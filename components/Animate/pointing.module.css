@@ -1,0 +1,31 @@
+/* Horizontal */
+@keyframes moveLeftRight {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+}
+
+.movingLR {
+  animation: moveLeftRight var(--animation-duration) ease-in-out infinite;
+  display: inline-block;
+}
+
+/* Vertical */
+@keyframes moveUpDown {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+.movingUD {
+  animation: moveUpDown var(--animation-duration) ease-in-out infinite;
+  display: inline-block;
+}
