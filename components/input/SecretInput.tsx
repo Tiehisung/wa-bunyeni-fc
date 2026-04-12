@@ -1,4 +1,4 @@
- 
+"use client";
 
 import { useState } from "react";
 import { VscEye, VscEyeClosed } from "react-icons/vsc";

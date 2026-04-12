@@ -1,14 +1,12 @@
- ;
+"use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
- 
 import { useGetViewportWidth } from "@/hooks/windowXY";
 import { POPOVER } from "../ui/popover";
 import { useOverflow } from "../../hooks/overflow";
 import { toggleClick } from "@/lib/dom";
 import { cn } from "@/lib/utils";
- 
 
 export const ResizableContent = ({
   children,
@@ -77,7 +75,7 @@ const HiddenDropdownContent = ({
   return (
     <div>
       {hiddenContent.length > 0 && (
-        <POPOVER  variant={'secondary'}>
+        <POPOVER variant={"secondary"}>
           {hiddenContent.map((Element, i) => (
             <div
               key={i}

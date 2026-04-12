@@ -1,3 +1,4 @@
+'use client'
 import { getErrorMessage } from '@/lib/error';
 import { IQueryResponse } from '@/types';
 import { toast } from 'sonner';

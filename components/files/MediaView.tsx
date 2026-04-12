@@ -1,4 +1,5 @@
 import { IFileProps } from "@/types/file.interface";
+import Image from "next/image";
  
 export function MediaPreview({ file,className }: { file: IFileProps,className?:string }) {
   const isVideo = file?.resource_type === "video";
@@ -14,7 +15,7 @@ export function MediaPreview({ file,className }: { file: IFileProps,className?:s
           playsInline
         />
       ) : (
-        <img
+        <Image
           src={file?.secure_url}
           alt={file?.original_filename || "gallery file"}
           width={400}

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { cn } from "@/lib/utils";
 import { ReactNode, useState, useCallback, useRef } from "react";
@@ -6,8 +6,9 @@ import { useUploadImageMutation } from "@/services/upload.endpoints";
 import { Button } from "../buttons/Button";
 import { smartToast } from "@/utils/toast";
 import { Label } from "../ui/label";
-import { X, Upload, Image as ImageIcon,   } from "lucide-react";
+import { X, Upload, Image as ImageIcon } from "lucide-react";
 import { OverlayLoader } from "../loaders/OverlayLoader";
+import Image from "next/image";
 
 interface IProps {
   onUpload: (url: string) => void;
@@ -159,8 +160,10 @@ export function ImageUploader({
         // Preview Area - Added 'group' class back
         <div className={cn("relative group", aspectRatioClasses[aspectRatio])}>
           <div className="relative w-full h-full overflow-hidden rounded-xl bg-gray-100">
-            <img
-              src={preview}
+            <Image
+              width={400}
+              height={400}
+              src={preview as string}
               alt="Upload preview"
               className="w-full h-full object-cover"
             />

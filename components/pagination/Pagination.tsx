@@ -1,4 +1,4 @@
- 
+"use client";
 
 import { Button } from "../buttons/Button";
 import { useUpdateSearchParams } from "@/hooks/params";
