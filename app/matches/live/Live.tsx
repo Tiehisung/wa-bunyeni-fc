@@ -1,3 +1,4 @@
+'use client'
 import { checkMatchMetrics, checkTeams } from "@/lib/compute/match";
 import { LuDot } from "react-icons/lu";
 import {

@@ -1,3 +1,4 @@
+'use client'
 import { LiveMatchEvents } from "./LiveEventsDisplay";
 import { checkMatchMetrics } from "@/lib/compute/match";
 import HEADER from "@/components/Element";

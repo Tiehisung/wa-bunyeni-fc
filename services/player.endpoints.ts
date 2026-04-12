@@ -2,7 +2,8 @@ import type { IQueryResponse } from "@/types";
 import { api } from "./api";
 import type { IPlayer,   } from "@/types/player.interface";
 import { IPlayerStats } from "@/types/stats";
-import { IPostPlayer } from "@/pages/admin/players/new/NewSigningForms";
+import { IPostPlayer } from "@/app/admin/players/new/NewSigningForms";
+
 
 const playerApi = api.injectEndpoints({
     endpoints: (builder) => ({
