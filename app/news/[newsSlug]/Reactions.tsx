@@ -1,10 +1,11 @@
+'use client'
+
 import { Button } from "@/components/buttons/Button";
 import { IComment, INewsProps } from "@/types/news.interface";
 import { ThumbsDown, Trash } from "lucide-react";
 import { POPOVER } from "@/components/ui/popover";
 import SocialShare, { SharePage } from "@/components/SocialShare";
 import { useEffect, useState } from "react";
-import { staticImages } from "@/assets/images";
 import { LiaCommentSolid } from "react-icons/lia";
 import { IoShareSocial } from "react-icons/io5";
 import { AVATAR } from "@/components/ui/avatar";
@@ -221,7 +222,7 @@ const CommentRow = ({
   return (
     <li className="flex items-start gap-5 pb-6  ">
       <AVATAR
-        src={com?.user?.avatar ?? staticImages.avatar}
+        src={com?.user?.avatar as string}
         alt={com?.user?.name}
       />
       <section>
