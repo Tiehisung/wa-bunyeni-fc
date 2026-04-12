@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { IMatch } from "@/types/match.interface";
 import { checkTeams } from "@/lib/compute/match";
 import { staticImages } from "@/assets/images";
+import Image from "next/image";
 
 export const PlayedMatchCard: React.FC<{
   match: IMatch;
@@ -35,8 +36,8 @@ export const PlayedMatchCard: React.FC<{
         >
           {/* Team Details */}
           <div className="flex items-center space-x-3">
-            <img
-              src={team?.logo ?? staticImages.ball}
+            <Image
+              src={team?.logo as string}
               alt={team?.name ?? ""}
               className="w-8 h-8 rounded-full"
               width={400}
