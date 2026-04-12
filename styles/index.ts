@@ -1,4 +1,4 @@
-// import { getRandomIndex } from "@/lib";
+import { getRandomIndex } from "@/lib";
 // import { StylesConfig } from "react-select";
 
 // export const customStyles: StylesConfig = {
@@ -47,23 +47,23 @@
 //   }),
 // };
 
-// export enum Color {
-//   red = "#ff3434",
+export enum Color {
+  red = "#ff3434",
 
-//   teal = "#006265",
+  teal = "#006265",
 
-//   blue = "#0c6bef",
-//   lightBlue = "#2cb5ff",
-//   darkBlue = "#171c2e",
+  blue = "#0c6bef",
+  lightBlue = "#2cb5ff",
+  darkBlue = "#171c2e",
 
-//   grey = "#272727",
+  grey = "#272727",
 
-//   green = "#00c846",
+  green = "#00c846",
 
-//   modalTransparent = "#1a1212b1",
+  modalTransparent = "#1a1212b1",
 
-//   black = "#455A64",
-// }
+  black = "#455A64",
+}
 
-// export const colors = Object.values(Color)
-// export const randomColor = colors[getRandomIndex(colors.length)] as string
+export const colors = Object.values(Color)
+export const randomColor = colors[getRandomIndex(colors.length)] as string
