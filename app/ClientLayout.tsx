@@ -22,7 +22,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
           disableTransitionOnChange
         >
           <MainNavbar />
-          <div className={`min-h-screen overflow-x-hidden`}>
+          <div className={`min-h-screen overflow-x-hidden _page`}>
             {children}
             <Swinger className="fixed bottom-6 right-6 z-30">
               <BackToTopButton />
