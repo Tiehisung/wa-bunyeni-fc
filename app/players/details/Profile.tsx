@@ -20,6 +20,7 @@ import { TEAM } from "@/data/team";
 import Link from "next/link";
 import useGetParam from "@/hooks/params";
 import { SharePage } from "@/components/SocialShare";
+import Image from "next/image";
 
 const statsData = [
   { stat: "PAS", value: 82 },
@@ -47,10 +48,12 @@ export default function PlayerProfile({
   const { images } = usePlayerGalleryUtils(galleries);
   const slides = images?.slice(0, 10)?.map((file) => (
     <div key={file?.public_id as string}>
-      <img
+      <Image
         src={file?.secure_url as string}
         alt={(file?.description as string) ?? "slide"}
         className="w-full h-72 object-cover"
+        width={400}
+        height={400}
       />
       <p>{file?.description}</p>
     </div>
