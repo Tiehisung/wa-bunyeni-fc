@@ -1,8 +1,8 @@
 // services/training.endpoints.ts
 import type { IQueryResponse } from "@/types";
 import { api } from "./api";
-import { ITrainingSession } from "@/pages/admin/training/attendance/page";
 import { IPlayerMini } from "@/types/player.interface";
+import { ITrainingSession } from "@/app/admin/training/attendance/page";
 
 export interface IPostTrainingSession {
     date: string;
