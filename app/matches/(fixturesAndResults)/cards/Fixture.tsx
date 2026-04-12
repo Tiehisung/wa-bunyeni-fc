@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { IMatch } from "@/types/match.interface";
 import { checkTeams } from "@/lib/compute/match";
 import { staticImages } from "@/assets/images";
+import Image from "next/image";
 
 interface IMatchFixtureCardProps {
   match: IMatch;
@@ -26,10 +27,10 @@ export const MatchFixtureCard: React.FC<IMatchFixtureCardProps> = ({
         <CardContent className="flex justify-between items-center w-full mb-2">
           {/* Home Team */}
           <div className="flex flex-col items-center space-y-2">
-            <img
+            <Image
               width={250}
               height={250}
-              src={home?.logo ?? staticImages.ball}
+              src={home?.logo as string}
               alt={"home logo"}
               className="w-12 h-12"
             />
@@ -46,8 +47,8 @@ export const MatchFixtureCard: React.FC<IMatchFixtureCardProps> = ({
 
           {/* Away Team */}
           <div className="flex flex-col items-center space-y-2">
-            <img
-              src={away?.logo ?? staticImages.ball}
+            <Image
+              src={away?.logo as string}
               width={250}
               height={250}
               alt={away?.name as string}
