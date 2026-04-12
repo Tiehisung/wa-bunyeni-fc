@@ -1,10 +1,11 @@
- 
+"use client";
 
-import  { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CiMenuBurger } from "react-icons/ci";
 import { VscClose } from "react-icons/vsc";
-import { useLocation } from "react-router-dom";
+import { usePathname } from "next/navigation";
+ 
 
 const variants = {
   open: {
@@ -24,7 +25,7 @@ const variants = {
 };
 
 const SideDrawerToRight = ({
-  className='bg-secondary _hover',
+  className = "bg-secondary _hover",
   trigger,
   children,
 }: {
@@ -32,7 +33,7 @@ const SideDrawerToRight = ({
   trigger?: ReactNode;
   children: ReactNode;
 }) => {
-  const pathname = useLocation().pathname;
+  const pathname = usePathname() 
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDrawer = () => {
@@ -48,7 +49,7 @@ const SideDrawerToRight = ({
         onClick={toggleDrawer}
         className={`text-3xl shadow-sm rounded p-1 slowTrans md:hidden ${className}`}
       >
-        {trigger ?? isOpen ? <VscClose /> : <CiMenuBurger />}
+        {(trigger ?? isOpen) ? <VscClose /> : <CiMenuBurger />}
       </button>
       <AnimatePresence>
         {isOpen && (
