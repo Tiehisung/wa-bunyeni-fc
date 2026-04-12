@@ -1,0 +1,32 @@
+/* Unused */
+
+@keyframes animate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(720deg);
+  }
+}
+._spin {
+  animation: animate 10s infinite;
+}
+
+/* WAVING OBJECT */
+@keyframes waver {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+._waving {
+  animation: animate 15s cubic-bezier(0.075, 0.82, 0.165, 1) infinite;
+ 
+}
