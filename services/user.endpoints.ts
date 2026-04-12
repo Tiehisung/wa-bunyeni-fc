@@ -1,9 +1,6 @@
-// services/users.endpoints.ts
 import type { IQueryResponse } from "@/types";
 import { api } from "./api";
 import type { IUser, } from "@/types/user";
-
-
 
 export interface ChangePasswordInput {
     currentPassword: string;
