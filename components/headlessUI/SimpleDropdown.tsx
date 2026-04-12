@@ -1,4 +1,5 @@
-// src/components/ui/SimpleDropdown.tsx
+'use client'
+
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Camera, X } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { ENV } from "@/lib/env";
 
 interface UploadResult {
   secure_url: string;
@@ -88,8 +89,8 @@ export const ImageUploadWidget = ({
 
   // Configure upload widget
   const uwConfig = {
-    cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
-    uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
+    cloudName: ENV.CLOUDINARY.CLOUD_NAME,
+    uploadPreset: ENV.CLOUDINARY.UPLOAD_PRESET,
     folder,
     cropping,
     croppingAspectRatio: cropping && shape === "circle" ? 1 : undefined,

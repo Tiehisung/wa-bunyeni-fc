@@ -1,3 +1,4 @@
+"use client";
 import { ReactNode } from "react";
 import Loader from "../loaders/Loader";
 import CountUp from "react-countup";
@@ -149,7 +150,6 @@ export function MetricCardB({
 }: IMetricCardB) {
   // const txtCl = `text-${color}-500`;
   // const _color = `${txtCl} bg-${color}-50`;
- 
 
   const _icon = { icon };
   return (

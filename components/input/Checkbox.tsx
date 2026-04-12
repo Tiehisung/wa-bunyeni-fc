@@ -1,4 +1,4 @@
-// src/components/ui/Checkbox.tsx
+'use client'
 import React from "react";
 import { cn } from "../../lib/utils";
 

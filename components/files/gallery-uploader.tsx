@@ -1,12 +1,11 @@
-'use client'
+"use client";
 import { useUploadGalleryMutation } from "@/services/upload.endpoints";
 import { toast } from "sonner";
 import { X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../buttons/Button";
 import { smartToast } from "@/utils/toast";
-
- 
+import Image from "next/image";
 
 interface GalleryUploaderProps {
   onUploadSuccess?: (urls: string[]) => void;
@@ -55,9 +54,7 @@ export function GalleryUploader({
 
     try {
       const response = await uploadGallery(formData).unwrap();
-      smartToast(response)
-
-   
+      smartToast(response);
 
       if (onUploadSuccess) {
         onUploadSuccess(response?.data?.map((f) => f.url) as string[]);
@@ -87,12 +84,15 @@ export function GalleryUploader({
           <div className="grid grid-cols-3 gap-4 mt-4">
             {previews.map((preview, index) => (
               <div key={index} className="relative group">
-                <img
-                  src={preview}
+                <Image
+                  width={400}
+                  height={400}
+                  src={preview as string}
                   alt={`Preview ${index + 1}`}
                   className="w-full h-32 object-cover rounded-lg"
                 />
                 <button
+                  type="button"
                   onClick={() => removeFile(index)}
                   className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
                 >

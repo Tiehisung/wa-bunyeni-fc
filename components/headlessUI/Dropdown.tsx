@@ -1,7 +1,8 @@
-// src/components/ui/Dropdown.tsx
+'use client'
 import { Fragment, type ReactNode } from "react";
 import { Menu, Transition } from "@headlessui/react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
+ 
 
 export interface DropdownItem {
   label: string;
@@ -66,7 +67,7 @@ export function Dropdown({
 
                   if (item.href) {
                     return (
-                      <Link to={item.href} className={classes}>
+                      <Link href={item.href} className={classes}>
                         {item.icon && (
                           <span className="mr-2 h-4 w-4">{item.icon}</span>
                         )}

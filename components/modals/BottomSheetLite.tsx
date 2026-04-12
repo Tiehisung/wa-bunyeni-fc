@@ -1,4 +1,4 @@
- 
+ "use client";
 
 import React, { ReactNode, useState } from "react";
 import { VscLoading } from "react-icons/vsc";

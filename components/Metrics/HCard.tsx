@@ -1,3 +1,5 @@
+'use client'
+
 import { TColor } from "@/types/color";
 import { Card, CardContent } from "../ui/card";
 import Loader from "../loaders/Loader";
