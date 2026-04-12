@@ -1,7 +1,9 @@
- 'use client'
+"use client";
 
 import PageLoader from "@/components/loaders/Page";
+import { SharePage } from "@/components/SocialShare";
 import { getInitials } from "@/lib";
+import { ENV } from "@/lib/env";
 import { useGetSquadsQuery } from "@/services/squad.endpoints";
 // import { PageSEO } from "@/utils/PageSEO";
 
@@ -13,7 +15,6 @@ export default function LatestMatchSquadPage() {
   }
   return (
     <section id="squad" className="py-24 ">
-      
       {/* <PageSEO page="squad"/> */}
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center mb-16">
@@ -54,6 +55,11 @@ export default function LatestMatchSquadPage() {
             </div>
           ))}
         </div>
+        <SharePage
+          label={"Share this squad"}
+          className="rounded-full bg-primary/90"
+          text={`Meet the talented players representing ${ENV.TEAM_NAME} with pride and passion in this fixture - ${squad?.title}`}
+        />
         <div className="text-center mt-12">
           <button className="border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-3 rounded-full font-semibold transition-all shadow-md hover:shadow-lg">
             View Full Squad →

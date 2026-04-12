@@ -1,4 +1,4 @@
- 
+"use client";
 
 import DiveUpwards from "@/components/Animate";
 import { useState, useEffect } from "react";
@@ -14,9 +14,14 @@ interface IProps {
   data?: string[];
   random?: boolean;
   every?: number;
-  className?:string
+  className?: string;
 }
-export const Updator = ({ data = updates, random, every = 5000,className }: IProps) => {
+export const Updator = ({
+  data = updates,
+  random,
+  every = 5000,
+  className,
+}: IProps) => {
   const [update, setUpdate] = useState(data?.[0]);
 
   useEffect(() => {

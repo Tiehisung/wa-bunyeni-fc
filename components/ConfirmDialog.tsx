@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 
 import { TButtonSize, TButtonVariant } from "@/components/ui/button";
@@ -82,7 +83,7 @@ export function ConfirmDialog({
 
       <AlertDialogContent className={cn("sm:max-w-md", className)}>
         <AlertDialogHeader>
-          <AlertDialogTitle >{title}</AlertDialogTitle>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>
             {typeof description === "string" ? (
               <div dangerouslySetInnerHTML={{ __html: description }} />

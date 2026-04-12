@@ -1,4 +1,4 @@
- 
+"use client";
 
 import {
   DropdownMenu,
@@ -20,7 +20,7 @@ export function PrimaryDropdown({
   hideAngle = true,
   align = "end",
   size = "icon-sm",
-  variant='ghost',
+  variant = "ghost",
 }: {
   children: ReactNode;
   trigger?: ReactNode;
@@ -40,7 +40,7 @@ export function PrimaryDropdown({
           size={size}
           className={cn(
             ` gap-1 flex items-center cursor-pointer text-muted-foreground p-2 rounded-full `,
-            triggerStyles
+            triggerStyles,
           )}
         >
           {trigger}
@@ -85,5 +85,3 @@ export function HoverDropdown({
     </HoverCard>
   );
 }
-
- 

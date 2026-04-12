@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { IMatch } from "@/types/match.interface";
 import { checkTeams } from "@/lib/compute/match";
-import { staticImages } from "@/assets/images";
+import Image from "next/image";
 
 export const CanceledMatchCard: React.FC<{
   match: IMatch;
@@ -22,10 +22,10 @@ export const CanceledMatchCard: React.FC<{
       <CardContent className="flex justify-between items-center mb-4">
         {/* Home Team */}
         <div className="flex flex-col items-center space-y-2">
-          <img
+          <Image
             width={100}
             height={100}
-            src={home?.logo ?? staticImages.ball}
+            src={home?.logo as string}
             alt={home?.name ?? "home"}
             className="w-12 h-12"
           />
@@ -37,10 +37,10 @@ export const CanceledMatchCard: React.FC<{
 
         {/* Away Team */}
         <div className="flex flex-col items-center space-y-2">
-          <img
+          <Image
             width={100}
             height={100}
-            src={away?.logo ?? staticImages.ball}
+            src={away?.logo as string}
             alt={away?.name}
             className="w-12 h-12"
           />

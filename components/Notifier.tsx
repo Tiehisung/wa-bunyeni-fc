@@ -1,4 +1,5 @@
- 
+"use client";
+
 import { ReactNode, useEffect, useState } from "react";
 import DiveUpwards from "./Animate";
 import CloseButton from "./buttons/Close";
@@ -24,16 +25,16 @@ const NotifierWrapper = ({
       delay == "1m"
         ? 10000
         : delay == "30s"
-        ? 30000
-        : delay == "10s"
-        ? 10000
-        : delay == "5s"
-        ? 5000
-        : delay == "2s"
-        ? 2000
-        : delay == "0"
-        ? 0
-        : 0;
+          ? 30000
+          : delay == "10s"
+            ? 10000
+            : delay == "5s"
+              ? 5000
+              : delay == "2s"
+                ? 2000
+                : delay == "0"
+                  ? 0
+                  : 0;
     const timeout = setTimeout(() => {
       setIsOpen(true);
     }, elapse);

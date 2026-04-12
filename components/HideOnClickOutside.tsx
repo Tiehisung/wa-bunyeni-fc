@@ -1,6 +1,6 @@
- 
+"use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 interface ClickOutsideWrapperProps {
   children: React.ReactNode;
@@ -11,7 +11,7 @@ interface ClickOutsideWrapperProps {
 
 const HideOnClickOutside: React.FC<ClickOutsideWrapperProps> = ({
   children,
-  className = ' z-30 ',
+  className = " z-30 ",
   setIsVisible,
   others,
 }) => {
@@ -27,9 +27,9 @@ const HideOnClickOutside: React.FC<ClickOutsideWrapperProps> = ({
   };
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 

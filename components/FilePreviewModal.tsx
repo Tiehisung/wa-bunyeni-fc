@@ -1,7 +1,7 @@
- 
+"use client";
 
 import { ReactNode } from "react";
- 
+
 import { getFileExtension, openFileInTab } from "@/lib/file";
 import { SideDrawer } from "./ShadSideDrawer";
 import { Button, TButtonVariant } from "./ui/button";
@@ -29,7 +29,12 @@ const FileViewer = ({
   //Open all pdf in new tab for small screen
   const extension = getFileExtension(url);
 
-  if (!url) return <p className="text-destructive italic font-light text-sm line-through">File not available</p> 
+  if (!url)
+    return (
+      <p className="text-destructive italic font-light text-sm line-through">
+        File not available
+      </p>
+    );
 
   if (extension.includes("pdf")) {
     return (

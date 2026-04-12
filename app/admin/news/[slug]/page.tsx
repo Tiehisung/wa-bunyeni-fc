@@ -66,11 +66,4 @@ export default function NewsItemPage() {
     </div>
   );
 }
-// {
-//             page?: number;
-//             limit?: number;
-//             category?: string;
-//             search?: string;
-//             sortBy?: string;
-//             status?: 'published' | 'draft' | 'archived';
-//         }
+ 

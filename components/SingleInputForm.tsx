@@ -1,13 +1,16 @@
+'use client'
+
 import { CSSProperties, useEffect, useState } from "react";
 import { Button } from "./buttons/Button";
 import { Input } from "./input/Inputs";
-import { useNavigate } from "react-router-dom";
+ 
 import { toast } from "sonner";
 import { apiConfig } from "@/lib/configs";
 import { fireEscape } from "@/hooks/Esc";
 import { useUpdateSearchParams } from "@/hooks/params";
 import { TButtonVariant } from "./ui/button";
 import { getErrorMessage } from "@/lib/error";
+import { useRouter } from "next/navigation";
 
 interface IProps {
   className?: string;
@@ -26,7 +29,7 @@ interface IProps {
 
 export function SingleInputForm(props: IProps) {
   const [input, setInput] = useState("");
-  const navigate = useNavigate();
+  const router = useRouter();
   const { setParam } = useUpdateSearchParams();
   const [waiting, setWaiting] = useState(false);
 
@@ -63,7 +66,7 @@ export function SingleInputForm(props: IProps) {
     } finally {
       setWaiting(false);
       // Use navigate(0) as a soft refresh instead of router.refresh()
-      navigate(0);
+      router.refresh()
       if (props.escapeOnEnd) fireEscape();
     }
   };

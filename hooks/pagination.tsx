@@ -1,21 +1,23 @@
 // hooks/useInfiniteLimitParams.ts
-import { useLocation, useNavigate } from "react-router-dom";
+"use client";
+
+import { useSearchParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef } from "react";
 import type { IPagination } from "@/types";
 
 export function useInfiniteLimitParams(pagination?: IPagination) {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const updateLimitParam = useCallback(
     (newLimit: number) => {
-      const params = new URLSearchParams(location.search);
+      const params = new URLSearchParams(searchParams.toString());
       params.set("limit", String(newLimit));
-      navigate(`?${params.toString()}`, { replace: true });
+      router.replace(`?${params.toString()}`, { scroll: false });
     },
-    [navigate, location.search],
+    [router, searchParams],
   );
 
   useEffect(() => {

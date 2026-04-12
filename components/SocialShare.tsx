@@ -1,4 +1,5 @@
- 
+"use client";
+
 import { ImWhatsapp } from "react-icons/im";
 import { PiTelegramLogoLight } from "react-icons/pi";
 import { Button } from "./ui/button";
@@ -147,7 +148,6 @@ export const SocialMediaHandles = ({
   url?: string;
   className?: string;
 }) => {
- 
   const socialLinks = [
     {
       platform: "whatsapp",

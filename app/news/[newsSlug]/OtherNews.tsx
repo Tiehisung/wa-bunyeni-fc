@@ -1,23 +1,31 @@
-'use client'
+"use client";
 
 import { INewsProps } from "@/types/news.interface";
 import { AnimateOnView } from "@/components/Animate/AnimateOnView";
 import { IQueryResponse } from "@/types";
-
 import { RxVideo } from "react-icons/rx";
 import TableLoader from "@/components/loaders/Table";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useGetNewsQuery } from "@/services/news.endpoints";
+import PageLoader from "@/components/loaders/Page";
  
 
-export default function OtherAdminNews({
+export default function OtherNews({
   news,
 }: {
   news?: IQueryResponse<INewsProps[]>;
 }) {
+  const searchParams = useSearchParams();
+  const paramsString = searchParams.toString();
+
+  const { data: newsData, isLoading } = useGetNewsQuery(paramsString);
+
   const newsId = useParams().newsId;
-  const others = news?.data?.filter((d) => d._id !== newsId);
+  const others = newsData?.data?.filter((d) => d._id !== newsId);
   const isAdmin = usePathname().includes("/admin");
+
+  if (isLoading) return <PageLoader />;
   return (
     <div className="grid gap-5 gap-y-10 mt-5 sticky top-0">
       {!news ? (

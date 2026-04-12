@@ -1,3 +1,4 @@
+"use client";
 import { useState, ReactNode, useEffect } from "react";
 import { toast } from "sonner";
 import { fireDoubleEscape } from "@/hooks/Esc";
@@ -66,7 +67,7 @@ export const DragAndDropUpload = ({
         formData.append("video", file);
         result = await uploadVideo(formData);
       }
-      
+
       if (file?.type.includes("pdf")) {
         formData.append("document", file);
         result = await uploadPDF(formData);

@@ -1,4 +1,6 @@
-import { FC, useState } from "react";
+"use client";
+
+import { useState } from "react";
 
 import { IFileProps } from "@/types/file.interface";
 import { INewsProps } from "@/types/news.interface";
@@ -7,18 +9,25 @@ import MasonryGallery from "@/components/Gallery/Masonry";
 import LightboxViewer from "@/components/viewer/LightBox";
 import { AVATAR } from "@/components/ui/avatar";
 import Divider from "@/components/Divider";
+import { useParams } from "next/navigation";
+import { useGetNewsItemQuery } from "@/services/news.endpoints";
+import Image from "next/image";
 
-const NewsItemClient: FC<{ newsItem?: INewsProps }> = ({ newsItem }) => {
+const NewsItemClient = () => {
+  const newsSlug = useParams().newsSlug;
   const [open, setOpen] = useState(false);
   const [gallery, setGallery] = useState<IFileProps[]>([]);
-
+  const { data: newsItemData, isLoading: itemLoading } = useGetNewsItemQuery(
+    newsSlug?.toString() || "",
+  );
+  const newsItem = newsItemData?.data;
   return (
     <div className=" mb-10">
       <header className="flex flex-wrap items-center gap-2.5">
-        <img
+        <Image
           width={1000}
           height={500}
-          alt={newsItem?.headline?.text}
+          alt={newsItem?.headline?.text as string}
           src={newsItem?.headline?.image as string}
           className={`w-full min-w-60 h-auto bg-cover object-cover aspect-5/3  `}
         />
@@ -46,13 +55,13 @@ const NewsItemClient: FC<{ newsItem?: INewsProps }> = ({ newsItem }) => {
                   {/* Large first media */}
                   {(detail?.media?.length ?? 0) > 0 && (
                     <div key={index} className="flex flex-wrap gap-4">
-                      <img
+                      <Image
                         width={1000}
                         height={500}
                         alt={detail?.media?.[0]?.original_filename as string}
                         src={
                           detail?.media?.[0].resource_type == "image"
-                            ? detail?.media?.[0].secure_url
+                            ? (detail?.media?.[0].secure_url as string)
                             : (detail?.media?.[0].thumbnail_url as string)
                         }
                         className={`w-full min-w-60 h-auto bg-cover object-cover aspect-5/3 `}

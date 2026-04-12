@@ -1,3 +1,4 @@
+"use client";
 import { Check, Grid2X2, List } from "lucide-react";
 import { Button } from "./buttons/Button";
 import { cn } from "@/lib/utils";
@@ -20,7 +21,8 @@ const DisplayType = () => {
               data: "list",
             }),
           );
-        }}size={'sm'}
+        }}
+        size={"sm"}
       >
         {displayType == "list" && <Check />}
 
@@ -37,7 +39,8 @@ const DisplayType = () => {
               data: "grid",
             }),
           );
-        }}size={'sm'}
+        }}
+        size={"sm"}
       >
         {displayType !== "list" && <Check />}
         <Grid2X2 />

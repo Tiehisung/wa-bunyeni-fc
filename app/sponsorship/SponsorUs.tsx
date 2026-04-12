@@ -1,6 +1,7 @@
 import { Mail, Phone, HandshakeIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TEAM } from "@/data/team";
+import { ENV } from "@/lib/env";
  
 
 export default function SponsorUs() {
@@ -54,7 +55,7 @@ export default function SponsorUs() {
             className="_primaryBtn h-12 text-lg rounded-xl"
           >
             <a
-              href={`mailto:${import.meta.env.VITE_CONTACT_EMAIL}?subject=Sponsorship%20Inquiry`}
+              href={`mailto:${ENV.CONTACT.EMAIL}?subject=Sponsorship%20Inquiry`}
             >
               Become a Sponsor
             </a>

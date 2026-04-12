@@ -1,6 +1,5 @@
 "use client";
 
-
 import Link from "next/link";
 import Loader from "./loaders/Loader";
 import LoginController from "./auth/LoginModal";

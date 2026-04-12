@@ -1,4 +1,4 @@
- 
+"use client";
 
 import { useState, useEffect, type RefObject } from "react";
 
@@ -6,7 +6,7 @@ type OverflowDirection = "horizontal" | "vertical";
 
 export function useOverflow(
   ref: RefObject<HTMLElement | null>,
-  direction: OverflowDirection = "horizontal"
+  direction: OverflowDirection = "horizontal",
 ): boolean {
   const [isOverflowing, setIsOverflowing] = useState(false);
 

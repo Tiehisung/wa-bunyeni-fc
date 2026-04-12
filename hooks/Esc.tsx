@@ -1,4 +1,4 @@
- 
+"use client";
 
 import { useEffect } from "react";
 
@@ -23,7 +23,7 @@ export function fireEscape(target: HTMLElement | Document = document) {
       key: "Escape",
       code: "Escape",
       bubbles: true,
-    })
+    }),
   );
 }
 

@@ -1,3 +1,5 @@
+'use client'
+
 import useGetParam, { useUpdateSearchParams } from "@/hooks/params";
 import {
   Select,

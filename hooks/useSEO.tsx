@@ -1,4 +1,5 @@
-// client/hooks/useSEO.ts
+'use client'
+
 import { useEffect } from "react";
 
 interface SEOProps {

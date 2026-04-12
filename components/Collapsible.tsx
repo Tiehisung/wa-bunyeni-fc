@@ -1,4 +1,4 @@
- 
+"use client";
 
 import { AnimatePresence, motion } from "framer-motion";
 import { ReactNode, useState } from "react";
@@ -7,7 +7,7 @@ import { TButtonSize, TButtonVariant } from "./ui/button";
 import { Button } from "./buttons/Button";
 import Loader from "./loaders/Loader";
 import { cn } from "@/lib/utils";
-import {usePathname, useRouter}from 'next/navigation'
+import { usePathname, useRouter } from "next/navigation";
 
 interface ICollapsible {
   header: {
@@ -52,11 +52,9 @@ export function PrimaryCollapsible({
         }}
         className={cn(
           `w-full flex items-center justify-between p-3 pr-0 rounded-lg _transition ${
-            isActiveLink(header?.path || "")
-              ? "text-primary"
-              : ""
+            isActiveLink(header?.path || "") ? "text-primary" : ""
           }  ${isOpen ? "rounded-b-none ring" : ""}`,
-          header?.className
+          header?.className,
         )}
         {...header?.others}
         variant={variant}

@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/buttons/Button";
 
 import { CgClose } from "react-icons/cg";
