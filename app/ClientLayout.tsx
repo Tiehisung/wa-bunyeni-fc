@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import {  ReactNode } from "react";
 import { Toaster } from "sonner";
 
 import BackToTopButton from "@/components/scroll/ToTopBtn";
@@ -12,20 +12,17 @@ import MainNavbar from "@/components/MainNavbar";
 import Footer from "./Footer";
 
 export default function ClientLayout({ children }: { children: ReactNode }) {
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-  if (mounted)
+
+ 
     return (
       <StoreProvider>
-        <ThemeProvider
+        {/* <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-        >
+        > */}
           <MainNavbar />
           <div className={`min-h-screen overflow-x-hidden _page`}>
             {children}
@@ -35,8 +32,8 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
             <Toaster position="top-right" richColors />
           </div>
           <Footer />
-        </ThemeProvider>
+        {/* </ThemeProvider> */}
       </StoreProvider>
     );
-    return null
+ 
 }
