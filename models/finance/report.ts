@@ -3,8 +3,9 @@
  * Database layer with validation and type safety
  */
 
+import { IReport } from "@/types/finance.interface"
 import { Schema, type Document, model, models } from "mongoose"
-import { type IReport, } from "./types"
+ 
 
 // Report Schema
 const reportSchema = new Schema<IReport & Document>(

@@ -4,7 +4,8 @@
  */
 
 import { Schema, type Document, model, models } from "mongoose"
-import {type IBudget,IncomeCategory, ExpenseCategory,} from "./types"
+ 
+import { EExpenseCategory, EIncomeCategory, IBudget } from "@/types/finance.interface"
     
 // Budget Schema
 const budgetSchema = new Schema<IBudget & Document>(
@@ -23,7 +24,7 @@ const budgetSchema = new Schema<IBudget & Document>(
         category: {
             type: String,
             required: [true, "Category is required"],
-            enum: [...Object.values(IncomeCategory), ...Object.values(ExpenseCategory)],
+            enum: [...Object.values(EIncomeCategory), ...Object.values(EExpenseCategory)],
         },
         plannedAmount: {
             type: Number,
