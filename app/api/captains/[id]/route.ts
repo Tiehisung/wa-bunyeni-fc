@@ -13,12 +13,12 @@ connectDB();
 // GET /api/captains/[id] - Get single captaincy record
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const id = (await params).id
 
-
-        const captaincy = await CaptaincyModel.findById(params.id).lean();
+        const captaincy = await CaptaincyModel.findById(id).lean();
 
         if (!captaincy) {
             return NextResponse.json({
@@ -42,9 +42,10 @@ export async function GET(
 // PUT /api/captains/[id] - Update captaincy record
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const id = (await params).id
 
 
         const session = await auth();
@@ -60,9 +61,8 @@ export async function PUT(
         delete updates._id;
 
         const updated = await CaptaincyModel.findByIdAndUpdate(
-            params.id,
+            id,
             { $set: updates },
-            { new: true }
         ).populate('player', 'name firstName lastName number position avatar');
 
         if (!updated) {
@@ -88,10 +88,10 @@ export async function PUT(
 // DELETE /api/captains/[id] - Delete captaincy record
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-
+        const id = (await params).id
 
         const session = await auth();
 
@@ -102,7 +102,7 @@ export async function DELETE(
             }, { status: 401 });
         }
 
-        const captaincy = await CaptaincyModel.findById(params.id);
+        const captaincy = await CaptaincyModel.findById(id);
 
         if (!captaincy) {
             return NextResponse.json({
@@ -111,14 +111,14 @@ export async function DELETE(
             }, { status: 404 });
         }
 
-        const deleted = await CaptaincyModel.findByIdAndDelete(params.id);
+        const deleted = await CaptaincyModel.findByIdAndDelete(id);
 
         await logAction({
             title: '👑 Captaincy Record Deleted',
             description: `${captaincy.player?.name}'s captaincy record deleted`,
             severity: ELogSeverity.CRITICAL,
             meta: {
-                captaincyId: params.id,
+                captaincyId: id,
                 playerId: captaincy.player?._id,
                 role: captaincy.role,
             },
