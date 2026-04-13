@@ -12,7 +12,6 @@ import { slugIdFilters } from "@/lib/slug";
 import { ELogSeverity } from "@/types/log.interface";
 import { getApiErrorMessage } from "@/lib/error-api";
  
-
 connectDB();
 
 export async function GET(
