@@ -11,16 +11,17 @@ connectDB();
 // GET /api/training/player/[playerId] - Get player training history
 export async function GET(
     request: NextRequest,
-    { params }: { params: { playerId: string } }
+    { params }: { params: Promise<{ playerId: string }> }
 ) {
     try {
+        const playerId = (await params).playerId
         const searchParams = request.nextUrl.searchParams;
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '10');
         const skip = (page - 1) * limit;
 
         const sessions = await TrainingSessionModel.find({
-            'attendance.attendedBy._id': params.playerId
+            'attendance.attendedBy._id': playerId
         })
             .sort({ date: -1 })
             .skip(skip)
@@ -28,7 +29,7 @@ export async function GET(
             .lean();
 
         const total = await TrainingSessionModel.countDocuments({
-            'attendance.attendedBy._id': params.playerId
+            'attendance.attendedBy._id': playerId
         });
 
         const totalSessions = await TrainingSessionModel.countDocuments({

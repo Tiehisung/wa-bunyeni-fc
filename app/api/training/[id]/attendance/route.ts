@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/config/db.config';
 import { auth } from '@/auth';
 import TrainingSessionModel from '@/models/training';
-import { LoggerService } from '@/shared/log.service';
 import { getApiErrorMessage } from '@/lib/error-api';
 
 connectDB();
@@ -16,6 +15,7 @@ export async function PATCH(
     try {
         const session = await auth();
         const id = (await params).id
+
         if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
             return NextResponse.json({
                 success: false,
@@ -58,7 +58,6 @@ export async function PATCH(
             data: updated,
         });
     } catch (error) {
-        LoggerService.error('Failed to update attendance', error);
         return NextResponse.json({
             success: false,
             message: getApiErrorMessage(error, 'Failed to update attendance'),

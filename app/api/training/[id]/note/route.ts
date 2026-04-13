@@ -4,7 +4,6 @@ import connectDB from '@/config/db.config';
 
 import { auth } from '@/auth';
 import TrainingSessionModel from '@/models/training';
-import { LoggerService } from '@/shared/log.service';
 import { getApiErrorMessage } from '@/lib/error-api';
 
 connectDB();
@@ -52,7 +51,6 @@ export async function PATCH(
             data: updated,
         });
     } catch (error) {
-        LoggerService.error('Failed to update note', error);
         return NextResponse.json({
             success: false,
             message: getApiErrorMessage(error, 'Failed to update note'),
