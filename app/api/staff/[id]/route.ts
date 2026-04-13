@@ -98,7 +98,7 @@ export async function PUT(
       description: `${updated.fullname}'s record updated`,
       severity: ELogSeverity.INFO,
       meta: {
-        staffMemberId: params.id,
+        staffMemberId: (await params).id,
         updates: Object.keys(updates),
       },
     });
@@ -149,7 +149,7 @@ export async function DELETE(
       description: `${staffMember.fullname} (${staffMember.role}) deleted on ${formatDate(new Date().toISOString())}`,
       severity: ELogSeverity.CRITICAL,
       meta: {
-        staffMemberId: params.id,
+        staffMemberId: (await params).id,
         role: staffMember.role,
         email: staffMember.email,
       },
