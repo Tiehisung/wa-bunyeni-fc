@@ -6,17 +6,18 @@
 import { Schema, type Document, model, models } from "mongoose"
 import {
     type ITransaction,
-    TransactionType,
+     
     IncomeCategory,
     ExpenseCategory,
 } from "./types"
+import { ETransactionType } from "@/types/finance.interface"
 
 // Transaction Schema
 const transactionSchema = new Schema<ITransaction & Document>(
     {
         type: {
             type: String,
-            enum: Object.values(TransactionType),
+            enum: Object.values(ETransactionType),
             required: [true, "Transaction type is required"],
         },
         amount: {
@@ -40,7 +41,7 @@ const transactionSchema = new Schema<ITransaction & Document>(
             maxlength: [500, "Description cannot exceed 500 characters"],
         },
         date: {
-            type: Date,
+            type: String,
             required: [true, "Transaction date is required"],
             default: () => new Date(),
         },
