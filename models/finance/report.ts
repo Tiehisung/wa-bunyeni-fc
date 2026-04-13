@@ -56,8 +56,7 @@ const reportSchema = new Schema<IReport & Document>(
     { timestamps: true },
 )
 
-// Create models with type checking
-
+ 
 export const ReportModel = (models.Report || model<IReport & Document>("Report", reportSchema))
 
 export { reportSchema }
