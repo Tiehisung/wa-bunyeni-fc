@@ -13,7 +13,7 @@ connectDB();
 // GET /api/logs/user/[userId] - Get logs by user
 export async function GET(
     request: NextRequest,
-    { params }: { params: { userId: string } }
+    { params }: { params:Promise< { userId: string } >}
 ) {
     try {
         const session = await auth();
@@ -30,13 +30,13 @@ export async function GET(
         const limit = parseInt(searchParams.get('limit') || '20');
         const skip = (page - 1) * limit;
 
-        const logs = await LogModel.find({ userId: params.userId })
+        const logs = await LogModel.find({ userId: (await params).userId })
             .sort({ createdAt: 'desc' })
             .skip(skip)
             .limit(limit)
             .lean();
 
-        const total = await LogModel.countDocuments({ userId: params.userId });
+        const total = await LogModel.countDocuments({ userId: (await params).userId });
 
         return NextResponse.json({
             success: true,
