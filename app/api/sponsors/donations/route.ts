@@ -1,10 +1,10 @@
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import DonationModel from "@/models/donation";
 import { NextRequest, NextResponse } from "next/server";
 import "@/models/sponsor";
 import { removeEmptyKeys } from "@/lib";
 
-ConnectMongoDb();
+connectDB();
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       { "description": regex },
       { "date": regex },
     ],
- 
+
   }
 
   if (sponsorId) query = { ...query, sponsor: sponsorId }

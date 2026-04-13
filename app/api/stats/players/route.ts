@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import { getGlobalPlayersStats } from "./globalPlayersStats";
 
-ConnectMongoDb();
+connectDB();
 export async function GET() {
     try {
         const playersStats = await getGlobalPlayersStats()

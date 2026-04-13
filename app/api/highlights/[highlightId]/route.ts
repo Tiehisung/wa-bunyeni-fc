@@ -1,4 +1,4 @@
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import { NextRequest, NextResponse } from "next/server";
 import '@/models/file'
 import { saveToArchive } from "../../archives/helper";
@@ -7,7 +7,7 @@ import { ELogSeverity } from "@/types/log";
 import { EArchivesCollection } from "@/types/archive.interface";
 import HighlightModel from "@/models/highlight";
 
-ConnectMongoDb();
+connectDB();
 
 export async function GET(
   _: NextRequest,

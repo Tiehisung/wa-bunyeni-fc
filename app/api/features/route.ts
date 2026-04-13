@@ -1,5 +1,5 @@
 import { getErrorMessage, removeEmptyKeys } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import { NextRequest, NextResponse } from "next/server";
 import { logAction } from "../logs/helper";
 import FeatureModel from "@/models/feature";
@@ -7,7 +7,7 @@ import { QueryFilter } from "mongoose";
 import { ELogSeverity } from "@/types/log";
 
 
-ConnectMongoDb();
+connectDB();
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const page = Number.parseInt(searchParams.get("page") || "1", 10);

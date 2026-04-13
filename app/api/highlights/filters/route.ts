@@ -1,5 +1,5 @@
 import { getErrorMessage } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import GalleryModel from "@/models/galleries";
 import { NextRequest, NextResponse } from "next/server";
 import "@/models/file";
@@ -7,7 +7,7 @@ import "@/models/file";
 // export const revalidate = 0;
 // export const dynamic = "force-dynamic";
 
-ConnectMongoDb();
+connectDB();
 //Not in use
 export async function POST(request: NextRequest) {
   try {

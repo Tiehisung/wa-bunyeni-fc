@@ -27,7 +27,7 @@ export function CredentialsLoginForm({
 }) {
   const router = useRouter();
 
-  const { login, isLoading } = useAuth();
+  const { signin, isLoading } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
   const { control, handleSubmit } = useForm<LoginForm>({
@@ -38,7 +38,7 @@ export function CredentialsLoginForm({
     setError(null);
 
     try {
-      const result = await login(data);
+      const result = await signin(data);
       smartToast(result);
 
       const dashboardPath =

@@ -1,5 +1,5 @@
 import { IMatch } from "./match.interface";
-import { IMiniUser,   } from "./user";
+import { IUser, } from "./user";
 
 export interface IInjury {
   _id?: string;
@@ -12,13 +12,13 @@ export interface IInjury {
   title: string;
   description?: string;
   severity: EInjurySeverity;
+  status: string; //active, recovered, etc.
 
   //if occurred in match
   minute?: number | string;
   match?: IMatch
 
-  createdBy?: IMiniUser
- 
+  user?: IUser
   createdAt?: string;
   updatedAt?: string;
 }

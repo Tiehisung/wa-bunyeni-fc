@@ -1,12 +1,13 @@
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import SponsorModel from "@/models/sponsor";
 import { NextRequest, NextResponse } from "next/server";
 import "@/models/donation";
 import { removeEmptyKeys } from "@/lib";
 
- 
 
-ConnectMongoDb();
+
+connectDB();
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const page = Number.parseInt(searchParams.get("page") || "1", 10);
@@ -49,7 +50,7 @@ export async function GET(request: NextRequest) {
       pages: Math.ceil(total / limit),
     },
   });
-} 
+}
 
 export async function POST(request: NextRequest) {
   const formdata = await request.json();

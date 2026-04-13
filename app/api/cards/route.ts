@@ -1,125 +1,179 @@
-import { getErrorMessage } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
-import { NextRequest, NextResponse } from "next/server";
-import { logAction } from "../logs/helper";
-import CardModel from "@/models/card";
-import { updateMatchEvent } from "../matches/live/events/route";
-import PlayerModel from "@/models/player";
-import { auth } from "@/auth";
-import { ICard } from "@/types/card.interface";
+// app/api/cards/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/config/db.config';
 
-ConnectMongoDb();
+import { auth } from '@/auth';
+import CardModel from '@/models/card';
+import PlayerModel from '@/models/player';
+import MatchModel from '@/models/match';
+import { IPostCard } from '@/models/card';
+import { ECardType } from '@/types/card.interface';
+import { ELogSeverity } from '@/types/log.interface';
+import { getApiErrorMessage } from '../../../lib/error-api';
+import { logAction } from '../logs/helper';
+import { updateMatchEvent } from '../matches/helpers';
 
+
+connectDB();
+
+// GET /api/cards - List all cards
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const page = Number.parseInt(searchParams.get("page") || "1", 10);
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '30');
+    const skip = (page - 1) * limit;
 
-  const limit = Number.parseInt(searchParams.get("limit") || "30", 10);
-  const skip = (page - 1) * limit;
+    const search = searchParams.get('card_search') || '';
+    const matchId = searchParams.get('matchId') || '';
+    const playerId = searchParams.get('playerId') || '';
+    const type = searchParams.get('type') || '';
 
-  const search = searchParams.get("card_search") || "";
+    const regex = new RegExp(search, 'i');
+    const query: any = {};
 
-  const regex = new RegExp(search, "i");
+    if (search) {
+      query.$or = [
+        { type: regex },
+        { 'player?.name': regex },
+        { 'match.title': regex },
+        { description: regex },
+        { minute: regex },
+      ];
+    }
 
-  const query = {
-    $or: [
-      { "type": regex },
-      { "player.name": regex },
-      { "match.name": regex },
-      { "description": regex },
-    ],
+    if (matchId) query.match = matchId;
+    if (playerId) query.player = playerId;
+    if (type) query.type = type;
+
+    const cards = await CardModel.find(query)
+      .populate('player', 'name number position avatar')
+      .populate('match', 'title date competition opponent')
+      .limit(limit)
+      .skip(skip)
+      .lean()
+      .sort({ createdAt: 'desc' });
+
+    const total = await CardModel.countDocuments(query);
+
+    return NextResponse.json({
+      success: true,
+      data: cards,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    // LoggerService.error('Failed to fetch cards', error);
+    return NextResponse.json({
+      success: false,
+      message: getApiErrorMessage(error, 'Failed to fetch cards'),
+    }, { status: 500 });
   }
-
-  const cards = await CardModel.find(query)
-    .limit(limit).skip(skip)
-    .lean().sort({ createdAt: "desc" });
-
-  const total = await CardModel.countDocuments(query)
-  return NextResponse.json({
-    success: true,
-    data: cards,
-    pagination: {
-      page,
-      limit,
-      total,
-      pages: Math.ceil(total / limit),
-    },
-  });
 }
 
+// POST /api/cards - Create new card
 export async function POST(request: NextRequest) {
   try {
-    const { match, minute, player, type, description, } = await request.json() as ICard;
+    const session = await auth();
+
+    if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
+      return NextResponse.json({
+        success: false,
+        message: 'Unauthorized',
+      }, { status: 401 });
+    }
+
+    const { match, minute, player, type, description } = await request.json() as IPostCard;
+
+    if (![...Object.values(ECardType)].includes(type)) {
+      return NextResponse.json({
+        success: false,
+        message: `Card type must be one of ${Object.values(ECardType).join(', ')}`,
+      }, { status: 400 });
+    }
+
+    // Check if player already has a red card in this match
+    if (type === 'red') {
+      const existingRed = await CardModel.findOne({
+        match: match?._id,
+        player: player?._id,
+        type: 'red'
+      });
+
+      if (existingRed) {
+        return NextResponse.json({
+          success: false,
+          message: 'Player already has a red card in this match',
+        }, { status: 409 });
+      }
+    }
 
     const savedCard = await CardModel.create({
-      match, minute, player, type
+      match,
+      minute,
+      player,
+      type,
+      description,
+      createdBy: session.user?.id
     });
 
     if (!savedCard) {
-      return NextResponse.json({ message: "Failed to create card.", success: false });
+      return NextResponse.json({
+        message: 'Failed to create card.',
+        success: false,
+      }, { status: 500 });
     }
 
-    //Update Player
-    await PlayerModel.findByIdAndUpdate(player?._id, { $push: { cards: savedCard._id } })
+    // Update Player - add card reference
+    await PlayerModel.findByIdAndUpdate(
+      player?._id,
+      { $push: { cards: savedCard._id } }
+    );
 
-    //Update events
-    await updateMatchEvent(match?._id as string, {
-      type: 'card',
-      minute: minute as string,
-      title: `${type == 'red' ? '🟥' : '🟨'} ${minute}' - ${player?.number}  ${player?.name} `,
-      description
-    })
+    // Update Match - add card reference
+    const matchId = match._id;
+    await MatchModel.findByIdAndUpdate(
+      matchId,
+      { $push: { cards: savedCard._id } }
+    );
 
-    // log
-    await logAction({
-      title: "Card Created",
-      description: `${type == 'red' ? '🟥' : '🟨'} ${type} card recorded. ${description || ''}`,
-    });
-
-    return NextResponse.json({ message: "Card created successfully!", success: true, data: savedCard });
-
-  } catch (error) {
-    return NextResponse.json({
-      message: getErrorMessage(error),
-      success: false,
-    });
-  }
-}
-
-
-export async function DELETE(request: NextRequest) {
-  try {
-    const { cardId, playerId, matchId } = await request.json() as { cardId: string, playerId: string, matchId: string }
-
-    const deleted = await CardModel.findByIdAndDelete(cardId,);
-
-    if (!deleted) {
-      return NextResponse.json({ message: "Failed to delete card.", success: false });
-    }
-
-    //Update Player
-    await PlayerModel.findByIdAndUpdate(playerId, { $pull: { cards: cardId } })
-
-    //Update events
+    // Update match events
+    const emoji = type === 'red' ? '🟥' : '🟨';
     await updateMatchEvent(matchId, {
       type: 'card',
-      minute: deleted?.minute,
-      title: ` Card revoked `,
-      description: 'Card reviewed and revoked'
-    })
+      minute: String(minute),
+      title: `${emoji} ${minute}' - ${player?.number || ''} ${player?.name || 'Player'}`,
+      description: description || `${type.toUpperCase()} card`,
+      timestamp: new Date(),
+    });
 
-    // log
     await logAction({
-      title: "Card deleted",
-      description: `Recent card was revoked`,
+      title: `${emoji} ${type.toUpperCase()} Card Issued`,
+      description: description || `${type} card for ${player?.name}`,
+      severity: type === 'red' ? ELogSeverity.WARNING : ELogSeverity.INFO,
+      meta: {
+        cardId: savedCard._id,
+        matchId,
+        playerId: player?._id,
+        type,
+        minute,
+      },
     });
 
-    return NextResponse.json({ message: "Card created successfully!", success: true, data: deleted });
-
-  } catch (error) {
     return NextResponse.json({
-      message: getErrorMessage(error),
+      message: 'Card recorded successfully!',
+      success: true,
+      data: savedCard,
+    }, { status: 201 });
+  } catch (error) {
+    // LoggerService.error('Failed to create card', error);
+    return NextResponse.json({
+      message: getApiErrorMessage(error, 'Failed to create card'),
       success: false,
-    });
+    }, { status: 500 });
   }
 }

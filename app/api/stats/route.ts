@@ -1,16 +1,16 @@
 import "@/models/file";
 import "@/models/galleries";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import PlayerModel from "@/models/player";
 import { NextResponse } from "next/server";
 import { IPlayer } from "@/types/player.interface";
 
-ConnectMongoDb();
+connectDB();
 
 export async function GET() {
     try {
         const players = await PlayerModel.find().lean();
-      
+
 
         const totalPlayers = players.length;
         const activePlayers = players.filter(p => p.isActive).length;

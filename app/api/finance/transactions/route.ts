@@ -1,5 +1,5 @@
 import { getErrorMessage, removeEmptyKeys } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import { TransactionModel } from "@/models/finance/transaction";
 import { ITransaction, TransactionType } from "@/models/finance/types";
 import { TSearchKey } from "@/types";
@@ -9,7 +9,7 @@ import { getClubTransactions, getFinancialSummary } from "..";
 import { logAction } from "../../logs/helper";
 import { IUser } from "@/types/user";
 
-ConnectMongoDb();
+connectDB();
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const page = Number.parseInt(searchParams.get("page") || "1", 10);

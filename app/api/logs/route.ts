@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import LogModel from "@/models/logs";
 import "@/models/user";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import { removeEmptyKeys } from "@/lib";
 export const dynamic = "force-dynamic";
 
-ConnectMongoDb();
+connectDB();
 export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);

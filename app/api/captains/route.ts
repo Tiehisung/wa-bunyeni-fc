@@ -1,51 +1,62 @@
-import "@/models/player";
-import "@/models/file";
-import { ICaptainProps } from "@/app/admin/players/captaincy/Captaincy";
-import { ConnectMongoDb } from "@/lib/dbconfig";
-import CaptaincyModel from "@/models/captain";
-import { NextRequest, NextResponse } from "next/server";
-import { getErrorMessage, removeEmptyKeys } from "@/lib";
-import { QueryFilter } from "mongoose";
-import { IPlayerMini } from "@/types/player.interface";
-import { auth } from "@/auth";
-import { ISession } from "@/types/user";
-import { checkAuth } from "../auth/check-auth";
+// app/api/captains/route.ts
+import { auth } from '@/auth';
+import { removeEmptyKeys } from '@/lib';
+import connectDB from '@/config/db.config';
 
+import CaptaincyModel from '@/models/captain';
+import PlayerModel from '@/models/player';
+import { NextRequest, NextResponse } from 'next/server';
+import { LoggerService } from '../../../shared/log.service';
+import { getApiErrorMessage } from '../../../lib/error-api';
 
-ConnectMongoDb();
-
-interface ICap {
-  player: IPlayerMini;
-  role: ICaptainProps["role"];
-}
-//Get all captains
-
+connectDB();
+// GET /api/captains - List all captains
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const page = Number.parseInt(searchParams.get("page") || "1", 10);
-    const limit = Number.parseInt(searchParams.get("limit") || "10", 10);
 
-    const search = searchParams.get("captain_search") || "";
-    const isActive = searchParams.get("isActive") || "";
 
+    const searchParams = request.nextUrl.searchParams;
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
     const skip = (page - 1) * limit;
 
-    const regex = new RegExp(search, "i"); // case-insensitive partial match
+    const search = searchParams.get('captain_search') || '';
+    const isActive = searchParams.get('isActive') === 'true';
+    const role = searchParams.get('role') || '';
+    const fromDate = searchParams.get('fromDate') || '';
+    const toDate = searchParams.get('toDate') || '';
 
-    const query = {} as QueryFilter<unknown>
+    const regex = new RegExp(search, 'i');
+
+    const query: any = {};
 
     if (search) {
       query.$or = [
-        { "player.firstName": regex },
-        { "player.lastName": regex },
-      ]
+        { 'player.firstName': regex },
+        { 'player.lastName': regex },
+        { 'player.name': regex },
+        { role: regex },
+      ];
     }
-    if (isActive) query.isActive = true
 
-    const cleaned = removeEmptyKeys(query)
+    if (searchParams.has('isActive')) {
+      query.isActive = isActive;
+    }
 
-    const captains = await CaptaincyModel.find(cleaned).sort({ 'createdAt': -1 })
+    if (role) {
+      query.role = role;
+    }
+
+    if (fromDate || toDate) {
+      query.startDate = {};
+      if (fromDate) query.startDate.$gte = new Date(fromDate);
+      if (toDate) query.startDate.$lte = new Date(toDate);
+    }
+
+    const cleaned = removeEmptyKeys(query);
+
+    const captains = await CaptaincyModel.find(cleaned)
+      .sort({ createdAt: -1, startDate: -1 })
       .skip(skip)
       .limit(limit)
       .lean();
@@ -62,49 +73,73 @@ export async function GET(request: NextRequest) {
         pages: Math.ceil(total / limit),
       },
     });
-  } catch (error: unknown) {
-    return NextResponse.json({ success: false, message: getErrorMessage(error) });
+  } catch (error) {
+    return NextResponse.json({
+      success: false,
+      message: getApiErrorMessage(error, 'Failed to fetch captains'),
+    }, { status: 500 });
   }
 }
 
-//Update database file metadata
-export async function POST(req: NextRequest) {
+// POST /api/captains - Assign new captain
+export async function POST(request: NextRequest) {
   try {
-    checkAuth()
 
-    const { player, role }: ICap = await req.json();
 
-    //Update current captain role
-    const reignEnded = await CaptaincyModel.updateMany(
+    const session = await auth();
+
+    if (!session) {
+      return NextResponse.json({
+        success: false,
+        message: 'Unauthorized',
+      }, { status: 401 });
+    }
+
+    const { player, role } = await request.json();
+
+    if (!player || !role) {
+      return NextResponse.json({
+        success: false,
+        message: 'Player and role are required',
+      }, { status: 400 });
+    }
+
+    const playerExists = await PlayerModel.findById(player._id);
+    if (!playerExists) {
+      return NextResponse.json({
+        success: false,
+        message: 'Player not found',
+      }, { status: 404 });
+    }
+
+    // End current captain's reign for this role
+    await CaptaincyModel.updateMany(
       { isActive: true, role: role },
-      { $set: { isActive: false, endDate: new Date().toISOString() } }
+      { $set: { isActive: false, endDate: new Date() } }
     );
 
-    if (!reignEnded)
-      return NextResponse.json({
-        message: "Current captains could not be updated.",
-        success: false,
-        data: reignEnded,
-      });
-
-    //Now set new captains
     const newCaptain = await CaptaincyModel.create({
       player,
       role,
       isActive: true,
+      startDate: new Date(),
+      createdBy: session.user?.id,
     });
 
+    const populatedCaptain = await CaptaincyModel.findById(newCaptain._id).lean();
+
+    LoggerService.info('👑 Captain Assigned', `${player.name} appointed as ${role}`);
+
     return NextResponse.json({
-      message: "Captain re-assigned successfully.",
+      message: 'Captain assigned successfully.',
       success: true,
-      data: newCaptain,
-    });
+      data: populatedCaptain,
+    }, { status: 201 });
   } catch (error) {
+
     return NextResponse.json({
-      message: "Failed to create captain.",
+      message: getApiErrorMessage(error),
       success: false,
-      data: error,
-    });
+    }, { status: 500 });
   }
 }
-

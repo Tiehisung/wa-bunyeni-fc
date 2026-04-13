@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import PlayerModel from "@/models/player";
 
-ConnectMongoDb();
+connectDB();
 export async function GET(
     _: Request,
     { params }: { params: Promise<{ playerId: string }> }

@@ -1,29 +1,30 @@
-import { getErrorMessage, removeEmptyKeys } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
-import GalleryModel from "@/models/galleries";
-import FileModel from "@/models/file";
-import { NextRequest, NextResponse } from "next/server";
-import { IGallery } from "@/types/file.interface";
-import { auth } from "@/auth";
+// app/api/galleries/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/config/db.config';
 
-ConnectMongoDb();
+import { auth } from '@/auth';
+import FileModel from '@/models/file';
+import { IGallery } from '@/types/file.interface';
+import { removeEmptyKeys } from '@/lib';
+import GalleryModel from '@/models/galleries';
+import { LoggerService } from '../../../shared/log.service';
+import { getApiErrorMessage } from '../../../lib/error-api';
 
+connectDB();
+
+// GET /api/galleries - List all galleries
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-
-    const page = Number.parseInt(searchParams.get("page") || "1", 10);
-    const limit = Number.parseInt(searchParams.get("limit") || "10", 10);
-    const search = searchParams.get("gallery_search") || "";
-    const tags = (searchParams.get("tags") || "")
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean);
+    const searchParams = request.nextUrl.searchParams;
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const search = searchParams.get('gallery_search') || '';
+    const tagsParam = searchParams.get('tags') || '';
+    const tags = tagsParam.split(',').map(t => t.trim()).filter(Boolean);
 
     const skip = (page - 1) * limit;
-    const regex = new RegExp(search, "i");
+    const regex = new RegExp(search, 'i');
 
-    // Build Query Object
     const query: Record<string, unknown> = {};
 
     if (tags.length > 0) {
@@ -40,9 +41,9 @@ export async function GET(request: NextRequest) {
 
     const cleaned = removeEmptyKeys(query);
 
-    // Apply filters here
     const galleries = await GalleryModel.find(cleaned)
-      .populate("files")
+      .populate('files')
+      .populate('createdBy', 'name role')
       .sort({ updatedAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -61,53 +62,57 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: getErrorMessage(error),
-      },
-      { status: 500 }
-    );
+    LoggerService.error('Failed to fetch galleries', error);
+    return NextResponse.json({
+      success: false,
+      message: getApiErrorMessage(error, 'Failed to fetch galleries'),
+    }, { status: 500 });
   }
 }
 
-
+// POST /api/galleries - Create new gallery
 export async function POST(request: NextRequest) {
   try {
-    const { files, tags, title, description, } = (await request.json()) as IGallery;
+    const session = await auth();
 
-    //Save files to File collection
+    if (!session) {
+      return NextResponse.json({
+        success: false,
+        message: 'Unauthorized',
+      }, { status: 401 });
+    }
+
+    const { files, tags, title, description } = await request.json() as IGallery;
+
+    if (!files || !Array.isArray(files) || files.length === 0) {
+      return NextResponse.json({
+        success: false,
+        message: 'At least one file is required',
+      }, { status: 400 });
+    }
+
     const savedFiles = await FileModel.insertMany(files);
     const fileIds = savedFiles.map(file => file._id);
 
-    const session = await auth()
-
-    //Create gallery with saved file IDs
     const savedGallery = await GalleryModel.create({
-      files: fileIds, tags, title, description,
+      files: fileIds,
+      tags: tags || [],
+      title: title || 'Untitled Gallery',
+      description: description || '',
       timestamp: Date.now(),
-      createdBy: session?.user
+      createdBy: session.user?.id
     });
 
-    if (!savedGallery)
-      return NextResponse.json({
-        message: "Failed to create gallery",
-        success: false,
-        data: savedGallery,
-      });
-
-
     return NextResponse.json({
-      message: "Gallery created",
+      message: 'Gallery created successfully',
       success: true,
-      data: savedGallery,
-    });
+      data: { ...savedGallery.toObject(), files: savedFiles },
+    }, { status: 201 });
   } catch (error) {
+    LoggerService.error('Failed to create gallery', error);
     return NextResponse.json({
-      message: getErrorMessage(error, "Failed to save gallery"),
+      message: getApiErrorMessage(error, 'Failed to save gallery'),
       success: false,
-    });
+    }, { status: 500 });
   }
 }
-
-

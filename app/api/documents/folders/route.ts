@@ -1,128 +1,111 @@
-import { ConnectMongoDb } from "@/lib/dbconfig";
-import { NextRequest, NextResponse } from "next/server";
-import { getErrorMessage, removeEmptyKeys } from "@/lib";
-import { TSearchKey } from "@/types";
-import { logAction } from "../../logs/helper";
-import { deleteCldAssets } from "../../file/route";
-import { ELogSeverity } from "@/types/log";
-import FolderModel, { IPostFolder } from "@/models/folder";
-import { auth } from "@/auth";
-import { EUserRole, IUser } from "@/types/user";
-import DocModel from "@/models/doc";
-import { IDocFile, IFolder } from "@/types/doc";
+// app/api/documents/folders/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/config/db.config';
+import { auth } from '@/auth';
+import FolderModel from '@/models/folder';
+import { removeEmptyKeys } from '@/lib';
+import { LoggerService } from '../../../../shared/log.service';
+import { getApiErrorMessage } from '../../../../lib/error-api';
 
-ConnectMongoDb();
+connectDB();
 
+// GET /api/documents/folders - List all folders
 export async function GET(request: NextRequest) {
-
-    const { searchParams } = new URL(request.url);
-    const page = Number.parseInt(searchParams.get("page") || "1", 10);
-    const limit = Number.parseInt(searchParams.get("limit") || "20", 10);
-
-    const search = searchParams.get("doc_search") as TSearchKey || "";
-
-    const skip = (page - 1) * limit;
-
-    const regex = new RegExp(search, "i");
-    const query = {
-        $or: [
-            { "name": regex },
-            { "original_filename": regex },
-            { "folder": regex },
-            { "description": regex },
-        ],
-    };
-
-    const cleaned = removeEmptyKeys(query);
-
-    const logs = await FolderModel.find(cleaned)
-        .sort({ createdAt: 'desc' })
-        .skip(skip)
-        .limit(limit)
-        .lean();
-
-    const total = await FolderModel.countDocuments(cleaned);
-    return NextResponse.json({
-        success: true,
-        data: logs, pagination: {
-            page,
-            limit,
-            total,
-            pages: Math.ceil(total / limit),
-        },
-    });
-}
-
-export async function POST(req: NextRequest) {
     try {
-        const { name, description, isDefault, } = await req.json() as IPostFolder
+        const searchParams = request.nextUrl.searchParams;
+        const page = parseInt(searchParams.get('page') || '1');
+        const limit = parseInt(searchParams.get('limit') || '10');
+        const search = searchParams.get('folder_search') || '';
+        const isDefault = searchParams.get('isDefault') === 'true';
 
-        const doc = await FolderModel.create({
-            name,
-            description,
-            isDefault,
-        });
+        const skip = (page - 1) * limit;
+        const regex = new RegExp(search, 'i');
 
-        // log
-        await logAction({
-            title: `Folder created - ${name}`,
-            description: `${name} created on ${Date.now()}` as string,
-        });
+        const query: Record<string, unknown> = {};
+        if (search) {
+            query.$or = [
+                { name: regex },
+                { description: regex },
+            ];
+        }
+
+        if (isDefault) query.isDefault = true;
+
+        const cleaned = removeEmptyKeys(query);
+
+        const folders = await FolderModel.find(cleaned)
+            .populate('documents')
+            .populate('createdBy', 'name role')
+            .sort({ updatedAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .lean();
+
+        const formatted = folders.map(f => ({
+            ...f,
+            docsCount: f.documents?.length || 0,
+        }));
+
+        const total = await FolderModel.countDocuments(cleaned);
+
         return NextResponse.json({
             success: true,
-            message: "New Folder Created",
-            data: doc,
+            data: formatted,
+            pagination: {
+                page,
+                limit,
+                total,
+                pages: Math.ceil(total / limit),
+            },
         });
     } catch (error) {
+        LoggerService.error('Failed to fetch folders', error);
         return NextResponse.json({
             success: false,
-            message: getErrorMessage(error, "Failed to create folder"),
-        });
+            message: getApiErrorMessage(error, 'Failed to fetch folders'),
+        }, { status: 500 });
     }
 }
 
-//Delete from Cloud then pull id from collection files field
-export async function DELETE(req: NextRequest) {
+// POST /api/documents/folders - Create new folder
+export async function POST(request: NextRequest) {
     try {
         const session = await auth();
-        if ((session?.user as IUser)?.role !== EUserRole.SUPER_ADMIN) {
+
+        if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
             return NextResponse.json({
-                message: "Unauthorized",
                 success: false,
-            });
+                message: 'Unauthorized',
+            }, { status: 401 });
         }
 
-        const folderId = await req.json()
+        const { name, description, isDefault } = await request.json();
 
-        const deletedFolder: IFolder = await FolderModel.findById(folderId).populate('documents');
+        const existingFolder = await FolderModel.findOne({ name });
+        if (existingFolder) {
+            return NextResponse.json({
+                success: false,
+                message: 'Folder already exists',
+            }, { status: 409 });
+        }
 
-        //Delete file from cloudinary
-        await deleteCldAssets(deletedFolder?.documents
-            ?.map((doc) => ({ public_id: doc.public_id })) ?? []);
-
-        //Delete file data from database
-        const deleteFromDb = await DocModel.deleteMany({
-            _id: {
-                $in: deletedFolder?.documents?.map(doc => doc._id).filter(Boolean) ?? [],
-            }
+        const folder = await FolderModel.create({
+            name,
+            description,
+            isDefault,
+            createdBy: session.user?.id
         });
-        // log
-        const logDesc = deletedFolder?.documents?.length ? `${deletedFolder?.documents?.length} docs deleted. [${deletedFolder?.documents?.map(dd => dd.name)?.join(', ')}].` : 'No documents to delete.';
-        await logAction({
-            title: "Folder deleted",
-            description: logDesc,
-            severity: ELogSeverity.CRITICAL,
-        });
+
         return NextResponse.json({
-            message: "Delete  successful ",
             success: true,
-            data: deleteFromDb,
-        });
+            message: 'Folder created successfully',
+            data: folder,
+        }, { status: 201 });
     } catch (error) {
+        // LoggerService.error('Failed to create folder', error);
         return NextResponse.json({
-            message: "Failed to delete file.",
             success: false,
-            data: error,
-        });
+            message: getApiErrorMessage(error, 'Failed to create folder'),
+        }, { status: 500 });
     }
 }

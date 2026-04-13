@@ -1,93 +1,175 @@
-import { getErrorMessage } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
-import { NextRequest, NextResponse } from "next/server";
-import { logAction } from "../logs/helper";
-import { IMatchCard } from "@/app/matches/(fixturesAndResults)";
-import { updateMatchEvent } from "../matches/live/events/route";
-import PlayerModel from "@/models/player";
-import MvPModel, { IPostMvp } from "@/models/mpv";
-import { TSearchKey } from "@/types";
+// app/api/mvps/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/config/db.config';
+import { auth } from '@/auth';
+import PlayerModel from '@/models/player';
+import MatchModel from '@/models/match';
 
-ConnectMongoDb();
+import { ELogSeverity } from '@/types/log.interface';
+import MvPModel, { IPostMvp } from '@/models/mpv';
+import { LoggerService } from '../../../shared/log.service';
+import { getApiErrorMessage } from '../../../lib/error-api';
+import { logAction } from '../logs/helper';
+import { updateMatchEvent } from '../matches/helpers';
 
+connectDB();
+
+// GET /api/mvps - List all MVPs
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const page = Number.parseInt(searchParams.get("page") || "1", 10);
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '30');
+    const skip = (page - 1) * limit;
 
-  const limit = Number.parseInt(searchParams.get("limit") || "30", 10);
-  const skip = (page - 1) * limit;
+    const search = searchParams.get('mvp_search') || '';
+    const playerId = searchParams.get('playerId') || '';
+    const matchId = searchParams.get('matchId') || '';
+    const season = searchParams.get('season') || '';
 
-  const search = searchParams.get("mvp_search") as TSearchKey || "";
+    const regex = new RegExp(search, 'i');
+    const query: any = {};
 
-  const regex = new RegExp(search, "i");
+    if (search) {
+      query.$or = [
+        { 'player.name': regex },
+        { 'match.title': regex },
+        { description: regex },
+        { positionPlayed: regex },
+      ];
+    }
 
-  const query = {
-    $or: [
-      { "player.name": regex },
-      { "match.title": regex },
-      { "description": regex },
-    ],
+    if (playerId) query.player = playerId;
+    if (matchId) query.match = matchId;
+    if (season) query.season = season;
+
+    const mvps = await MvPModel.find(query)
+      .populate('player', 'name number position avatar')
+      .populate('match', 'title date competition opponent')
+      .limit(limit)
+      .skip(skip)
+      .lean()
+      .sort({ createdAt: 'desc' });
+
+    const total = await MvPModel.countDocuments(query);
+
+    return NextResponse.json({
+      success: true,
+      data: mvps,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    // LoggerService.error('Failed to fetch MVPs', error);
+    return NextResponse.json({
+      success: false,
+      message: getApiErrorMessage(error, 'Failed to fetch MVPs'),
+    }, { status: 500 });
   }
-
-  const cards = await MvPModel.find(query)
-    .limit(limit).skip(skip)
-    .lean().sort({ createdAt: "desc" });
-
-  const total = await MvPModel.countDocuments(query)
-  return NextResponse.json({
-    success: true,
-    data: cards,
-    pagination: {
-      page,
-      limit,
-      total,
-      pages: Math.ceil(total / limit),
-    },
-  });
 }
 
+// POST /api/mvps - Create new MVP
 export async function POST(request: NextRequest) {
   try {
-    const { match, player, description, positionPlayed } = await request.json() as IPostMvp;
+    const session = await auth();
 
-    
-    if (match?.mvp) {
-      return NextResponse.json({ message: "Match already assigned MoTM.", success: false });
+    if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
+      return NextResponse.json({
+        success: false,
+        message: 'Unauthorized',
+      }, { status: 401 });
     }
+
+    const { match, player, description, positionPlayed, season } = await request.json() as IPostMvp;
+
+    if (!match || !player) {
+      return NextResponse.json({
+        success: false,
+        message: 'Match ID and player ID are required',
+      }, { status: 400 });
+    }
+
+    // Check if match already has an MVP
+    const existingMatch = await MatchModel.findById(match).populate('mvp');
+
+    if (existingMatch?.mvp) {
+      return NextResponse.json({
+        message: 'Match already assigned Man of the Match.',
+        success: false,
+      }, { status: 409 });
+    }
+
     const savedMVP = await MvPModel.create({
-      match, player, description, positionPlayed
+      match,
+      player,
+      description,
+      positionPlayed,
+      season: season || existingMatch?.season,
+      createdBy: session.user?.id
     });
 
     if (!savedMVP) {
-      return NextResponse.json({ message: "Failed to create mvp.", success: false });
+      return NextResponse.json({
+        message: 'Failed to create MVP.',
+        success: false,
+      }, { status: 500 });
     }
 
-    //Update Player
-    await PlayerModel.findByIdAndUpdate(player?._id, { $push: { mvps: savedMVP._id } })
+    // Update Match - add MVP reference
+    await MatchModel.findByIdAndUpdate(
+      match,
+      {
+        $set: { mvp: savedMVP._id },
+        $push: { mvps: savedMVP._id }
+      }
+    );
 
-    //Update events
-    // await updateMatchEvent(match?.toString(), {
-    //   type: 'general',
-     
-    //   title: `${player?.name} awarded MVP `,
-    //   description: description as string
-    // })
+    // Update Player - add MVP reference
+    const playerId = typeof player === 'object' ? player._id : player;
+    await PlayerModel.findByIdAndUpdate(
+      playerId,
+      { $push: { mvps: savedMVP._id } }
+    );
 
-    // log
+    // Update match events
+    await updateMatchEvent(match?.toString(), {
+      type: 'general',
+      minute: 'FT',
+      title: `🏆 ${typeof player === 'object' ? player.name : 'Player'} awarded Man of the Match`,
+      description: description || `Outstanding performance${positionPlayed ? ` playing as ${positionPlayed}` : ''}`,
+      timestamp: new Date(),
+    });
+
     await logAction({
-      title: "MVP declared",
-      description: `${player?.name} declared MVP. ${description || ''}`,
+      title: '🏆 MVP Awarded',
+      description: `${typeof player === 'object' ? player.name : 'Player'} declared Man of the Match. ${description || ''}`,
+      severity: ELogSeverity.INFO,
+      meta: {
+        mvpId: savedMVP._id,
+        matchId: match,
+        playerId: playerId,
+      },
     });
 
-    return NextResponse.json({ message: "MVP created successfully!", success: true, data: savedMVP });
+    const populatedMVP = await MvPModel.findById(savedMVP._id)
+      .populate('player', 'name number position avatar')
+      .populate('match', 'title date competition opponent')
+      .lean();
 
-  } catch (error) {
     return NextResponse.json({
-      message: getErrorMessage(error),
+      message: 'Man of the Match awarded successfully!',
+      success: true,
+      data: populatedMVP,
+    }, { status: 201 });
+  } catch (error) {
+    // LoggerService.error('Failed to create MVP', error);
+    return NextResponse.json({
+      message: getApiErrorMessage(error, 'Failed to create MVP'),
       success: false,
-    });
+    }, { status: 500 });
   }
 }
-
-
- 

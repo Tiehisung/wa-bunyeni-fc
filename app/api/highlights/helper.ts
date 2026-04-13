@@ -1,16 +1,16 @@
 import { apiConfig } from "@/lib/configs";
-import { ConnectMongoDb } from "@/lib/dbconfig";
-import {   IQueryResponse, } from "@/types";
+import connectDB from "@/config/db.config";
+import { IQueryResponse, } from "@/types";
 import { IGallery } from "@/types/file.interface";
 
-
+connectDB();
 export async function createGallery({
     title,
     description,
     files, tags,
 }: IGalleryProps) {
     try {
-        ConnectMongoDb();
+
         const response = await fetch(apiConfig.galleries, {
             method: 'POST', body: JSON.stringify({
                 title,

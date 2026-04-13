@@ -61,7 +61,6 @@ export interface ISession {
     image: string;
     role?: EUserRole
     email: string;
-
   };
   expires: string
 }

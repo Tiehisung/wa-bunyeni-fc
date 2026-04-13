@@ -1,39 +1,71 @@
-import {  EUserRole } from "@/types/user";
 import mongoose, { Schema } from "mongoose";
+import bcrypt from "bcryptjs";
+import { EUserRole } from "@/types/user";
+ 
 
-// mongoose.connect(process.env.MDB_URI!);
-// mongoose.Promise = global.Promise;
-const userSchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: [true, "Name is required"],
-      minlength: [3, "Name must be at least 3 characters long"],
-      trim: true,
-    },
-    image: String,
+ 
+
+const UserSchema = new Schema({
+    name: { type: String, required: true },
+    avatar: String,
     email: {
-      type: String,
-      required: [true, "Email is required"],
-      unique: [true, "Email already taken"],
-      trim: true,
-      lowercase: true,
+        type: String,
+        required: [true, 'Email is required'],
+        unique: true,
+        lowercase: true,
+        trim: true,
+        match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
     },
-    password: {
-      type: String,
+    password: { type: String, required: true, minlength: 6 },
+    role: { type: String, enum: Object.values(EUserRole), default: EUserRole.FAN },
+    emailVerified: { type: Boolean, default: true },
+    isActive: {
+        type: Boolean,
+        default: true
     },
-    role: {
-      type: String,
-      default: "guest",
-      enum: [...Object.values(EUserRole)],
+    lastLogin: {
+        type: Date
     },
-    dateEngaged: { type: String, default: () => new Date().toISOString() },
-    isActive: { type: Boolean, default: true },
-  },
-  { timestamps: true }
-);
+    refreshToken: {
+        type: String,
+        select: false
+    },
+    resetPasswordToken: {
+        type: String,
+        select: false
+    },
+    resetPasswordExpires: {
+        type: Date,
+        select: false
+    },
 
-const UserModel =
-  mongoose.models.User || mongoose.model("User", userSchema);
+    // New fan fields
+    fanPoints: { type: Number, default: 0 },
+    fanBadges: [{ type: String }],
+    fanRank: { type: Number },
+    engagementScore: { type: Number, default: 0 },
+    contributions: {
+        comments: { type: Number, default: 0 },
+        shares: { type: Number, default: 0 },
+        reactions: { type: Number, default: 0 },
+        matchAttendance: { type: Number, default: 0 },
+        galleries: { type: Number, default: 0 },
+        newsViews: { type: Number, default: 0 }
+    },
+    fanSince: { type: Date, default: Date.now },
+    lastActive: { type: Date, default: Date.now },
+    isFan: { type: Boolean, default: false }
+}, {
+    timestamps: true,
+});
+
+// Compare password method
+UserSchema.methods.comparePassword = async function (candidatePassword: string) {
+    return bcrypt.compare(candidatePassword, this.password);
+};
+
+const UserModel = mongoose.models.User || mongoose.model("User", UserSchema);
 
 export default UserModel;
+
+ 

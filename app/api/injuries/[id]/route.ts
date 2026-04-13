@@ -1,38 +1,167 @@
-import { ConnectMongoDb } from "@/lib/dbconfig";
-import InjuryModel from "@/models/injury";
-import { NextRequest, NextResponse } from "next/server";
+// app/api/injuries/[id]/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/config/db.config';
 
-ConnectMongoDb();
+import { auth } from '@/auth';
+import InjuryModel from '@/models/injury';
+import PlayerModel from '@/models/player';
+import MatchModel from '@/models/match';
+import { ELogSeverity } from '@/types/log.interface';
+import { LoggerService } from '../../../../shared/log.service';
+import { getApiErrorMessage } from '../../../../lib/error-api';
+import { logAction } from '../../logs/helper';
 
+connectDB();
+
+// GET /api/injuries/[id] - Get single injury
 export async function GET(
-    _: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    request: NextRequest,
+    { params }: { params: { id: string } }
 ) {
-    const id = (await params).id;
+    try {
+        const injury = await InjuryModel.findById(params.id).lean();
 
-    const fixtures = await InjuryModel.findById(id).lean()
+        if (!injury) {
+            return NextResponse.json({
+                success: false,
+                message: 'Injury not found',
+            }, { status: 404 });
+        }
 
-    return NextResponse.json(fixtures);
+        return NextResponse.json({
+            success: true,
+            data: injury,
+        });
+    } catch (error) {
+        LoggerService.error('Failed to fetch injury', error);
+        return NextResponse.json({
+            success: false,
+            message: getApiErrorMessage(error, 'Failed to fetch injury'),
+        }, { status: 500 });
+    }
 }
-export async function PUT(request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }) {
 
-    const id = (await params).id
+// PUT /api/injuries/[id] - Update injury
+export async function PUT(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
+    try {
+        const session = await auth();
 
-    const body = await request.json();
+        if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
+            return NextResponse.json({
+                success: false,
+                message: 'Unauthorized',
+            }, { status: 401 });
+        }
 
-    const updated = await InjuryModel.findByIdAndUpdate(id, {
-        $set: { ...body },
-    });
-    if (updated) return NextResponse.json({ message: "Updated", success: true });
-    return NextResponse.json({ message: "Update failed", success: false });
+        const updates = await request.json();
+        delete updates._id;
+
+        const updatedInjury = await InjuryModel.findByIdAndUpdate(
+            params.id,
+            {
+                $set: {
+                    ...updates,
+                    updatedAt: new Date(),
+                    updatedBy: session.user?.id,
+                },
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedInjury) {
+            return NextResponse.json({
+                success: false,
+                message: 'Injury not found',
+            }, { status: 404 });
+        }
+
+        await logAction({
+            title: `Injury Updated - ${updatedInjury.title}`,
+            description: 'Injury record updated',
+            severity: ELogSeverity.INFO,
+            meta: {
+                injuryId: params.id,
+                updates: Object.keys(updates),
+            },
+        });
+
+        return NextResponse.json({
+            success: true,
+            message: 'Injury updated successfully',
+            data: updatedInjury,
+        });
+    } catch (error) {
+        LoggerService.error('Failed to update injury', error);
+        return NextResponse.json({
+            success: false,
+            message: getApiErrorMessage(error, 'Failed to update injury'),
+        }, { status: 500 });
+    }
 }
 
-export async function DELETE(_: NextRequest,
-    { params }: { params: Promise<{ id: string }> }) {
-    const id = (await params).id
-    const deleted = await InjuryModel.findByIdAndDelete(id);
-    if (deleted)
-        return NextResponse.json({ message: "Deleted", success: true, data: deleted });
-    return NextResponse.json({ message: "Delete failed", success: false });
+// DELETE /api/injuries/[id] - Delete injury
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
+    try {
+        const session = await auth();
+
+        if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
+            return NextResponse.json({
+                success: false,
+                message: 'Unauthorized',
+            }, { status: 401 });
+        }
+
+        const injuryToDelete = await InjuryModel.findById(params.id);
+
+        if (!injuryToDelete) {
+            return NextResponse.json({
+                success: false,
+                message: 'Injury not found',
+            }, { status: 404 });
+        }
+
+        const deletedInjury = await InjuryModel.findByIdAndDelete(params.id);
+
+        // Update Player - remove injury reference
+        await PlayerModel.findByIdAndUpdate(
+            injuryToDelete.player,
+            { $pull: { injuries: params.id } }
+        );
+
+        // Update Match - remove injury reference
+        if (injuryToDelete.match) {
+            await MatchModel.findByIdAndUpdate(
+                injuryToDelete.match,
+                { $pull: { injuries: params.id } }
+            );
+        }
+
+        await logAction({
+            title: `Injury Deleted - ${injuryToDelete.title}`,
+            description: 'Injury record deleted',
+            severity: ELogSeverity.CRITICAL,
+            meta: {
+                injuryId: params.id,
+                playerId: injuryToDelete.player,
+            },
+        });
+
+        return NextResponse.json({
+            success: true,
+            message: 'Injury deleted successfully',
+            data: deletedInjury,
+        });
+    } catch (error) {
+        LoggerService.error('Failed to delete injury', error);
+        return NextResponse.json({
+            success: false,
+            message: getApiErrorMessage(error, 'Failed to delete injury'),
+        }, { status: 500 });
+    }
 }

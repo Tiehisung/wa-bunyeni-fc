@@ -1,6 +1,6 @@
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import mongoose, { Schema } from "mongoose";
-ConnectMongoDb();
+connectDB();
 
 const specialdataSchema = new Schema(
   {

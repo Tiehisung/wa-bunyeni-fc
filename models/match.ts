@@ -1,5 +1,7 @@
+import { computeMatchResult } from "@/app/api/matches/helpers";
 import { EMatchStatus } from "@/types/match.interface";
 import mongoose, { Schema } from "mongoose";
+ 
 
 const matchSchema = new Schema(
   {
@@ -15,16 +17,28 @@ const matchSchema = new Schema(
     },
     goals: [{ type: Schema.Types.ObjectId, ref: "goals" }],
     squad: { type: Schema.Types.ObjectId, ref: "squad" },
+    cards: [{ type: Schema.Types.ObjectId, ref: "cards" }],
+    injuries: [{ type: Schema.Types.ObjectId, ref: "injuries" }],
 
     sponsor: [{ type: Schema.Types.ObjectId, ref: "sponsors" }],
     broadcaster: {},
-    venue: { name: { type: String, default: () => 'Home Park' }, files: [{}] },
+    venue: { name: { type: String, default: () => 'Konjiehi Park' }, files: [{}] },
+    competition: { type: String, default: () => 'Friendly Match' },
     isHome: Boolean,
     events: [{ description: String, title: String, minute: String, modeOfScore: String }],
-    mvp: {} //iplayer preferred
+    mvp: {},//iplayer preferred
+    fixtureFlier: String,
+    resultFlier: String,
+    createdBy: { _id: String, name: String, avatar: String } //As IUser
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true, }, toObject: { virtuals: true } }
 );
+
+matchSchema.virtual("computed").get(function () {
+  return computeMatchResult(this as any);
+});
+
+
 
 const MatchModel =
   mongoose.models.matches || mongoose.model("matches", matchSchema);
@@ -32,3 +46,4 @@ const MatchModel =
 export default MatchModel;
 
 export type IPostMatch = mongoose.InferSchemaType<typeof matchSchema>;
+

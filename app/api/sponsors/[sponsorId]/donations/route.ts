@@ -1,12 +1,12 @@
 import { createGallery } from "@/app/api/galleries/helper";
 import { removeEmptyKeys } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import DonationModel from "@/models/donation";
 import SponsorModel from "@/models/sponsor";
 import { NextRequest, NextResponse } from "next/server";
- 
 
-ConnectMongoDb();
+
+connectDB();
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ sponsorId: string }> }) {
   const sponsorId = (await params).sponsorId

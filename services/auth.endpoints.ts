@@ -7,18 +7,9 @@ import { formatError } from "@/lib/error";
 const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
     // Sign in an existing user
-    login: builder.mutation<IAuthResponse, ILoginCredentials>({
-      query: (credentials) => ({
-        url: '/auth/login',
-        method: 'POST',
-        body: credentials,
-      }),
-      transformErrorResponse: (response) => formatError(response),
-    }),
-
     signin: builder.mutation<IAuthResponse, ILoginCredentials>({
       query: (credentials) => ({
-        url: '/auth/signin',
+        url: '/auth/credentials-signin',
         method: 'POST',
         body: credentials,
       }),
@@ -176,7 +167,7 @@ export const {
 
   useRegisterMutation,
 
-  useLoginMutation,
+  
   useSigninMutation,
   useVerifyOtpMutation,
   useResendOtpMutation,

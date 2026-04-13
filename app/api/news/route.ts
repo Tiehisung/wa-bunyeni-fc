@@ -1,13 +1,15 @@
 import { IPostNews } from "@/app/admin/news/NewsForm";
-import { getErrorMessage, removeEmptyKeys, slugify } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import NewsModel from "@/models/news";
 import { NextRequest, NextResponse } from "next/server";
 import { logAction } from "../logs/helper";
 import { QueryFilter } from "mongoose";
 import { TSearchKey } from "@/types";
+import { removeEmptyKeys } from "@/lib";
+import { slugify } from "@/lib/slugging";
+import { getApiErrorMessage } from "../../../lib/error-api";
 
-ConnectMongoDb();
+connectDB();
 export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
@@ -75,7 +77,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { headline, details, reporter, type, }: IPostNews = await request.json();
+    const { headline, details, }: IPostNews = await request.json();
     const slug = slugify(headline.text as string);
 
 
@@ -83,13 +85,12 @@ export async function POST(request: NextRequest) {
       slug,
       headline,
       details,
-      reporter, type: type ?? 'general',
     });
     // log
     await logAction({
       title: "News Created",
       description: headline.text as string,
-      meta: reporter
+
     });
     if (published)
       return NextResponse.json({
@@ -99,7 +100,7 @@ export async function POST(request: NextRequest) {
       });
   } catch (error) {
     return NextResponse.json({
-      message: getErrorMessage(error, "Failed to publish! "),
+      message: getApiErrorMessage(error, "Failed to publish! "),
       success: false,
     });
   }

@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import UserModel from "@/models/user";
 import { ISession, IUser } from "@/types/user";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import { getErrorMessage } from "@/lib";
 import { auth } from "@/auth";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-ConnectMongoDb();
+connectDB();
 export interface SessionIUser {
   user: {
     name: string;

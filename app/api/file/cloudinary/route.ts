@@ -1,13 +1,13 @@
 import { EPreset, EPresetType } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
-import { IFileProps ,IFileUpload} from "@/types/file.interface";
+import { IFileProps, IFileUpload } from "@/types/file.interface";
 import cld from "cloudinary";
 import FileModel from "@/models/file";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 const cloudinary = cld.v2;
 //config is populated with cloudname,secret and key from CLOUDINARY_URL in .env by default
 
-ConnectMongoDb();
+connectDB();
 //Post to cloudinary
 export async function POST(request: NextRequest) {
   const {
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     description,
   }: IFileUpload = await request.json();
 
-  
+
   try {
     if (!path)
       return new Response(

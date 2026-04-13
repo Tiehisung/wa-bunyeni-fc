@@ -1,135 +1,142 @@
-import { ConnectMongoDb } from "@/lib/dbconfig";
-import { NextRequest, NextResponse } from "next/server";
-import { getErrorMessage } from "@/lib";
-import { logAction } from "../../../logs/helper";
-import { deleteCldAssets } from "../../../file/route";
-import { ELogSeverity } from "@/types/log";
-import FolderModel, { IPostFolder } from "@/models/folder";
-import { auth } from "@/auth";
-import { EUserRole, IUser } from "@/types/user";
-import DocModel from "@/models/doc";
-import { IFolder } from "@/types/doc";
+// app/api/documents/folders/[folderId]/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/config/db.config';
+import { auth } from '@/auth';
+import FolderModel from '@/models/folder';
+import DocModel from '@/models/doc';
+import { LoggerService } from '@/shared/log.service';
+import { getApiErrorMessage } from '@/lib/error-api';
+import { EUserRole } from '@/types/user';
 
-ConnectMongoDb();
+connectDB();
 
-export async function GET(_: NextRequest, { params }: { params: Promise<{ folderId: string }> }) {
-    const folderId = (await params).folderId;
-    const folder = await FolderModel.findById(folderId)
-        .populate('documents').lean();
-    return NextResponse.json(folder);
-}
-
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ folderId: string }> }) {
+// GET /api/documents/folders/[folderId] - Get single folder
+export async function GET(
+    request: NextRequest,
+    { params }: { params: { folderId: string } }
+) {
     try {
-        const folderId = (await params).folderId;
+        const folder = await FolderModel.findById(params.folderId)
+            .populate('documents')
+            .populate('createdBy', 'name role')
+            .lean();
 
-        const foundFolder: (IPostFolder & { _id: string }) | null = await FolderModel.findById({ name: folderId });
-        if (!foundFolder) {
+        if (!folder) {
             return NextResponse.json({
                 success: false,
-                message: "Folder not found",
-            });
+                message: 'Folder not found',
+            }, { status: 404 });
         }
 
-        const { ...data } = await req.json() as IPostFolder
-        const { name, description, isDefault } = data;
-
-        await FolderModel.findOneAndUpdate({ name: folderId }, {
-            $set: {
-                ...data
-            },
-        });
-
-        //Rename 'folder' of every containing doc file on database
-        if (name && foundFolder.name !== name) {
-            await DocModel.updateMany({
-                _id: {
-                    $in: foundFolder?.documents?.map((doc) => doc?._id?.toString()).filter(Boolean) ?? [],
-                },
-
-            },
-                { $set: { folder: name } }
-            );
-        }
-
-
-
-        let title = ''
-        let desc = ''
-        let defaultChangedMsg = ' '
-
-        if (name && foundFolder.name !== name) {
-            title += `Name changed from ${foundFolder.name} to ${name}. `
-
-        }
-        if (description && foundFolder.description !== description) {
-            desc += `Description changed from ${foundFolder.description} to ${description}. `
-        }
-        if (foundFolder.isDefault !== isDefault) {
-            defaultChangedMsg = isDefault ? `Folder made default  ` : 'Folder changed from being system default';
-        }
-
-        // log
-        await logAction({
-            title: title || ` Folder [${name}] updated.`,
-            description: desc + defaultChangedMsg,
-        });
         return NextResponse.json({
             success: true,
-            message: "Folder Updated",
-
+            data: folder,
         });
     } catch (error) {
+        // LoggerService.error('Failed to fetch folder', error);
         return NextResponse.json({
             success: false,
-            message: getErrorMessage(error, "Failed to update folder"),
-        });
+            message: getApiErrorMessage(error, 'Failed to fetch folder'),
+        }, { status: 500 });
     }
 }
 
-//Delete from Cloud then pull id from collection files field
-// export async function DELETE(_: NextRequest, { params }: { params: Promise<{ folderId: string }> }) {
-//     try {
-//         const session = await auth();
-//         const folderId = (await params).folderId;
+// PUT /api/documents/folders/[folderId] - Update folder
+export async function PUT(
+    request: NextRequest,
+    { params }: { params: { folderId: string } }
+) {
+    try {
+        const session = await auth();
 
-//         if ((session?.user as IUser)?.role !== EUserRole.SUPER_ADMIN) {
-//             return NextResponse.json({
-//                 message: "Unauthorized",
-//                 success: false,
-//             });
-//         }
+        if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
+            return NextResponse.json({
+                success: false,
+                message: 'Unauthorized',
+            }, { status: 401 });
+        }
 
-//         console.log({folderId})
-//         const deletedFolder: IFolder = await FolderModel.findByIdAndDelete(folderId).populate('documents');
+        const updates = await request.json();
 
-//         //Delete file from cloudinary
-//         await deleteCldAssets(deletedFolder?.documents
-//             ?.map((doc) => ({ public_id: doc.public_id })) ?? []);
+        if (updates.name) {
+            const existingFolder = await FolderModel.findOne({ name: updates.name });
+            if (existingFolder && existingFolder._id.toString() !== params.folderId) {
+                return NextResponse.json({
+                    success: false,
+                    message: 'Folder already exists',
+                }, { status: 409 });
+            }
+        }
 
-//         //Delete file data from database
-//         const deleteFromDb = await DocModel.deleteMany({
-//             _id: {
-//                 $in: deletedFolder?.documents?.map(doc => doc._id).filter(Boolean) ?? [],
-//             }
-//         });
-//         // log
-//         const logDesc = deletedFolder?.documents?.length ? `${deletedFolder?.documents?.length} docs deleted. [${deletedFolder?.documents?.map(dd => dd.name)?.join(', ')}].` : 'No documents to delete.';
-//         await logAction({
-//             title: "Folder deleted",
-//             description: logDesc,
-//             severity: ELogSeverity.CRITICAL,
-//         });
-//         return NextResponse.json({
-//             message: "Folder deleted ",
-//             success: true,
-//             data: deleteFromDb,
-//         });
-//     } catch (error) {
-//         return NextResponse.json({
-//             message: "Failed to delete file.",
-//             success: false,
-//             data: error,
-//         });
-//     }
-// }
+        const folder = await FolderModel.findByIdAndUpdate(
+            params.folderId,
+            {
+                $set: {
+                    ...updates,
+                    updatedAt: new Date(),
+                    updatedBy: session.user?.id
+                }
+            },
+            { new: true }
+        );
+
+        if (!folder) {
+            return NextResponse.json({
+                success: false,
+                message: 'Folder not found',
+            }, { status: 404 });
+        }
+
+        return NextResponse.json({
+            success: true,
+            message: 'Folder updated successfully',
+            data: folder,
+        });
+    } catch (error) {
+        // LoggerService.error('Failed to update folder', error);
+        return NextResponse.json({
+            success: false,
+            message: getApiErrorMessage(error, 'Failed to update folder'),
+        }, { status: 500 });
+    }
+}
+
+// DELETE /api/documents/folders/[folderId] - Delete folder
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: { folderId: string } }
+) {
+    try {
+        const session = await auth();
+
+        if (session?.user?.role !== EUserRole.SUPER_ADMIN) {
+            return NextResponse.json({
+                message: 'Unauthorized. Only super admins can delete folders.',
+                success: false,
+            }, { status: 403 });
+        }
+
+        const folder = await FolderModel.findById(params.folderId);
+
+        if (!folder) {
+            return NextResponse.json({
+                success: false,
+                message: 'Folder not found',
+            }, { status: 404 });
+        }
+
+        await FolderModel.findByIdAndDelete(params.folderId);
+        await DocModel.deleteMany({ folder: params.folderId });
+
+        return NextResponse.json({
+            success: true,
+            message: 'Folder deleted successfully',
+        });
+    } catch (error) {
+        // LoggerService.error('Failed to delete folder', error);
+        return NextResponse.json({
+            success: false,
+            message: getApiErrorMessage(error, 'Failed to delete folder'),
+        }, { status: 500 });
+    }
+}

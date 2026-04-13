@@ -1,12 +1,12 @@
 
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import { NextRequest, NextResponse } from "next/server";
 import { logAction } from "../../logs/helper";
 import { IUser } from "@/types/user";
 import FeatureModel from "@/models/feature";
 import { ELogSeverity } from "@/types/log";
 
-ConnectMongoDb();
+connectDB();
 export async function GET(_: NextRequest, { params }: { params: Promise<{ name: string }> }) {
 
     const name = (await params).name
@@ -44,7 +44,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     await logAction({
         title: "Feature deleted",
         description: `Feature deleted by ${user?.name ?? 'Admin'}`,
-        severity:ELogSeverity.WARNING,
+        severity: ELogSeverity.WARNING,
     });
     return NextResponse.json({
         success: true,

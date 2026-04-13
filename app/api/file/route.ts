@@ -1,12 +1,12 @@
 import { apiConfig } from "@/lib/configs";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import FileModel from "@/models/file";
-import {   IQueryResponse } from "@/types";
+import { IQueryResponse } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 import { IFileProps } from "@/types/file.interface";
- 
 
-ConnectMongoDb();
+
+connectDB();
 
 //Update database file metadata
 export async function PUT() {

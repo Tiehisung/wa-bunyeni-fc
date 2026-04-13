@@ -1,14 +1,15 @@
 
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import PlayerModel from "@/models/player";
 import { NextResponse } from "next/server";
-ConnectMongoDb();
+
+connectDB();
 export async function GET() {
   try {
-    const mod = await PlayerModel.updateMany({}, { $set: { status: "current" } }) 
+    const mod = await PlayerModel.updateMany({}, { $set: { status: "current" } })
     const players = await PlayerModel.find()
 
-     
+
     return NextResponse.json({
       ok: true,
       message: 'Test complete!',

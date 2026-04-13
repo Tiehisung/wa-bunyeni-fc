@@ -1,4 +1,4 @@
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import SponsorModel from "@/models/sponsor";
 import { NextRequest, NextResponse } from "next/server";
 import "@/models/file";
@@ -9,9 +9,9 @@ import { formatDate } from "@/lib/timeAndDate";
 import { saveToArchive } from "../../archives/helper";
 import { EArchivesCollection } from "@/types/archive.interface";
 
-// export const revalidate = 0;
-// export const dynamic = "force-dynamic";
-ConnectMongoDb();
+connectDB();
+
+
 export async function GET(
   _: NextRequest,
   { params }: { params: Promise<{ sponsorId: string }> }

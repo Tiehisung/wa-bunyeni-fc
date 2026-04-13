@@ -1,10 +1,10 @@
 import { getErrorMessage } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import { TransactionModel } from "@/models/finance/transaction";
 import { NextRequest, NextResponse } from "next/server";
 import { logAction } from "../../../logs/helper";
 
-ConnectMongoDb();
+connectDB();
 export async function GET(_: NextRequest, { params }: { params: Promise<{ transactionId: string }> }) {
 
     const transaction = await TransactionModel.findById((await params).transactionId)

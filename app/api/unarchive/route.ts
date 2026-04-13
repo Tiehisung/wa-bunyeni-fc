@@ -1,5 +1,5 @@
 import { getErrorMessage } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import ArchiveModel from "@/models/Archives";
 import GalleryModel from "@/models/galleries";
 import MatchModel from "@/models/match";
@@ -14,7 +14,7 @@ import { EArchivesCollection } from "@/types/archive.interface";
 import { NextRequest, NextResponse } from "next/server";
 
 
-ConnectMongoDb();
+connectDB();
 
 export async function POST(request: NextRequest) {
   const { sourceCollection, dataId } = await request.json();

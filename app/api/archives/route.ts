@@ -1,10 +1,10 @@
 import { removeEmptyKeys } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import ArchiveModel from "@/models/Archives";
 import { QueryFilter } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
-ConnectMongoDb();
+connectDB();
 
 export async function GET(request: NextRequest) {
   const sourceCollection = request.nextUrl.searchParams.get("sourceCollection");

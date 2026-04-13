@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import MatchModel from "@/models/match";
-
+ConnectMongoDb();
 export async function GET() {
     try {
-        await ConnectMongoDb();
+
 
         // Win, draw, loss counts
         const [wins, draws, losses] = await Promise.all([

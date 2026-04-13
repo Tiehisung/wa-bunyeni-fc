@@ -1,9 +1,9 @@
 import { auth } from "@/auth";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import LogModel from "@/models/logs";
-import { ELogSeverity, ILog } from "@/types/log";
+import { ELogSeverity, ILog } from "@/types/log.interface";
 
-ConnectMongoDb();
+connectDB();
 export async function logAction({
     title,
     description,

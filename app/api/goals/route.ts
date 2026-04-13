@@ -1,138 +1,168 @@
-import { getErrorMessage } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
-import { NextRequest, NextResponse } from "next/server";
-import { logAction } from "../logs/helper";
-import GoalModel, { IPostGoal } from "@/models/goals";
-import { updateMatchEvent } from "../matches/live/events/route";
-import MatchModel from "@/models/match";
-import PlayerModel from "@/models/player";
-import { IGoal } from "@/types/match.interface";
+// app/api/goals/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/config/db.config';
+import { auth } from '@/auth';
+import PlayerModel from '@/models/player';
+import MatchModel from '@/models/match';
+import GoalModel, { IPostGoal } from '@/models/goals';
+import { LoggerService } from '../../../shared/log.service';
+import { getApiErrorMessage } from '../../../lib/error-api';
 
-ConnectMongoDb();
+connectDB();
 
+// GET /api/goals - List all goals
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const page = Number.parseInt(searchParams.get("page") || "1", 10);
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const skip = (page - 1) * limit;
 
-  const limit = Number.parseInt(searchParams.get("limit") || "10", 10);
-  const skip = (page - 1) * limit;
+    const search = searchParams.get('goal_search') || '';
+    const matchId = searchParams.get('matchId') || '';
+    const playerId = searchParams.get('playerId') || '';
+    const forKFC = searchParams.get('forKFC') === 'true';
 
-  const search = searchParams.get("goal_search") || "";
+    const regex = new RegExp(search, 'i');
+    const query: any = {};
 
-  const regex = new RegExp(search, "i");
+    if (search) {
+      query.$or = [
+        { 'scorer._id': regex },
+        { 'scorer.name': regex },
+        { 'assist.name': regex },
+        { 'assist._id': regex },
+        { description: regex },
+        { 'opponent.name': regex },
+        { 'opponent._id': regex },
+        { modeOfScore: regex },
+      ];
+    }
 
-  const query = {
-    $or: [
-      { "scorer._id": regex },
-      { "scorer.name": regex },
-      { "assist.name": regex },
-      { "assist._id": regex },
-      { "description": regex },
-      { "opponent.name": regex },
-      { "opponent._id": regex },
-    ],
+    if (matchId) {
+      query.match = matchId;
+    }
+
+    if (playerId) {
+      query.$or = [
+        ...(query.$or || []),
+        { 'scorer._id': playerId },
+        { 'assist._id': playerId },
+      ];
+    }
+
+    if (searchParams.has('forKFC')) {
+      query.forKFC = forKFC;
+    }
+
+    const goals = await GoalModel.find(query)
+      .populate('match', 'title date competition')
+      .limit(limit)
+      .skip(skip)
+      .lean()
+      .sort({ createdAt: 'desc' });
+
+    const total = await GoalModel.countDocuments(query);
+
+    return NextResponse.json({
+      success: true,
+      data: goals,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    LoggerService.error('Failed to fetch goals', error);
+    return NextResponse.json({
+      success: false,
+      message: getApiErrorMessage(error, 'Failed to fetch goals'),
+    }, { status: 500 });
   }
-
-  const managers = await GoalModel.find(query)
-    .limit(limit).skip(skip)
-    .lean().sort({ createdAt: "desc" });
-
-  const total = await GoalModel.countDocuments(query)
-  return NextResponse.json({
-    success: true, data: managers, pagination: {
-      page,
-      limit,
-      total,
-      pages: Math.ceil(total / limit),
-    },
-  });
 }
 
+// POST /api/goals - Create new goal
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
 
-    const { match, description, minute, scorer, assist, modeOfScore, forKFC } = await request.json() as IPostGoal;
+    if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
+      return NextResponse.json({
+        success: false,
+        message: 'Unauthorized',
+      }, { status: 401 });
+    }
+
+    const { match, description, minute, scorer, assist, modeOfScore, teamId } = await request.json() as IPostGoal;
+
+    if (!match || !minute) {
+      return NextResponse.json({
+        success: false,
+        message: 'Match ID and minute are required',
+      }, { status: 400 });
+    }
 
     const savedGoal = await GoalModel.create({
-      match, description, minute, scorer, assist, modeOfScore, forKFC
+      match,
+      description,
+      minute,
+      scorer,
+      assist,
+      modeOfScore,
+      teamId,
+      createdBy: session.user?.id
     });
 
     if (!savedGoal) {
-      return NextResponse.json({ message: "Failed to create goal.", success: false });
-    }
-    //Update Match
-    const updatedMatech = await MatchModel.findByIdAndUpdate(match, { $push: { 'goals': savedGoal._id } })
-
-    //Update Player
-    if (forKFC && scorer) {
-      await PlayerModel.findByIdAndUpdate(scorer?._id, { $push: { goals: savedGoal._id } })
-
-      if (assist)
-        await PlayerModel.findByIdAndUpdate(assist?._id, { $push: { assists: savedGoal._id } })
+      return NextResponse.json({
+        message: 'Failed to create goal.',
+        success: false,
+      }, { status: 500 });
     }
 
+    // Update Match - add goal reference
+    const updatedMatch = await MatchModel.findByIdAndUpdate(
+      match,
+      { $push: { goals: savedGoal._id } },
+      { new: true }
+    );
 
-    //Update events
-    if (minute) {
-      const assistance = assist ? `Assist: ${assist?.number ?? ''} ${assist.name} ` : ''
-      await updateMatchEvent(match?.toString(), {
-        type: 'goal',
-        minute: String(minute),
-        title: `⚽ ${minute}' - ${scorer?.number ?? 'Goal scored by '}  ${scorer?.name ?? 'unknown player'} `,
-        description: `${assistance} ${description} Mode of Score: ${modeOfScore ?? ''}`
+    // Update Player statistics
+    if (scorer) {
+      await PlayerModel.findByIdAndUpdate(
+        scorer._id,
+        { $push: { goals: savedGoal._id } }
+      );
 
-      })
+      if (assist) {
+        await PlayerModel.findByIdAndUpdate(
+          assist._id,
+          { $push: { assists: savedGoal._id } }
+        );
+      }
     }
 
-    // log
-    await logAction({
-      title: "Goal Created " + updatedMatech?.title,
-      description: description as string,
-      meta: savedGoal
-    });
+    LoggerService.info(
+      `Goal Created - ${updatedMatch?.title || 'Match'}`,
+      description || `Goal scored at ${minute}'`,
+      request
+    );
 
-    return NextResponse.json({ message: "Goal created successfully!", success: true, data: savedGoal });
+    const populatedGoal = await GoalModel.findById(savedGoal._id)
+      .lean();
 
-  } catch (error) {
     return NextResponse.json({
-      message: getErrorMessage(error),
-      success: false,
-    });
-  }
-}
-
-export async function DELETE(request: NextRequest) {
-  try {
-
-    const { forKFC, match, _id, scorer, assist } = await request.json() as IGoal;
-
-    const deletedGoal = await GoalModel.findByIdAndDelete(_id)
-    if (!deletedGoal) {
-      return NextResponse.json({ message: "Failed to delete goal.", success: false });
-    }
-    //Update Match
-    const updatedMatech = await MatchModel.findByIdAndUpdate(match, { $pull: { goals: _id } })
-
-    //Update Player
-    if (forKFC && scorer) {
-      await PlayerModel.findByIdAndUpdate(scorer?._id, { $push: { goals: _id } })
-
-      if (assist)
-        await PlayerModel.findByIdAndUpdate(assist?._id, { $pull: { assists: _id } })
-    }
-
-    // log
-    await logAction({
-      title: "Goal Deleted " + updatedMatech?.title,
-      description: deletedGoal?.description as string,
-      meta: deletedGoal
-    });
-
-    return NextResponse.json({ message: "Goal deleted successfully!", success: true, data: deletedGoal });
+      message: 'Goal created successfully!',
+      success: true,
+      data: populatedGoal,
+    }, { status: 201 });
   } catch (error) {
+    LoggerService.error('Failed to create goal', error);
     return NextResponse.json({
-      message: getErrorMessage(error),
+      message: getApiErrorMessage(error, 'Failed to create goal'),
       success: false,
-    });
+    }, { status: 500 });
   }
 }

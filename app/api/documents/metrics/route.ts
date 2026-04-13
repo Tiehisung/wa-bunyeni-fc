@@ -1,9 +1,9 @@
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import { NextRequest, NextResponse } from "next/server";
 import FolderModel from "@/models/folder";
 import DocModel from "@/models/doc";
 
-ConnectMongoDb();
+connectDB();
 
 export async function GET(_: NextRequest) {
     const folders = await FolderModel.find().lean()

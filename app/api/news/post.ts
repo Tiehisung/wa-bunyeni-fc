@@ -1,11 +1,11 @@
 import { INewsProps } from "@/types/news.interface";
-import { slugify } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import NewsModel from "@/models/news";
+import { slugify } from "@/lib/slugging";
 
 export async function postNews({ headline, metaDetails, type }: Partial<INewsProps>) {
     try {
-        ConnectMongoDb();
+        connectDB();
 
         let body = {}
 

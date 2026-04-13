@@ -1,5 +1,5 @@
 import { getErrorMessage, } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import NewsModel from "@/models/news";
 import { NextRequest, NextResponse } from "next/server";
 import { QueryFilter } from "mongoose";
@@ -10,7 +10,7 @@ import { ELogSeverity } from "@/types/log";
 import { formatDate } from "@/lib/timeAndDate";
 import { slugIdFilters } from "@/lib/api";
 
-ConnectMongoDb();
+connectDB();
 
 export async function GET(
     _: NextRequest,
@@ -84,7 +84,7 @@ export async function PUT(
         return NextResponse.json({
             message: "News updated",
             success: true,
-            data:updated
+            data: updated
         });
     } catch (error) {
         return NextResponse.json({

@@ -1,9 +1,8 @@
-import { ECardType } from "@/types/card.interface";
 import mongoose, { Schema } from "mongoose";
+import { ECardType } from "../../../types/card.interface";
 
 export const cardSchema = new Schema(
   {
-
     minute: String,
     description: String,
     player: {
@@ -18,8 +17,8 @@ export const cardSchema = new Schema(
     },
     match: {},
 
-    type: { type: String, enum: Object.values(ECardType), default: ECardType.YELLOW},
-
+    type: { type: String, enum: Object.values(ECardType), default: ECardType.YELLOW },
+    createdBy: { _id: String, name: String, avatar: String } //As IUser
   },
   { timestamps: true }
 );

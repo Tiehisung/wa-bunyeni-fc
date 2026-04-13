@@ -1,11 +1,11 @@
 
 import { getErrorMessage } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import MatchModel from "@/models/match";
 import { NextRequest, NextResponse } from "next/server";
 import { IMatchEvent } from "@/app/matches/(fixturesAndResults)";
 
-ConnectMongoDb();
+connectDB();
 
 //Post new fixture
 
@@ -28,7 +28,7 @@ export async function PUT(request: NextRequest) {
 export async function updateMatchEvent(
   matchId: string, event: IMatchEvent) {
   try {
-    ConnectMongoDb()
+
     const updated = await MatchModel.findByIdAndUpdate(matchId, {
       $push: { events: event },
     });

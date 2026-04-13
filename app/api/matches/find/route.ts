@@ -1,5 +1,5 @@
 import { deleteEmptyKeys, getErrorMessage } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import MatchModel from "@/models/match";
 import { NextRequest, NextResponse } from "next/server";
 import "@/models/teams";
@@ -7,7 +7,7 @@ import "@/models/file";
 import "@/models/goals";
 import "@/models/player";
 
-ConnectMongoDb();
+connectDB();
 // export const revalidate = 0;
 // export const dynamic = "force-dynamic";
 

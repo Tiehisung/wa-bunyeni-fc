@@ -1,10 +1,10 @@
 import cld from "cloudinary";
 const cloudinary = cld.v2;
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import { IFileUpload } from "@/types/file.interface";
- 
 
-ConnectMongoDb();
+
+connectDB();
 //Post to cloudinary
 export async function fileUploader({
     name,

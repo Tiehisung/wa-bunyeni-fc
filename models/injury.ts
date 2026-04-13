@@ -17,8 +17,10 @@ export const injurySchema = new Schema(
       number: Number
     },
     severity: { type: String, enum: Object.values(EInjurySeverity), default: EInjurySeverity.MINOR },
+    status: { type: String, default: () => 'active' }, // active, recovered, long-term
     match: {},
     user: {},
+    createdBy: { _id: String, name: String, avatar: String } //As IUser
   },
   { timestamps: true }
 );

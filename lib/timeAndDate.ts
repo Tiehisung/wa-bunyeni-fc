@@ -2,12 +2,12 @@ import moment from "moment";
 
 /**
  *
- * @param dob Date arg as string
+ * @param birthdate Date arg as string
  * @returns Years as number
  */
-export const getAgeFromDOB = (dob: string): number => {
+export const getAgeFromDOB = (birthdate: string): number => {
   // Parse the birthdate string into a Date object
-  const birthdateObj = new Date(dob);
+  const birthdateObj = new Date(birthdate);
 
   const currentDate = new Date();
 
@@ -18,49 +18,21 @@ export const getAgeFromDOB = (dob: string): number => {
   return ageInYears;
 };
 
-
 export const formatDate = (
   dateString?: string | Date,
-  format:
-    | "dd/mm/yyyy"
-    | "dd-mm-yyyy"
-    | "yyyy-mm-dd"
-    | "March 2, 2025"
-    | "MAR 28, 2025"
-    | "Sunday, March 2, 2025"
-    | "HH:MM"
-    | "HH:MM:SS"
-    | "HH:MM:SS A"
-    | "full"
-    | "iso"
-    | "timestamp" = 'MAR 28, 2025',
+  format?: "dd/mm/yyyy" | "March 2, 2025" | "Sunday, March 2, 2025",
 ) => {
   if (!dateString) return "";
 
   const createdAt = new Date(dateString);
 
   switch (format) {
-    // Date formats
     case "March 2, 2025":
       return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
         createdAt
       );
-
-    case "MAR 28, 2025":
-      return createdAt.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }).toUpperCase();
-
     case "dd/mm/yyyy":
       return moment(dateString).format("DD/MM/YYYY");
-
-    case "dd-mm-yyyy":
-      return moment(dateString).format("DD-MM-YYYY");
-
-    case "yyyy-mm-dd":
-      return moment(dateString).format("YYYY-MM-DD");
 
     case "Sunday, March 2, 2025":
       return createdAt.toLocaleDateString("en-US", {
@@ -69,26 +41,6 @@ export const formatDate = (
         day: "numeric",
         year: "numeric",
       });
-
-    // Time formats
-    case "HH:MM":
-      return moment(dateString).format("HH:mm");
-
-    case "HH:MM:SS":
-      return moment(dateString).format("HH:mm:ss");
-
-    case "HH:MM:SS A":
-      return moment(dateString).format("hh:mm:ss A");
-
-    // Combined formats
-    case "full":
-      return moment(dateString).format("DD/MM/YYYY HH:mm:ss");
-
-    case "iso":
-      return createdAt.toISOString();
-
-    case "timestamp":
-      return createdAt.getTime().toString();
 
     default:
       return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
@@ -147,7 +99,7 @@ export function getDateFromDaysAgo(daysAgo: number): Date {
   return date;
 }
 
-export type TimeUnit = "mon" | "w" | "d" | "hr" | "min";
+export type TimeUnit = "m" | "wk" | "d" | "hr" | "min";
 
 export interface TimeLeftResult {
   value: number;
@@ -182,10 +134,10 @@ export function getTimeLeftOrAgo(date?: string | number | Date): TimeLeftResult 
 
   if (months >= 1) {
     value = months;
-    unit = "mon";
+    unit = "m";
   } else if (weeks >= 1) {
     value = weeks;
-    unit = "w";
+    unit = "wk";
   } else if (days >= 1) {
     value = days;
     unit = "d";
@@ -199,8 +151,8 @@ export function getTimeLeftOrAgo(date?: string | number | Date): TimeLeftResult 
 
   const expired = diffMs < 0;
   const formatted = expired
-    ? `${value}${unit} ago`
-    : `${value}${unit} left`;
+    ? `${value} ${unit}${value !== 1 ? "s" : ""} ago`
+    : `${value} ${unit}${value !== 1 ? "s" : ""} left`;
 
   return { value, unit, expired, formatted };
 }
@@ -217,53 +169,4 @@ export const getYears = (
     from = from + 1;
   }
   return asc ? years : years.sort((a, b) => b - a);
-};
-
-
-export const isLateByDays = (
-  date: Date | string,
-  days: number = 0,
-): boolean => {
-  const target = new Date(date);
-  const today = new Date();
-
-  // Normalize both to midnight
-  target.setHours(0, 0, 0, 0);
-  today.setHours(0, 0, 0, 0);
-
-  const diffInMs = today.getTime() - target.getTime();
-  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-  if (diffInDays < 0) return false; // future dates are not late
-
-  return diffInDays >= days;
-};
-
-/**
- * 
- * @param date Date set as deadline.
- * @param extraDays Optional for adjusting date.
- * @returns  - { isPassed: true/false , deadline: datestring,}
- */
-
-
-export const getDeadlineInfo = (
-  date: Date | string,
-  extraDays: number = 0,
-) => {
-  const base = new Date(date);
-  const today = new Date();
-
-  base.setHours(0, 0, 0, 0);
-  today.setHours(0, 0, 0, 0);
-
-  const deadline = new Date(base);
-  deadline.setDate(deadline.getDate() + extraDays);
-
-  const isPassed = today >= deadline;
-
-  return {
-    isPassed,
-    deadline: formatDate(deadline, ),
-  };
 };

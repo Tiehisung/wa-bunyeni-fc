@@ -1,10 +1,10 @@
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import MatchModel from "@/models/match";
 import MVPModel from "@/models/mpv";
 import PlayerModel from "@/models/player";
 import { NextRequest, NextResponse } from "next/server";
 
-ConnectMongoDb();
+connectDB();
 
 export async function GET(
     _: NextRequest,

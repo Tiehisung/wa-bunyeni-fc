@@ -1,6 +1,7 @@
+import { EPlayerAgeStatus, EPlayerStatus, EPlayerAvailability } from "@/types/player.interface";
 import mongoose, { Schema } from "mongoose";
 import { fileSchema } from "./file";
-import { EPlayerAgeStatus, EPlayerAvailability, EPlayerStatus } from "@/types/player.interface";
+ 
 
 
 const playerSchema = new Schema(
@@ -37,13 +38,13 @@ const playerSchema = new Schema(
         message: "Email must be valid",
       },
     },
+    avatar: String,
     height: { type: Number },
     captaincy: { type: String },
     dob: { type: String, required: true },
     about: { type: String, },
     history: { type: String, },
     dateSigned: { type: String, required: true },
-    avatar: String,
     featureMedia: { type: [fileSchema], default: () => [] },
     manager: {
       fullname: String,
@@ -60,7 +61,7 @@ const playerSchema = new Schema(
     matches: [{ type: Schema.Types.ObjectId, ref: "matches", default: [] }],
     mvps: [{ type: Schema.Types.ObjectId, ref: "mvps", default: [] }],
 
-    issues: { type: [{ title: String, description: String, date: { type: String, default: () => new Date().toISOString() }}], default: () => [] },
+    issues: { type: [{ title: String, description: String, date: { type: String, default: () => new Date().toISOString() } }], default: () => [] },
     ageStatus: { type: String, enum: Object.values(EPlayerAgeStatus), default: () => EPlayerAgeStatus.YOUTH },
     status: { type: String, enum: Object.values(EPlayerStatus), default: () => EPlayerStatus.CURRENT },
     availability: { type: String, default: () => EPlayerAvailability.AVAILABLE, enum: Object.values(EPlayerAvailability) },
@@ -71,7 +72,7 @@ const playerSchema = new Schema(
     },
     training: { type: Schema.Types.Mixed, default: () => ({ team: "A" }) },
     code: { type: String, required: [true, 'Player ID is required'], unique: [true, 'Player ID must be a unique value'] },//IS091223
-
+    createdBy: { _id: String, name: String, avatar: String } //As IUser
   },
   { timestamps: true }
 );

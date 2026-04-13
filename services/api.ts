@@ -1,6 +1,7 @@
 // services/api.ts
 
  
+import { ENV } from "@/lib/env";
 import { RootState } from "@/store/store";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
  
@@ -8,7 +9,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const api = createApi({
     reducerPath: "api",
     baseQuery: fetchBaseQuery({
-        baseUrl: process.env.NEXT_PUBLIC_API_URL,
+        baseUrl: ENV.API_URL,
         credentials: "include",
         prepareHeaders: (headers, { getState }) => {
             const token = (getState() as RootState).auth.accessToken;

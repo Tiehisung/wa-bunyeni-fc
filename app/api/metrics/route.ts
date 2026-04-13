@@ -1,6 +1,6 @@
 
 import { checkMatchMetrics } from "@/lib/compute/match";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import MatchModel from "@/models/match";
 import PlayerModel from "@/models/player";
 import { IMatch, IMatchMetrics, } from "@/types/match.interface";
@@ -8,10 +8,10 @@ import { EPlayerStatus } from "@/types/player.interface";
 import { NextRequest, NextResponse } from "next/server";
 
 
-ConnectMongoDb();
+connectDB();
 
 export async function GET(request: NextRequest) {
-  ConnectMongoDb();
+
   const matches = await MatchModel.find({ status: 'FT' }).populate('opponent').populate('goals') as IMatch[];
 
   const matchMetrics = matches?.map(m => checkMatchMetrics(m));

@@ -1,11 +1,11 @@
 import { getErrorMessage, removeEmptyKeys } from "@/lib";
-import { ConnectMongoDb } from "@/lib/dbconfig";
+import connectDB from "@/config/db.config";
 import { NextRequest, NextResponse } from "next/server";
 import HighlightModel, { IPostHighlight } from "@/models/highlight";
 import { logAction } from "../logs/helper";
 import { formatDate } from "@/lib/timeAndDate";
 
-ConnectMongoDb();
+connectDB();
 
 export async function GET(request: NextRequest) {
   try {
@@ -78,12 +78,12 @@ export async function POST(request: NextRequest) {
     const savedHighlight = await HighlightModel.create({
       match, ...others
     });
-   // log
-   await logAction({
-     title: `Match highlight created - [${others?.title??''}]`,
-     description: `A match highlight(${others?.title}) created on ${formatDate(new Date().toISOString()) ?? ''}.`,
-     meta: savedHighlight?.toString(),
-   });
+    // log
+    await logAction({
+      title: `Match highlight created - [${others?.title ?? ''}]`,
+      description: `A match highlight(${others?.title}) created on ${formatDate(new Date().toISOString()) ?? ''}.`,
+      meta: savedHighlight?.toString(),
+    });
 
     return NextResponse.json({
       message: "Highlight created",
