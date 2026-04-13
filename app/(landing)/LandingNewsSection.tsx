@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React from "react";
 import { ArrowRight, ChevronRight, TrendingUpIcon } from "lucide-react";
@@ -6,8 +6,9 @@ import { ArrowRight, ChevronRight, TrendingUpIcon } from "lucide-react";
 import { INewsItem, INewsProps, INewsSection } from "@/types/news.interface";
 import { useGetNewsQuery } from "@/services/news.endpoints";
 
-import { NewsSectionSkeleton } from "./skeletons/news-section";
 import Link from "next/link";
+import PageLoader from "@/components/loaders/Page";
+import Image from "next/image";
 
 // Main News Section Props Interface
 export interface INewsSectionProps extends INewsSection {
@@ -57,15 +58,17 @@ const Desktop: React.FC<Props> = ({ newsItems }) => {
       {/* Trending Header */}
       <div className="flex items-center gap-2 my-6">
         <span className=" font-semibold text-3xl tracking-wide">
-          {"TRENDING"}
+      TRENDING 
         </span>
       </div>
 
       {/* Hero Section with Main Image */}
       <Link href={`/news/${main?.slug}`}>
         <div className="relative h-64 md:h-80 lg:h-96 overflow-hidden">
-          <img
-            src={main?.headline?.image}
+          <Image
+            width={400}
+            height={400}
+            src={main?.headline?.image as string}
             alt="International break action"
             className="w-full h-full object-cover"
           />
@@ -91,7 +94,9 @@ const Desktop: React.FC<Props> = ({ newsItems }) => {
             <Link href={`/news/${item?.slug}`} key={item._id}>
               <div className="group bg-card rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100">
                 <div className="relative h-48 overflow-hidden">
-                  <img
+                  <Image
+                    width={200}
+                    height={200}
                     src={item?.headline?.image}
                     alt={item?.headline?.text}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -152,8 +157,10 @@ const Mobile: React.FC<Props> = ({ newsItems }) => {
       {/* Hero Section with Main Image - Mobile */}
       <Link href={`/news/${main?.slug}`}>
         <div className="relative max-sm:h-[80vw] overflow-hidden">
-          <img
-            src={main?.headline?.image}
+          <Image
+            width={400}
+            height={400}
+            src={main?.headline?.image as string}
             alt="International break action"
             className="w-full h-full object-cover"
           />
@@ -183,7 +190,9 @@ const Mobile: React.FC<Props> = ({ newsItems }) => {
             >
               <div className="flex">
                 <div className="w-24 h-24 shrink-0">
-                  <img
+                  <Image
+                    width={200}
+                    height={200}
                     src={item?.headline?.image}
                     alt={item?.headline?.text}
                     className="w-full h-full object-cover"
@@ -239,8 +248,8 @@ const NEWSSECTION: React.FC<TrendingProps> = ({ className = "" }) => {
 
   if (isLoading) {
     return (
-      <div className="py-12 px-4 space-y-8 _page flex justify-center items-center min-h-100">
-        <NewsSectionSkeleton/>
+      <div className=" space-y-8 flex justify-center items-center ">
+        <PageLoader />
       </div>
     );
   }

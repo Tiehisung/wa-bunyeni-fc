@@ -1,4 +1,12 @@
-
+export type AnyObject = { [key: string]: unknown };
+export function removeEmptyKeys(obj: AnyObject): AnyObject {
+  return Object.keys(obj).reduce((acc: AnyObject, key: string) => {
+    if (obj[key] !== null && obj[key] !== undefined && obj[key] !== "") {
+      acc[key] = obj[key];
+    }
+    return acc;
+  }, {});
+}
 export function roundToNearest(num: number, nearest?: 10 | 100 | 1000) {
   if (nearest == 10) return Math.round(num / 10) * 10;
   if (nearest == 100) return Math.round(num / 100) * 100;
@@ -43,11 +51,7 @@ export const getSafeUrl = (url: string) => {
   return purified;
 };
 
-
-export function isObjectId(value: string) {
-  if (!value) return true
-  return typeof value === "string" && /^[a-f\d]{24}$/i.test(value);
-}
+ 
 
 export const getUrlToShare = () => typeof window !== 'undefined' ? window.location.href : "";
 

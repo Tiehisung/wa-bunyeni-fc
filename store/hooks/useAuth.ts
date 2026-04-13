@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store';
-import { useLoginMutation, useLogoutMutation, useRefreshTokenMutation } from '@/services/auth.endpoints';
+import { useSigninMutation, useLogoutMutation, useRefreshTokenMutation,  } from '@/services/auth.endpoints';
 import { ILoginCredentials } from '@/types/auth';
 import { logout, setAccessToken, setCredentials, } from '../slices/auth.slice';
 import { getErrorMessage } from '@/lib/error';
@@ -11,7 +11,7 @@ export const useAuth = () => {
     const dispatch = useAppDispatch();
     const { user, accessToken, isAuthenticated, } = useAppSelector((state) => state.auth);
 
-    const [loginMutation, { isLoading: isLoggingIn }] = useLoginMutation();
+    const [signinMutation, { isLoading: isLoggingIn }] = useSigninMutation();
     const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutMutation();
     const [refreshTokenMutation] = useRefreshTokenMutation();
 
@@ -32,9 +32,9 @@ export const useAuth = () => {
         return () => clearInterval(interval);
     }, [dispatch, refreshTokenMutation]);
 
-    const login = async (credentials: ILoginCredentials) => {
+    const signin = async (credentials: ILoginCredentials) => {
         try {
-            const result = await loginMutation(credentials).unwrap();
+            const result = await signinMutation(credentials).unwrap();
 
             dispatch(setCredentials({
                 user: result.data.user,
@@ -64,7 +64,7 @@ export const useAuth = () => {
         accessToken,
         isAuthenticated,
         isLoading: isLoggingIn || isLoggingOut,
-        login,
+        signin,
         logout: logoutUser,
     };
 };

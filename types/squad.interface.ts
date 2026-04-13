@@ -10,7 +10,8 @@ export interface ISquad {
     coach?: { _id?: string; name: string; avatar?: string };
     assistant?: { _id?: string; name: string; avatar?: string };
     match: IMatch;
-    createdBy?: IMiniUser
+    formation?: string
     createdAt?: string;
     updatedAt?: string;
+    createdBy?:IMiniUser
 }

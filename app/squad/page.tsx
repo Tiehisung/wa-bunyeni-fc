@@ -16,7 +16,7 @@ export default function LatestMatchSquadPage() {
   return (
     <section id="squad" className="py-24 ">
       {/* <PageSEO page="squad"/> */}
-      <div className="container mx-auto px-4 md:px-6">
+      <div >
         <div className="text-center mb-16">
           <span className="text-primary font-semibold tracking-wide uppercase text-sm">
             The Team

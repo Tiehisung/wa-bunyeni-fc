@@ -2,12 +2,12 @@ import moment from "moment";
 
 /**
  *
- * @param dob Date arg as string
+ * @param birthdate Date arg as string
  * @returns Years as number
  */
-export const getAgeFromDOB = (dob: string): number => {
+export const getAgeFromDOB = (birthdate: string): number => {
   // Parse the birthdate string into a Date object
-  const birthdateObj = new Date(dob);
+  const birthdateObj = new Date(birthdate);
 
   const currentDate = new Date();
 
@@ -17,7 +17,6 @@ export const getAgeFromDOB = (dob: string): number => {
 
   return ageInYears;
 };
-
 
 export const formatDate = (
   dateString?: string | Date,
@@ -97,6 +96,7 @@ export const formatDate = (
   }
 };
 
+
 export function formatTimeToAmPm(time: string, separator: ':' | '.' = '.') {
   if (!time) return "";
 
@@ -147,7 +147,7 @@ export function getDateFromDaysAgo(daysAgo: number): Date {
   return date;
 }
 
-export type TimeUnit = "mon" | "w" | "d" | "hr" | "min";
+export type TimeUnit = "m" | "wk" | "d" | "hr" | "min";
 
 export interface TimeLeftResult {
   value: number;
@@ -182,10 +182,10 @@ export function getTimeLeftOrAgo(date?: string | number | Date): TimeLeftResult 
 
   if (months >= 1) {
     value = months;
-    unit = "mon";
+    unit = "m";
   } else if (weeks >= 1) {
     value = weeks;
-    unit = "w";
+    unit = "wk";
   } else if (days >= 1) {
     value = days;
     unit = "d";
@@ -199,8 +199,8 @@ export function getTimeLeftOrAgo(date?: string | number | Date): TimeLeftResult 
 
   const expired = diffMs < 0;
   const formatted = expired
-    ? `${value}${unit} ago`
-    : `${value}${unit} left`;
+    ? `${value} ${unit}${value !== 1 ? "s" : ""} ago`
+    : `${value} ${unit}${value !== 1 ? "s" : ""} left`;
 
   return { value, unit, expired, formatted };
 }
@@ -218,27 +218,6 @@ export const getYears = (
   }
   return asc ? years : years.sort((a, b) => b - a);
 };
-
-
-export const isLateByDays = (
-  date: Date | string,
-  days: number = 0,
-): boolean => {
-  const target = new Date(date);
-  const today = new Date();
-
-  // Normalize both to midnight
-  target.setHours(0, 0, 0, 0);
-  today.setHours(0, 0, 0, 0);
-
-  const diffInMs = today.getTime() - target.getTime();
-  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-  if (diffInDays < 0) return false; // future dates are not late
-
-  return diffInDays >= days;
-};
-
 /**
  * 
  * @param date Date set as deadline.
@@ -264,6 +243,6 @@ export const getDeadlineInfo = (
 
   return {
     isPassed,
-    deadline: formatDate(deadline, ),
+    deadline: formatDate(deadline,),
   };
 };

@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
 import { useEffect, useState } from "react";
 import { IQueryResponse } from "@/types";
-import { ICaptain, IPlayer, IPlayerMini } from "@/types/player.interface";
+import { ICaptain, IPlayer,   } from "@/types/player.interface";
 import RadioButtons from "@/components/input/Radio";
 import useGetParam from "@/hooks/params";
 import { Verified } from "lucide-react";
@@ -18,22 +18,11 @@ import {
 } from "@/services/captain.endpoints";
 import { smartToast } from "@/utils/toast";
 
-export type ICaptainProps = {
-  isActive?: boolean;
-  _id: string;
-  player: Partial<IPlayerMini>;
-  role: "captain" | "vice";
-  startDate: string;
-  endDate: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
 export default function CaptaincyAdm({ players }: { players: IPlayer[] }) {
   const { data: captainsData } = useGetCaptainsQuery("isActive=true");
 
-  const [filtered, setFiltered] = useState<ICaptainProps[]>(
-    captainsData?.data as ICaptainProps[],
+  const [filtered, setFiltered] = useState<ICaptain[]>(
+    captainsData?.data as ICaptain[],
   );
 
   const captainType = useGetParam("captains") as
@@ -43,7 +32,7 @@ export default function CaptaincyAdm({ players }: { players: IPlayer[] }) {
 
   const searchKey = useGetParam("search");
 
-  function searcher(caps: ICaptainProps[]) {
+  function searcher(caps: ICaptain[]) {
     if (searchKey)
       return caps?.filter((c) =>
         c.player?.name?.toLowerCase()?.includes(searchKey.toLowerCase()),
@@ -141,7 +130,7 @@ export const UpdateCaptaincy = ({
   captains,
 }: {
   players?: IPlayer[];
-  captains?: ICaptainProps[];
+  captains?: ICaptain[];
 }) => {
   const [isBusy, setIsBusy] = useState(false);
 
@@ -185,7 +174,7 @@ const PlayerForCaptainRow = ({
   setIsBusy,
 }: {
   player: IPlayer;
-  defaultRole?: ICaptainProps["role"];
+  defaultRole?: ICaptain["role"];
   setIsBusy: (arg: boolean) => void;
 }) => {
   const [assignCaptain, { isLoading }] = useAssignCaptainMutation();
