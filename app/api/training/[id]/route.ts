@@ -16,10 +16,11 @@ connectDB();
 // GET /api/training/[id] - Get single training session
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await TrainingSessionModel.findById(params.id).lean();
+    const id =(await params).id
+    const session = await TrainingSessionModel.findById(id).lean();
 
     if (!session) {
       return NextResponse.json({
@@ -44,9 +45,10 @@ export async function GET(
 // PUT /api/training/[id] - Update training session
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const id =(await params).id
     const session = await auth();
 
     if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -58,7 +60,7 @@ export async function PUT(
 
     const formData = await request.json();
 
-    const existingSession = await TrainingSessionModel.findById(params.id);
+    const existingSession = await TrainingSessionModel.findById(id);
     if (!existingSession) {
       return NextResponse.json({
         success: false,
@@ -76,7 +78,7 @@ export async function PUT(
     delete formData._id;
 
     const updated = await TrainingSessionModel.findByIdAndUpdate(
-      params.id,
+      id,
       {
         $set: {
           ...formData,
@@ -100,7 +102,7 @@ export async function PUT(
       description: `Training session at ${updated.location} updated`,
       severity: ELogSeverity.INFO,
       meta: {
-        sessionId: params.id,
+        sessionId: id,
         updates: Object.keys(formData),
         updateCount: (existingSession.updateCount || 0) + 1,
       },
@@ -123,9 +125,10 @@ export async function PUT(
 // DELETE /api/training/[id] - Delete training session
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const id =(await params).id
     const session = await auth();
 
     if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
@@ -135,7 +138,7 @@ export async function DELETE(
       }, { status: 401 });
     }
 
-    const existingSession = await TrainingSessionModel.findById(params.id);
+    const existingSession = await TrainingSessionModel.findById(id);
 
     if (!existingSession) {
       return NextResponse.json({
@@ -144,14 +147,14 @@ export async function DELETE(
       }, { status: 404 });
     }
 
-    await TrainingSessionModel.findByIdAndDelete(params.id);
+    await TrainingSessionModel.findByIdAndDelete(id);
 
     await logAction({
       title: '🏋️ Training Session Deleted',
       description: `Training session at ${existingSession.location} on ${formatDate(existingSession.date)} deleted`,
       severity: ELogSeverity.CRITICAL,
       meta: {
-        sessionId: params.id,
+        sessionId: id,
         location: existingSession.location,
         date: existingSession.date,
       },
