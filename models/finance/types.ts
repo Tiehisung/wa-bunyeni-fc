@@ -3,6 +3,8 @@
  * Defines the shape of all data structures used in the system
  */
 
+import { ETransactionType } from "@/types/finance.interface"
+
  
 export enum IncomeCategory {
     SPONSORSHIP = "sponsorship",          // funds from local partners
@@ -32,7 +34,7 @@ export enum ExpenseCategory {
 // Base transaction interface
 export interface ITransaction {
     _id?: string
-    type: TransactionType
+    type: ETransactionType
     amount: number
     category: IncomeCategory | ExpenseCategory
     description: string

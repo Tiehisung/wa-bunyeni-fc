@@ -25,7 +25,7 @@ const reportSchema = new Schema<IReport & Document>(
                 required: true,
                 validate: {
                     validator: function (v: Date) {
-                        return v > (this as { period: { startDate: Date } }).period.startDate
+                        return v > (this as unknown as { period: { startDate: Date } }).period.startDate
                     },
                     message: "End date must be after start date",
                 },

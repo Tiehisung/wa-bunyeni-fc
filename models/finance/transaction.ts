@@ -43,7 +43,7 @@ const transactionSchema = new Schema<ITransaction & Document>(
         date: {
             type: String,
             required: [true, "Transaction date is required"],
-            default: () => new Date(),
+            default: () => new Date().toISOString(),
         },
         notes: {
             type: String,
