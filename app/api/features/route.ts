@@ -1,10 +1,12 @@
-import { getErrorMessage, removeEmptyKeys } from "@/lib";
+import {   removeEmptyKeys } from "@/lib";
 import connectDB from "@/config/db.config";
 import { NextRequest, NextResponse } from "next/server";
 import { logAction } from "../logs/helper";
 import FeatureModel from "@/models/feature";
 import { QueryFilter } from "mongoose";
-import { ELogSeverity } from "@/types/log";
+import { ELogSeverity } from "@/types/log.interface";
+import { getApiErrorMessage } from "@/lib/error-api";
+ 
 
 
 connectDB();
@@ -67,7 +69,7 @@ export async function POST(request: NextRequest) {
 
     } catch (error) {
         return NextResponse.json({
-            message: getErrorMessage(error),
+            message: getApiErrorMessage(error),
             success: false,
         });
     }

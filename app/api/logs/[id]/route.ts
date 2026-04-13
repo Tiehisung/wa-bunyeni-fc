@@ -1,108 +1,85 @@
-import { NextRequest, NextResponse } from "next/server";
-import UserModel from "@/models/user";
-import { ISession, IUser } from "@/types/user";
-import connectDB from "@/config/db.config";
-import { getErrorMessage } from "@/lib";
-import { auth } from "@/auth";
-
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
+// app/api/logs/[id]/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+ 
+import { auth } from '@/auth';
+import connectDB from '@/config/db.config';
+import { getApiErrorMessage } from '@/lib/error-api';
+import LogModel from '@/models/logs';
+import { LoggerService } from '@/shared/log.service';
+ 
 
 connectDB();
-export interface SessionIUser {
-  user: {
-    name: string;
-    image: string;
-    role: IUser['role'];
-    email: string;
-  };
-}
+
+// GET /api/logs/[id] - Get single log
 export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const users = await UserModel.findById((await params).id);
-  return NextResponse.json(users);
-}
-
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  request: NextRequest,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const session = (await auth())
-    if ((session?.user as ISession['user'])?.role !== "super_admin")
+    const session = await auth();
+
+    if (!session || !['admin', 'super_admin', 'coach', 'player'].includes(session.user?.role || '')) {
       return NextResponse.json({
         success: false,
-        message: "You are not authorized to perform this action.",
-      });
+        message: 'Unauthorized',
+      }, { status: 401 });
+    }
 
-    const data = await req.json();
+    const log = await LogModel.findById(params.id).lean();
 
-    const updated = await UserModel.findByIdAndUpdate((await params).id, {
-      $set: { ...data },
-    });
+    if (!log) {
+      return NextResponse.json({
+        success: false,
+        message: 'Log not found',
+      }, { status: 404 });
+    }
+
     return NextResponse.json({
-      message: "User updated",
       success: true,
-      data: updated,
+      data: log,
     });
   } catch (error) {
+    LoggerService.error('Failed to fetch log', error);
     return NextResponse.json({
       success: false,
-      message: getErrorMessage(error),
-    });
+      message: getApiErrorMessage(error, 'Failed to fetch log'),
+    }, { status: 500 });
   }
 }
 
-// Engage/Disengage manager
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const admin = await UserModel.findById((await params).id);
-    admin.isActive = !admin.isActive;
-    admin.save();
-
-    return NextResponse.json({
-      message: "User updated",
-      success: true,
-      data: admin,
-    });
-  } catch (error) {
-    console.log({ error });
-    return NextResponse.json({
-      success: false,
-      message: "Failed to update user",
-      error: error,
-    });
-  }
-}
+// DELETE /api/logs/[id] - Delete specific log (admin only)
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  request: NextRequest,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const session = (await auth())
-    if ((session?.user as ISession['user'])?.role !== "super_admin")
+    const session = await auth();
+
+    if (session?.user?.role !== 'super_admin') {
       return NextResponse.json({
         success: false,
-        message: "You are not authorized to perform this action.",
-      });
-    const deleted = await UserModel.findByIdAndDelete((await params).id);
+        message: 'Unauthorized - Super admin access required',
+      }, { status: 401 });
+    }
+
+    const log = await LogModel.findByIdAndDelete(params.id);
+
+    if (!log) {
+      return NextResponse.json({
+        success: false,
+        message: 'Log not found',
+      }, { status: 404 });
+    }
 
     return NextResponse.json({
-      message: "User deleted",
       success: true,
-      data: deleted,
+      message: 'Log deleted successfully',
     });
   } catch (error) {
-    console.log({ error });
+    LoggerService.error('Failed to delete log', error);
     return NextResponse.json({
       success: false,
-      message: "Failed to delete user",
-      error: error,
-    });
+      message: getApiErrorMessage(error, 'Failed to delete log'),
+    }, { status: 500 });
   }
 }

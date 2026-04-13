@@ -1,4 +1,4 @@
-import { getErrorMessage, } from "@/lib";
+ 
 import connectDB from "@/config/db.config";
 import NewsModel from "@/models/news";
 import { NextRequest, NextResponse } from "next/server";
@@ -6,9 +6,12 @@ import { QueryFilter } from "mongoose";
 import ArchiveModel from "@/models/Archives";
 import { EArchivesCollection } from "@/types/archive.interface";
 import { logAction } from "../../logs/helper";
-import { ELogSeverity } from "@/types/log";
+ 
 import { formatDate } from "@/lib/timeAndDate";
-import { slugIdFilters } from "@/lib/api";
+import { slugIdFilters } from "@/lib/slug";
+import { ELogSeverity } from "@/types/log.interface";
+import { getApiErrorMessage } from "@/lib/error-api";
+ 
 
 connectDB();
 
@@ -54,7 +57,7 @@ export async function DELETE(
         });
     } catch (error) {
         return NextResponse.json({
-            message: getErrorMessage(error, "Failed to delete! "),
+            message: getApiErrorMessage(error, "Failed to delete! "),
             success: false,
         });
     }
@@ -88,7 +91,7 @@ export async function PUT(
         });
     } catch (error) {
         return NextResponse.json({
-            message: getErrorMessage(error, "Failed to update! "),
+            message: getApiErrorMessage(error, "Failed to update! "),
             success: false,
         });
     }

@@ -1,5 +1,5 @@
-import { getErrorMessage } from "@/lib";
 import connectDB from "@/config/db.config";
+import { getApiErrorMessage } from "@/lib/error-api";
 import ArchiveModel from "@/models/Archives";
 import GalleryModel from "@/models/galleries";
 import MatchModel from "@/models/match";
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     return NextResponse.json({
-      message: getErrorMessage(error),
+      message: getApiErrorMessage(error),
       success: false,
     });
   }

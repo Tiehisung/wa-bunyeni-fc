@@ -1,5 +1,5 @@
+import { ECardType } from "@/types/card.interface";
 import mongoose, { Schema } from "mongoose";
-import { ECardType } from "../../../types/card.interface";
 
 export const cardSchema = new Schema(
   {

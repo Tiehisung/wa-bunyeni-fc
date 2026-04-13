@@ -1,151 +1,101 @@
-// app/api/donations/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/config/db.config';
-import { auth } from '@/auth';
-import DonationModel from '@/models/donation';
-import SponsorModel from '@/models/sponsor';
-import { removeEmptyKeys } from '@/lib';
-import { LoggerService } from '../../../shared/log.service';
-import { getApiErrorMessage } from '../../../lib/error-api';
-import { createGallery } from '../highlights/helper';
+import { removeEmptyKeys } from "@/lib";
+import connectDB from "@/config/db.config";
+import DonationModel from "@/models/donation";
+import SponsorModel from "@/models/sponsor";
+import { NextRequest, NextResponse } from "next/server";
+import { createGallery } from "@/app/api/highlights/helper";
+
 
 connectDB();
 
-// GET /api/donations - List all donations
-export async function GET(request: NextRequest) {
-    try {
-        const searchParams = request.nextUrl.searchParams;
-        const page = parseInt(searchParams.get('page') || '1');
-        const limit = parseInt(searchParams.get('limit') || '10');
-        const skip = (page - 1) * limit;
+export async function GET(request: NextRequest, { params }: { params: Promise<{ sponsorId: string }> }) {
+  const sponsorId = (await params).sponsorId
+  const { searchParams } = new URL(request.url);
+  const page = Number.parseInt(searchParams.get("page") || "1", 10);
 
-        const search = searchParams.get('donation_search') || '';
-        const sponsorId = searchParams.get('sponsorId') || '';
-        const fromDate = searchParams.get('fromDate') || '';
-        const toDate = searchParams.get('toDate') || '';
 
-        const regex = new RegExp(search, 'i');
-        const query: any = {};
+  const limit = Number.parseInt(searchParams.get("limit") || "10", 10);
+  const skip = (page - 1) * limit;
 
-        if (search) {
-            query.$or = [
-                { item: regex },
-                { description: regex },
-                { date: regex },
-                { category: regex },
-            ];
-        }
+  const search = searchParams.get("donation_search") || "";
 
-        if (sponsorId) {
-            query.sponsor = sponsorId;
-        }
+  const regex = new RegExp(search, "i");
 
-        if (fromDate || toDate) {
-            query.date = {};
-            if (fromDate) query.date.$gte = new Date(fromDate);
-            if (toDate) query.date.$lte = new Date(toDate);
-        }
+  let query = {}
 
-        const cleaned = removeEmptyKeys(query);
+  if (search) query = {
+    $or: [
+      { "item": regex },
+      { "description": regex },
+      { "date": regex },
+    ],
+    //  sponsor: new mongoose.Types.ObjectId(sponsorId)
+  }
+  if (sponsorId) query = { ...query, sponsor: sponsorId }
 
-        const donations = await DonationModel.find(cleaned)
-            .populate({ path: 'sponsor', select: 'name businessName logo' })
-            .populate('files')
-            .populate('createdBy', 'name role')
-            .limit(limit)
-            .skip(skip)
-            .lean()
-            .sort({ createdAt: 'desc' });
+  const cleaned = removeEmptyKeys(query)
 
-        const total = await DonationModel.countDocuments(cleaned);
+  const donations = await DonationModel.find(cleaned)
+    .populate({ path: "sponsor" })
+    .limit(limit)
+    .skip(skip)
+    .lean().sort({ createdAt: "desc" });
 
-        return NextResponse.json({
-            success: true,
-            data: donations,
-            pagination: {
-                page,
-                limit,
-                total,
-                pages: Math.ceil(total / limit),
-            },
-        });
-    } catch (error) {
-        LoggerService.error('Failed to fetch donations', error);
-        return NextResponse.json({
-            success: false,
-            message: getApiErrorMessage(error, 'Failed to fetch donations'),
-        }, { status: 500 });
-    }
+  const total = await DonationModel.countDocuments(cleaned)
+
+  return NextResponse.json({
+    success: true, data: donations, pagination: {
+      page,
+      limit,
+      total,
+      pages: Math.ceil(total / limit),
+    },
+  });
+}
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ sponsorId: string }> }
+) {
+  const sponsorId = (await params).sponsorId;
+  const { item, description, files, date } = await request.json();
+
+  const donated = await DonationModel.create({
+    item,
+    description,
+    files,
+    date,
+    sponsor: sponsorId,
+  });
+
+  await SponsorModel.findByIdAndUpdate(sponsorId, {
+    $push: { donations: donated._id },
+    $inc: { badge: 1 }
+  });
+
+  //Update gallery
+  if (files?.length > 0) {
+    const sponsor = await SponsorModel.findById(sponsorId)
+    createGallery({ title: item, description, files, tags: [sponsor.name ?? ''].filter(Boolean) })
+  }
+
+  return NextResponse.json({
+    message: "Donated successfully",
+    success: true,
+    data: donated,
+  });
 }
 
-// POST /api/donations - Create new donation
-export async function POST(request: NextRequest) {
-    try {
-        const session = await auth();
+//Revoke donation
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ sponsorId: string }> }
+) {
+  const sponsorId = (await params).sponsorId;
+  const donationId = await request.json();
+  await DonationModel.findByIdAndDelete(donationId);
+  await SponsorModel.findByIdAndUpdate(sponsorId, {
+    $pull: { donations: donationId },
+  });
 
-        if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
-            return NextResponse.json({
-                success: false,
-                message: 'Unauthorized',
-            }, { status: 401 });
-        }
-
-        const { sponsorId, item, description, files, date, value, category } = await request.json();
-
-        if (!sponsorId || !item) {
-            return NextResponse.json({
-                success: false,
-                message: 'Sponsor ID and item are required',
-            }, { status: 400 });
-        }
-
-        const donated = await DonationModel.create({
-            item,
-            description,
-            files,
-            date: date || new Date(),
-            sponsor: sponsorId,
-            value,
-            category: category || 'general',
-            createdBy: session.user?.id
-        });
-
-        // Update sponsor
-        await SponsorModel.findByIdAndUpdate(sponsorId, {
-            $push: { donations: donated._id },
-            $inc: {
-                badge: 1,
-                totalDonations: 1,
-                totalValue: value || 0,
-            }
-        });
-
-        // Create gallery if files exist
-        if (files?.length > 0) {
-            const sponsor = await SponsorModel.findById(sponsorId);
-            await createGallery({
-                title: item,
-                description: description || `Donation from ${sponsor?.name || sponsor?.businessName}`,
-                files,
-                tags: [sponsor?.name, sponsor?.businessName, category].filter(Boolean),
-            });
-        }
-
-        const populatedDonation = await DonationModel.findById(donated._id)
-            .populate('sponsor')
-            .populate('files')
-            .lean();
-
-        return NextResponse.json({
-            message: 'Donation recorded successfully',
-            success: true,
-            data: populatedDonation,
-        }, { status: 201 });
-    } catch (error) {
-        LoggerService.error('Failed to create donation', error);
-        return NextResponse.json({
-            message: getApiErrorMessage(error, 'Failed to create donation'),
-            success: false,
-        }, { status: 500 });
-    }
+  return NextResponse.json({ message: "Donation revoked.", success: true });
 }

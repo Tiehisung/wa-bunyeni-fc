@@ -4,7 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { logAction } from "../../logs/helper";
 import { IUser } from "@/types/user";
 import FeatureModel from "@/models/feature";
-import { ELogSeverity } from "@/types/log";
+import { ELogSeverity } from "@/types/log.interface";
+ 
 
 connectDB();
 export async function GET(_: NextRequest, { params }: { params: Promise<{ name: string }> }) {

@@ -1,5 +1,7 @@
-import { ILog } from "@/types/log";
+
+import { ELogSeverity, ILog } from "@/types/log.interface";
 import mongoose, { Schema } from "mongoose";
+ 
 
 const logSchema = new Schema(
   {
@@ -14,28 +16,17 @@ const logSchema = new Schema(
 
     // store the user email that triggered this log
     user: {},
-    
+
     severity: {
       type: String,
-      default: "info",
-      enum: ["info", "warning", "error", "critical"],
-    },
-
-    category: {
-      type: String,
-      default: "api",
-      enum: ["auth", "api", "db", "system", "ui", "other"],
-    },
-
-    source: {
-      type: String,
-      default: "user",
-      enum: ["admin", "user", "system", "other"],
+      default: ELogSeverity.INFO,
+      enum: Object.values(ELogSeverity),
     },
 
     meta: { type: mongoose.Schema.Types.Mixed },
 
     url: String,
+    createdBy: { _id: String, name: String, avatar: String } //As IUser
   },
   {
     timestamps: true,

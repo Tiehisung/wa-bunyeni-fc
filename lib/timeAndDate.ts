@@ -170,3 +170,31 @@ export const getYears = (
   }
   return asc ? years : years.sort((a, b) => b - a);
 };
+/**
+ * 
+ * @param date Date set as deadline.
+ * @param extraDays Optional for adjusting date.
+ * @returns  - { isPassed: true/false , deadline: datestring,}
+ */
+
+
+export const getDeadlineInfo = (
+  date: Date | string,
+  extraDays: number = 0,
+) => {
+  const base = new Date(date);
+  const today = new Date();
+
+  base.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+
+  const deadline = new Date(base);
+  deadline.setDate(deadline.getDate() + extraDays);
+
+  const isPassed = today >= deadline;
+
+  return {
+    isPassed,
+    deadline: formatDate(deadline,),
+  };
+};

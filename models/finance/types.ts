@@ -3,12 +3,7 @@
  * Defines the shape of all data structures used in the system
  */
 
-// Enums for type safety
-export enum TransactionType {
-    INCOME = "income",
-    EXPENSE = "expense",
-}
-
+ 
 export enum IncomeCategory {
     SPONSORSHIP = "sponsorship",          // funds from local partners
     DONATIONS = "donations",              // from supporters or individuals

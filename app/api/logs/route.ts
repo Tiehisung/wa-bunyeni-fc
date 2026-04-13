@@ -1,51 +1,82 @@
-import { NextRequest, NextResponse } from "next/server";
-import LogModel from "@/models/logs";
-import "@/models/user";
-import connectDB from "@/config/db.config";
-import { removeEmptyKeys } from "@/lib";
-export const dynamic = "force-dynamic";
+// app/api/logs/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/auth';
+import connectDB from '@/config/db.config';
+import { removeEmptyKeys } from '@/lib';
+import { getApiErrorMessage } from '@/lib/error-api';
+import LogModel from '@/models/logs';
+import { LoggerService } from '@/shared/log.service';
 
 connectDB();
+
+// GET /api/logs - List all logs
 export async function GET(request: NextRequest) {
+  try {
+    const session = await auth();
 
-  const { searchParams } = new URL(request.url);
-  const page = Number.parseInt(searchParams.get("page") || "1", 10);
-  const limit = Number.parseInt(searchParams.get("limit") || "20", 10);
+    if (!session || !['admin', 'super_admin', 'coach', 'player'].includes(session.user?.role || '')) {
+      return NextResponse.json({
+        success: false,
+        message: 'Unauthorized',
+      }, { status: 401 });
+    }
 
-  const search = searchParams.get("log_search") || "";
+    const searchParams = request.nextUrl.searchParams;
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const skip = (page - 1) * limit;
 
-  const skip = (page - 1) * limit;
+    const search = searchParams.get('log_search') || '';
+    const severity = searchParams.get('severity') || '';
+    const category = searchParams.get('category') || '';
+    const userId = searchParams.get('userId') || '';
+    const fromDate = searchParams.get('fromDate') || '';
+    const toDate = searchParams.get('toDate') || '';
 
-  const regex = new RegExp(search, "i");
-  const query = {
-    $or: [
-      { "title": regex },
-      { "severity": regex },
-      { "user.name": regex },
-      { "user.email": regex },
-      { "category": regex },
-    ],
-  };
+    const regex = new RegExp(search, 'i');
+    const query: any = {
+      $or: [
+        { title: regex },
+        { severity: regex },
+        { category: regex },
+      ],
+    };
 
-  const cleaned = removeEmptyKeys(query);
+    if (severity) query.severity = severity;
+    if (category) query.category = category;
+    if (userId) query.userId = userId;
 
-  const logs = await LogModel.find(cleaned)
-    .sort({ createdAt: 'desc' })
-    .skip(skip)
-    .limit(limit)
-    .lean();
+    if (fromDate || toDate) {
+      query.createdAt = {};
+      if (fromDate) query.createdAt.$gte = new Date(fromDate);
+      if (toDate) query.createdAt.$lte = new Date(toDate);
+    }
 
-  const total = await LogModel.countDocuments(cleaned);
-  return NextResponse.json({
-    success: true,
-    data: logs, pagination: {
-      page,
-      limit,
-      total,
-      pages: Math.ceil(total / limit),
-    },
-  });
+    const cleaned = removeEmptyKeys(query);
+
+    const logs = await LogModel.find(cleaned)
+      .sort({ createdAt: 'desc' })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    const total = await LogModel.countDocuments(cleaned);
+
+    return NextResponse.json({
+      success: true,
+      data: logs,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    LoggerService.error('Failed to fetch logs', error);
+    return NextResponse.json({
+      success: false,
+      message: getApiErrorMessage(error, 'Failed to fetch logs'),
+    }, { status: 500 });
+  }
 }
-
-
-
