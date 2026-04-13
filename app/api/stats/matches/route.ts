@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/config/db.config";
 import MatchModel from "@/models/match";
-ConnectMongoDb();
+
+connectDB();
+
 export async function GET() {
     try {
 
