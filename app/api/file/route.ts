@@ -5,7 +5,6 @@ import { IQueryResponse } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 import { IFileProps } from "@/types/file.interface";
 
-
 connectDB();
 
 //Update database file metadata

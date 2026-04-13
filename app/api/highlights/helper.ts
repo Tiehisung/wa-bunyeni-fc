@@ -8,7 +8,7 @@ export async function createGallery({
     title,
     description,
     files, tags,
-}: IGalleryProps) {
+}: IGallery) {
     try {
 
         const response = await fetch(apiConfig.galleries, {
