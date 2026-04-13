@@ -12,7 +12,7 @@ connectDB();
 // PATCH /api/training/[id]/note - Update session note
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const session = await auth();
@@ -27,7 +27,7 @@ export async function PATCH(
         const { note } = await request.json();
 
         const updated = await TrainingSessionModel.findByIdAndUpdate(
-            params.id,
+            (await params).id,
             {
                 $set: {
                     note,
