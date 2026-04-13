@@ -13,40 +13,36 @@ import PageLoader from "@/components/loaders/Page";
 import DataErrorAlert from "@/components/error/DataError";
 
 import useGetParam from "@/hooks/params";
+import { useParams } from "next/navigation";
 
 export default function PlayerProfilePage() {
-  const playerId = useGetParam("playerId");
+  const playerSlug = useParams().playerSlug;
 
   const { data: playersData, isLoading: playersLoading } =
     useGetPlayersQuery("");
+
   const { data: galleriesData, isLoading: galleriesLoading } =
-    useGetGalleriesQuery(`tags=${playerId}`);
+    useGetGalleriesQuery(`tags=${playerSlug}`);
   const {
     data: statsData,
     isLoading: statsLoading,
     error,
-  } = useGetPlayerStatsQuery(playerId || "");
+  } = useGetPlayerStatsQuery(playerSlug || "");
 
   const isLoading = playersLoading || galleriesLoading || statsLoading;
   const players = playersData;
   const galleries = galleriesData;
   const playerStats = statsData;
 
-  const player = players?.data?.find((p) => p._id === playerId);
+  const player = players?.data?.find((p) => p._id === playerSlug);
 
-  if (isLoading) {
-    return <PageLoader />;
-  }
 
-  if (!player) {
-    return <DataErrorAlert message={error} />;
-  }
 
   return (
     <>
       <main className="pl-2">
         <PlayerProfile
-          players={players?.data as IPlayer[]}
+           
           galleries={galleries?.data}
           stats={playerStats?.data}
         />

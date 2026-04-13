@@ -3,13 +3,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { IPlayer } from "@/types/player.interface";
 import { getInitials } from "@/lib";
-import useGetParam from "@/hooks/params";
 import Link from "next/link";
+import { useParams } from "next/navigation";
  
 
 export function PlayerHeadList({ players }: { players: IPlayer[] }) {
  
-  const currentPlayerId = useGetParam("playerId");
+  const {playerSlug} = useParams();
 
   if (!players || players.length === 0) {
     return null;
@@ -18,11 +18,11 @@ export function PlayerHeadList({ players }: { players: IPlayer[] }) {
   return (
     <div className="fixed top-20 -left-2 z-10 flex items-center gap-4 flex-col border rounded-full p-1 bg-secondary/20 backdrop:blur-xs shadow-md max-h-[45vh] w-fit overflow-y-auto _hideScrollbar">
       {players.map((player) => {
-        const isSelected = currentPlayerId === player?._id;
+        const isSelected = playerSlug === player?.slug;
 
         return (
           <Link
-            href={`/players/details?playerId=${player?._id}`}
+            href={`/players/${player?.slug}`}
             key={player?._id}
             title={`${player?.lastName?.[0]}. ${player?.firstName}`}
             className={
