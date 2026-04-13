@@ -10,8 +10,6 @@ cloudinary.config({
 
 export { cloudinary };
 
- 
-
 export const formatCloudinaryResponse = (file: any): ICloudinaryFile => {
     return {
         secure_url: file.secure_url,

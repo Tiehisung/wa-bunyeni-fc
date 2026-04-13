@@ -5,6 +5,7 @@ import connectDB from '@/config/db.config';
 import { EMatchStatus } from '@/types/match.interface';
 import MatchModel from '@/models/match';
 import { getApiErrorMessage } from '../../../../lib/error-api';
+import '@/shared/models.imports'
 
 connectDB();
 

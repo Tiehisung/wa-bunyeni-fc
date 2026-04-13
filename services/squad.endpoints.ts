@@ -8,32 +8,32 @@ const squadApi = api.injectEndpoints({
 
         // GET all squads
         getSquads: builder.query<IQueryResponse<ISquad[]>, string>({
-            query: (paramsString = '') => `/squads?${paramsString}`,
+            query: (paramsString = '') => `/squad?${paramsString}`,
             providesTags: ["Squads",'Matches'],
         }),
 
         // GET squad by ID
         getSquadById: builder.query<IQueryResponse<ISquad>, string>({
-            query: (id) => `/squads/${id}`,
+            query: (id) => `/squad/${id}`,
             providesTags: ["Squads",'Matches'],
         }),
 
         // GET squad by match
         getSquadByMatch: builder.query<IQueryResponse<ISquad>, string>({
-            query: (matchId) => `/squads/match/${matchId}`,
+            query: (matchId) => `/squad/match/${matchId}`,
             providesTags: ["Squads",'Matches'],
         }),
 
         // GET squad statistics
         getSquadStats: builder.query<IQueryResponse<any>, void>({
-            query: () => "/squads/stats",
+            query: () => "/squad/stats",
             providesTags: ["Squads",'Matches'],
         }),
 
         // CREATE squad
         createSquad: builder.mutation<IQueryResponse<ISquad>, Partial<ISquad>>({
             query: (body) => ({
-                url: "/squads",
+                url: "/squad",
                 method: "POST",
                 body,
             }),
@@ -43,7 +43,7 @@ const squadApi = api.injectEndpoints({
         // UPDATE squad
         updateSquad: builder.mutation<IQueryResponse<ISquad>, { id: string; body: Partial<ISquad> }>({
             query: ({ id, body }) => ({
-                url: `/squads/${id}`,
+                url: `/squad/${id}`,
                 method: "PUT",
                 body,
             }),
@@ -59,7 +59,7 @@ const squadApi = api.injectEndpoints({
             viceCaptain?: string;
         }>({
             query: ({ id, startingXI, substitutes, captain, viceCaptain }) => ({
-                url: `/squads/${id}/players`,
+                url: `/squad/${id}/players`,
                 method: "PATCH",
                 body: { startingXI, substitutes, captain, viceCaptain },
             }),
@@ -75,7 +75,7 @@ const squadApi = api.injectEndpoints({
             reason?: string;
         }>({
             query: ({ squadId, playerOut, playerIn, minute, reason }) => ({
-                url: `/squads/${squadId}/substitutions`,
+                url: `/squad/${squadId}/substitutions`,
                 method: "POST",
                 body: { playerOut, playerIn, minute, reason },
             }),
@@ -88,7 +88,7 @@ const squadApi = api.injectEndpoints({
             formation: string;
         }>({
             query: ({ id, formation }) => ({
-                url: `/squads/${id}/formation`,
+                url: `/squad/${id}/formation`,
                 method: "PATCH",
                 body: { formation },
             }),
@@ -98,7 +98,7 @@ const squadApi = api.injectEndpoints({
         // DELETE squad
         deleteSquad: builder.mutation<IQueryResponse<ISquad>, string>({
             query: (id) => ({
-                url: `/squads/${id}`,
+                url: `/squad/${id}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["Squads",'Matches'],

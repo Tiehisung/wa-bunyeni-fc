@@ -21,6 +21,10 @@ import Link from "next/link";
 import useGetParam from "@/hooks/params";
 import { SharePage } from "@/components/SocialShare";
 import Image from "next/image";
+import { useGetPlayerQuery } from "@/services/player.endpoints";
+import { useParams } from "next/navigation";
+import DataErrorAlert from "@/components/error/DataError";
+import PageLoader from "@/components/loaders/Page";
 
 const statsData = [
   { stat: "PAS", value: 82 },
@@ -32,18 +36,19 @@ const statsData = [
 ];
 
 interface PageProps {
-  players: IPlayer[];
   galleries?: IGallery[];
   stats?: IPlayerStats;
 }
 
-export default function PlayerProfile({
-  players,
-  galleries,
-  stats,
-}: PageProps) {
-  const playerId = useGetParam("playerId");
-  const player = players?.find((p) => p._id === playerId);
+export default function PlayerProfile({ galleries, stats }: PageProps) {
+  const { playerSlug } = useParams();
+  const {
+    data: playerData,
+    isLoading,
+    error,
+  } = useGetPlayerQuery((playerSlug as string) ?? "");
+
+  const player = playerData?.data;
 
   const { images } = usePlayerGalleryUtils(galleries);
   const slides = images?.slice(0, 10)?.map((file) => (
@@ -59,16 +64,12 @@ export default function PlayerProfile({
     </div>
   ));
 
-  if (!player) {
-    return (
-      <main className="min-h-screen bg-card flex flex-col items-center p-10">
-        <div className="text-center">
-          <h1 className="text-2xl font-semibold text-red-500">
-            Player not found
-          </h1>
-        </div>
-      </main>
-    );
+  if (isLoading) {
+    return <PageLoader />;
+  }
+
+  if (!error && !isLoading) {
+    return <DataErrorAlert message={error} />;
   }
 
   const averageRating =
@@ -240,8 +241,8 @@ export default function PlayerProfile({
           </div>
 
           <SharePage
-            title={`${player.firstName} ${player.lastName}`}
-            text={`Check out ${player.firstName} ${player.lastName} from Bunyeni FC!`}
+            title={`${player?.firstName} ${player?.lastName}`}
+            text={`Check out ${player?.firstName} ${player?.lastName} from Bunyeni FC!`}
           />
         </div>
 

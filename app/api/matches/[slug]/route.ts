@@ -11,7 +11,7 @@ import { logAction } from '../../logs/helper';
 import { formatDate } from '@/lib/timeAndDate';
 import { slugIdFilters } from '../../../../lib/slug';
 import { getApiErrorMessage } from '../../../../lib/error-api';
-
+import '@/shared/models.imports'
 connectDB();
 
 // GET /api/matches/[slug] - Get single match by slug or ID

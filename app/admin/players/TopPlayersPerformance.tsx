@@ -9,7 +9,7 @@ import { Goal, Medal } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useGetPlayersOverviewMetricsQuery } from "@/services/metrics.endpoints";
-import { getPositionIcon } from "@/configs/player";
+import { getPositionIcon } from "@/utils/player";
 
 export default function TopPerformingPlayers() {
   const { currentData } = useGetPlayersOverviewMetricsQuery({});
