@@ -17,14 +17,7 @@ export async function DELETE(
 ) {
     try {
         const session = await auth();
-
-        // Optional: Uncomment for auth check
-        // if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
-        //     return NextResponse.json({
-        //         success: false,
-        //         message: 'Unauthorized',
-        //     }, { status: 401 });
-        // }
+ 
 
         const team = await TeamModel.findByIdAndUpdate(
             (await params).id,

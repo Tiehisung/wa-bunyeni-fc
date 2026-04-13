@@ -1,24 +1,10 @@
 
-import connectDB from "@/config/db.config";
-import PlayerModel from "@/models/player";
-import { NextResponse } from "next/server";
+// app/api/test/route.ts
+import { NextResponse } from 'next/server';
 
-connectDB();
 export async function GET() {
-  try {
-    const mod = await PlayerModel.updateMany({}, { $set: { status: "current" } })
-    const players = await PlayerModel.find()
-
-
-    return NextResponse.json({
-      ok: true,
-      message: 'Test complete!',
-      data: mod,
-      players
-
-    })
-  } catch (error) {
-
-    return NextResponse.json({ ok: false, error }, { status: 500 })
-  }
+  return NextResponse.json({
+    success: true,
+    message: 'API is working!'
+  });
 }
