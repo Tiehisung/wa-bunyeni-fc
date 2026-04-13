@@ -1,28 +1,31 @@
-'use client'
-import { GalleryUploader } from "@/components/files/gallery-uploader";
-import { VideoUploader } from "@/components/files/video/uploader";
-import { ImageUploader } from "@/components/files/image-uploader";
-// import GroupedAdminSidebar from "../admin/(sidebar)/GroupedSidebarLinks";
-import { CloudinaryWidget } from "@/components/cloudinary/Cloudinary";
-import GlassmorphicTest from "./Glassmorphic";
+// app/test/page.tsx
+"use client";
+
+import { useGetPlayersQuery } from "@/services/player.endpoints";
+import { useEffect } from "react";
 
 export default function TestPage() {
+  const { data, isLoading, error, isError, status } = useGetPlayersQuery('');
+
+  console.log(data)
+
+  useEffect(() => {
+    console.log("🔍 RTK Query Debug:");
+    console.log("  - isLoading:", isLoading);
+    console.log("  - isError:", isError);
+    console.log("  - error:", error);
+    console.log("  - status:", status);
+    console.log("  - data:", data);
+  }, [data, isLoading, error, isError, status]);
+
+  if (isLoading) return <div>Loading... (check console for debug)</div>;
+  if (isError) return <div>Error: {JSON.stringify(error)}</div>;
+  if (!data) return <div>No data received</div>;
+
   return (
-    <div className="grid md:flex items-center ">
-      <main className="block p-5">
-        <GlassmorphicTest />
-        {/* <GroupedAdminSidebar /> */}
-        <ImageUploader onUpload={(url) => console.log(url)} />
-
-        <br />
-
-        <GalleryUploader />
-
-        <br />
-
-        <VideoUploader />
-        <CloudinaryWidget />
-      </main>
+    <div>
+      <h1>Players Loaded: {data.data?.length || 0}</h1>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );
 }

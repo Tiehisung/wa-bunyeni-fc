@@ -11,11 +11,11 @@ connectDB();
 // PATCH /api/training/[id]/attendance - Update attendance
 export async function PATCH(
     request: NextRequest,
-    { params }: { params:Promise< { id: string }> }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const session = await auth();
-
+        const id = (await params).id
         if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
             return NextResponse.json({
                 success: false,
@@ -33,7 +33,7 @@ export async function PATCH(
         }
 
         const updated = await TrainingSessionModel.findByIdAndUpdate(
-            (await params).id,
+            id,
             {
                 $set: {
                     attendance,
@@ -42,7 +42,7 @@ export async function PATCH(
                 },
                 $inc: { updateCount: 1 },
             },
-            { new: true }
+
         );
 
         if (!updated) {
