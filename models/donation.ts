@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { fileSchema } from "./file";
+ 
 
 const donationSchema = new Schema(
   {
@@ -16,6 +17,7 @@ const donationSchema = new Schema(
       ref: "sponsors",
       required: [true, "Sponsor required"],
     },
+    createdBy: { _id: String, name: String, avatar: String } //As IUser
   },
   { timestamps: true }
 );
