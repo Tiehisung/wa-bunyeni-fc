@@ -27,10 +27,11 @@ connectDB();
 // GET /api/players/[slug] - Get single player
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const filter = slugIdFilters(params.slug);
+    const slug = (await params).slug
+    const filter = slugIdFilters(slug);
 
     const player = await PlayerModel.findOne(filter)
       .populate({ path: 'galleries', populate: { path: 'files' } })
@@ -66,9 +67,10 @@ export async function GET(
 // PUT /api/players/[slug] - Update player
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const slug = (await params).slug
     const session = await auth();
 
     if (!session || !['admin', 'super_admin', 'player'].includes(session.user?.role || '')) {
@@ -78,7 +80,7 @@ export async function PUT(
       }, { status: 401 });
     }
 
-    const filter = slugIdFilters(params.slug);
+    const filter = slugIdFilters(slug);
     const formData = await request.json();
     const updates = { ...formData };
 
@@ -138,9 +140,10 @@ export async function PUT(
 // PATCH /api/players/[slug] - Partial update player
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const slug = (await params).slug
     const session = await auth();
 
     if (!session || !['admin', 'super_admin', 'player'].includes(session.user?.role || '')) {
@@ -150,7 +153,7 @@ export async function PATCH(
       }, { status: 401 });
     }
 
-    const filter = slugIdFilters(params.slug);
+    const filter = slugIdFilters(slug);
     const updates = await request.json();
 
     // Remove undefined or null values
