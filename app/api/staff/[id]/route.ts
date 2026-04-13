@@ -44,7 +44,7 @@ export async function GET(
 // PUT /api/staff/[id] - Update staff
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -62,7 +62,7 @@ export async function PUT(
     if (updates.email) {
       const existingStaff = await StaffModel.findOne({
         email: updates.email.toLowerCase().trim(),
-        _id: { $ne: params.id }
+        _id: { $ne: (await params).id }
       });
 
       if (existingStaff) {
@@ -75,7 +75,7 @@ export async function PUT(
     }
 
     const updated = await StaffModel.findByIdAndUpdate(
-      params.id,
+      (await params).id,
       {
         $set: {
           ...updates,
@@ -120,7 +120,7 @@ export async function PUT(
 // DELETE /api/staff/[id] - Delete staff
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -132,7 +132,7 @@ export async function DELETE(
       }, { status: 401 });
     }
 
-    const staffMember = await StaffModel.findById(params.id);
+    const staffMember = await StaffModel.findById((await params).id);
 
     if (!staffMember) {
       return NextResponse.json({
@@ -141,7 +141,7 @@ export async function DELETE(
       }, { status: 404 });
     }
 
-    const deleted = await StaffModel.findByIdAndDelete(params.id);
+    const deleted = await StaffModel.findByIdAndDelete((await params).id);
     await saveToArchive(staffMember, EArchivesCollection.USERS, '', request);
 
     await logAction({
