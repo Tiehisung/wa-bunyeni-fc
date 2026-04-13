@@ -6,7 +6,7 @@ export async function getGlobalPlayersStats() {
     const players = await PlayerModel.find({ isCurrentPlayer: true }).lean() as unknown as IPlayer[];
 
     const totalPlayers = players.length;
-    const activePlayers = players.filter(p => p.isCurrentPlayer).length;
+    const activePlayers = players.filter(p => p.status=='current').length;
     const inactivePlayers = totalPlayers - activePlayers;
 
     // Injuries
