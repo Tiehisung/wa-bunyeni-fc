@@ -1,7 +1,7 @@
 import cld from "cloudinary";
 const cloudinary = cld.v2;
 import connectDB from "@/config/db.config";
-import { IFileUpload } from "@/types/file.interface";
+ 
 
 
 connectDB();
@@ -13,8 +13,7 @@ export async function fileUploader({
     preset,
     folder,
     presetType,
-
-}: IFileUpload) {
+}: any) {
 
     try {
         if (!path)

@@ -1,6 +1,6 @@
 import { EPreset, EPresetType } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
-import { IFileProps, IFileUpload } from "@/types/file.interface";
+import { IFileProps, } from "@/types/file.interface";
 import cld from "cloudinary";
 import FileModel from "@/models/file";
 import connectDB from "@/config/db.config";
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     folder,
     presetType,
     description,
-  }: IFileUpload = await request.json();
+  }: any = await request.json();
 
 
   try {
