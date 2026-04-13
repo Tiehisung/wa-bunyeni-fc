@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/config/db.config';
 
 import { auth } from '@/auth';
-
 import { EMatchStatus } from '@/types/match.interface';
 import { removeEmptyKeys } from '@/lib';
 import MatchModel, { IPostMatch } from '@/models/match';
@@ -11,6 +10,7 @@ import { logAction } from '../logs/helper';
 import { slugify } from '@/lib/slugging';
 import { formatDate } from '@/lib/timeAndDate';
 import { getApiErrorMessage } from '../../../lib/error-api';
+import '@/shared/models.imports'
 
 connectDB();
 

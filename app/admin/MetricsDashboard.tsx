@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGetDashboardMetricsQuery } from "@/services/metrics.endpoints";
-import { getResultIcon, getResultTextColor } from "@/configs/match";
+import { getResultIcon, getResultTextColor } from "@/utils/match";
 
 interface MetricsDashboardProps {
   className?: string;

@@ -7,7 +7,6 @@ const matchSchema = new Schema(
   {
     title: { type: String },
     slug: { type: String, unique: [true, "Slug must be unique"] },
-    opponent: { type: Schema.Types.ObjectId, ref: "teams", required: true },
     date: { type: String, required: true },
     time: { type: String, required: true },
     status: {
@@ -15,6 +14,7 @@ const matchSchema = new Schema(
       enum: [...Object.values(EMatchStatus)],
       default: () => EMatchStatus.UPCOMING,
     },
+    opponent: { type: Schema.Types.ObjectId, ref: "teams", required: true },
     goals: [{ type: Schema.Types.ObjectId, ref: "goals" }],
     squad: { type: Schema.Types.ObjectId, ref: "squad" },
     cards: [{ type: Schema.Types.ObjectId, ref: "cards" }],
