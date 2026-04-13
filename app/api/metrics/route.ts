@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
   }
   const winRate = (((matchStats?.wins?.length ?? 0) / (matchMetrics?.length ?? 1)) * 100)?.toPrecision(1)
 
-  const goals = matchMetrics?.map(mm => mm.goals.kfc).flat().length ?? 0
+  const goals = matchMetrics?.map(mm => mm.goals.teamGoals).flat().length ?? 0
 
   const total = await PlayerModel.countDocuments({ status: EPlayerStatus.CURRENT })
 
