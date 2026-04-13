@@ -11,7 +11,7 @@ connectDB();
 // GET /api/mvps/player/[playerId] - Get MVPs by player
 export async function GET(
     request: NextRequest,
-    { params }: { params: { playerId: string } }
+    { params }: { params: Promise<{ playerId: string }> }
 ) {
     try {
         const searchParams = request.nextUrl.searchParams;
@@ -19,14 +19,14 @@ export async function GET(
         const limit = parseInt(searchParams.get('limit') || '10');
         const skip = (page - 1) * limit;
 
-        const mvps = await MvPModel.find({ player: params.playerId })
+        const mvps = await MvPModel.find({ player: (await params).playerId })
             .populate('match', 'title date competition opponent')
             .sort({ createdAt: 'desc' })
             .skip(skip)
             .limit(limit)
             .lean();
 
-        const total = await MvPModel.countDocuments({ player: params.playerId });
+        const total = await MvPModel.countDocuments({ player: (await params).playerId });
 
         return NextResponse.json({
             success: true,

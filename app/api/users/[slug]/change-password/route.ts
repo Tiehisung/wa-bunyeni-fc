@@ -15,7 +15,7 @@ connectDB();
 // POST /api/users/[slug]/change-password - Change user password
 export async function POST(
     request: NextRequest,
-    { params }: { params: { slug: string } }
+    { params }: { params: Promise<{ slug: string }> }
 ) {
     try {
         const session = await auth();
@@ -27,7 +27,7 @@ export async function POST(
             }, { status: 401 });
         }
 
-        const filter = slugIdFilters(params.slug);
+        const filter = slugIdFilters((await params).slug);
         const { currentPassword, newPassword } = await request.json();
 
         if (!currentPassword || !newPassword) {

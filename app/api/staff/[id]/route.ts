@@ -16,10 +16,10 @@ connectDB();
 // GET /api/staff/[id] - Get single staff
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const staffMember = await StaffModel.findById(params.id).lean();
+    const staffMember = await StaffModel.findById((await params).id).lean();
 
     if (!staffMember) {
       return NextResponse.json({

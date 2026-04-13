@@ -10,10 +10,10 @@ connectDB();
 // GET /api/mvps/match/[matchId] - Get MVP by match
 export async function GET(
     request: NextRequest,
-    { params }: { params: { matchId: string } }
+    { params }: { params: Promise<{ matchId: string }> }
 ) {
     try {
-        const mvp = await MvPModel.findOne({ match: params.matchId })
+        const mvp = await MvPModel.findOne({ match: (await params).matchId })
             .populate('player', 'name number position avatar')
             .lean();
 

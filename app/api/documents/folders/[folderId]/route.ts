@@ -13,10 +13,11 @@ connectDB();
 // GET /api/documents/folders/[folderId] - Get single folder
 export async function GET(
     request: NextRequest,
-    { params }: { params: { folderId: string } }
+    { params }: { params: Promise<{ folderId: string }> }
 ) {
     try {
-        const folder = await FolderModel.findById(params.folderId)
+        const folderId = (await params).folderId
+        const folder = await FolderModel.findById(folderId)
             .populate('documents')
             .populate('createdBy', 'name role')
             .lean();
@@ -44,9 +45,10 @@ export async function GET(
 // PUT /api/documents/folders/[folderId] - Update folder
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { folderId: string } }
+  { params }: { params: Promise<{ folderId: string }> }
 ) {
     try {
+        const folderId = (await params).folderId
         const session = await auth();
 
         if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -60,7 +62,7 @@ export async function PUT(
 
         if (updates.name) {
             const existingFolder = await FolderModel.findOne({ name: updates.name });
-            if (existingFolder && existingFolder._id.toString() !== params.folderId) {
+            if (existingFolder && existingFolder._id.toString() !== folderId) {
                 return NextResponse.json({
                     success: false,
                     message: 'Folder already exists',
@@ -69,7 +71,7 @@ export async function PUT(
         }
 
         const folder = await FolderModel.findByIdAndUpdate(
-            params.folderId,
+            folderId,
             {
                 $set: {
                     ...updates,
@@ -104,9 +106,10 @@ export async function PUT(
 // DELETE /api/documents/folders/[folderId] - Delete folder
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { folderId: string } }
+  { params }: { params: Promise<{ folderId: string }> }
 ) {
     try {
+        const folderId = (await params).folderId
         const session = await auth();
 
         if (session?.user?.role !== EUserRole.SUPER_ADMIN) {
@@ -116,7 +119,7 @@ export async function DELETE(
             }, { status: 403 });
         }
 
-        const folder = await FolderModel.findById(params.folderId);
+        const folder = await FolderModel.findById(folderId);
 
         if (!folder) {
             return NextResponse.json({
@@ -125,8 +128,8 @@ export async function DELETE(
             }, { status: 404 });
         }
 
-        await FolderModel.findByIdAndDelete(params.folderId);
-        await DocModel.deleteMany({ folder: params.folderId });
+        await FolderModel.findByIdAndDelete(folderId);
+        await DocModel.deleteMany({ folder: folderId });
 
         return NextResponse.json({
             success: true,

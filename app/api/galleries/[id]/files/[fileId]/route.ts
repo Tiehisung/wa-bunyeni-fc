@@ -13,9 +13,12 @@ connectDB();
 // DELETE /api/galleries/[id]/files/[fileId] - Remove file from gallery
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string; fileId: string } }
+    { params }: { params: Promise<{ id: string; fileId: string }> }
 ) {
     try {
+        const id = (await params).id
+        const fileId = (await params).fileId
+
         const session = await auth();
 
         if (!session) {
@@ -26,9 +29,9 @@ export async function DELETE(
         }
 
         const updatedGallery = await GalleryModel.findByIdAndUpdate(
-            params.id,
+            id,
             {
-                $pull: { files: params.fileId },
+                $pull: { files: fileId },
                 $set: { updatedAt: new Date(), updatedBy: session.user?.id },
             },
             { new: true }
@@ -41,7 +44,7 @@ export async function DELETE(
             }, { status: 404 });
         }
 
-        await FileModel.findByIdAndDelete(params.fileId);
+        await FileModel.findByIdAndDelete(fileId);
 
         return NextResponse.json({
             message: 'File removed from gallery successfully',

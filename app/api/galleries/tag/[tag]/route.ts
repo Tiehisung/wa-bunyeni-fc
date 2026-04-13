@@ -11,15 +11,16 @@ connectDB();
 // GET /api/galleries/tag/[tag] - Get galleries by tag
 export async function GET(
     request: NextRequest,
-    { params }: { params: { tag: string } }
+    { params }: { params: Promise<{ tag: string }> }
 ) {
     try {
+
         const searchParams = request.nextUrl.searchParams;
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '10');
         const skip = (page - 1) * limit;
 
-        const galleries = await GalleryModel.find({ tags: params.tag })
+        const galleries = await GalleryModel.find({ tags: (await params).tag })
             .populate('files')
             .populate('createdBy', 'name role')
             .sort({ updatedAt: -1 })
@@ -27,7 +28,7 @@ export async function GET(
             .limit(limit)
             .lean();
 
-        const total = await GalleryModel.countDocuments({ tags: params.tag });
+        const total = await GalleryModel.countDocuments({ tags: (await params).tag });
 
         return NextResponse.json({
             success: true,

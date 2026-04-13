@@ -14,7 +14,7 @@ connectDB();
 // POST /api/users/[slug]/toggle-status - Toggle user status
 export async function POST(
     request: NextRequest,
-    { params }: { params: { slug: string } }
+    { params }: { params: Promise<{ slug: string }> }
 ) {
     try {
         const session = await auth();
@@ -26,7 +26,7 @@ export async function POST(
             }, { status: 401 });
         }
 
-        const filter = slugIdFilters(params.slug);
+        const filter = slugIdFilters((await params).slug);
         const { status } = await request.json();
 
         if (!['active', 'inactive', 'suspended'].includes(status)) {

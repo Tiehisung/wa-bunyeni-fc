@@ -17,10 +17,11 @@ connectDB();
 // GET /api/users/[slug] - Get single user
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params:Promise< { slug: string } >}
 ) {
   try {
-    const filter = slugIdFilters(params.slug);
+    const slug=(await params).slug
+    const filter = slugIdFilters(slug);
 
     const user = await UserModel.findOne(filter)
       .select('-password')
@@ -49,9 +50,10 @@ export async function GET(
 // PUT /api/users/[slug] - Update user
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+   { params }: { params:Promise< { slug: string } >}
 ) {
   try {
+    const slug=(await params).slug
     const session = await auth();
 
     if (!session) {
@@ -61,7 +63,7 @@ export async function PUT(
       }, { status: 401 });
     }
 
-    const filter = slugIdFilters(params.slug);
+    const filter = slugIdFilters(slug);
     const { password, ...data } = await request.json();
 
     const existingUser = await UserModel.findOne(filter);
@@ -122,12 +124,13 @@ export async function PUT(
 // DELETE /api/users/[slug] - Delete user
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+   { params }: { params:Promise< { slug: string } >}
 ) {
   try {
+    const slug=(await params).slug
     const session = await auth();
 
-    const filter = slugIdFilters(params.slug);
+    const filter = slugIdFilters(slug);
 
     const userToDelete = await UserModel.findOne(filter);
     if (!userToDelete) {

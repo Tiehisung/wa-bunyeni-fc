@@ -197,7 +197,7 @@ export async function PATCH(
 // DELETE /api/players/[slug] - Delete player
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     const session = await auth();
@@ -210,7 +210,7 @@ export async function DELETE(
       }, { status: 403 });
     }
 
-    const filter = slugIdFilters(params.slug);
+    const filter = slugIdFilters((await params).slug);
 
     const player = await PlayerModel.findOne(filter);
 
@@ -237,7 +237,7 @@ export async function DELETE(
 
     await logAction({
       title: 'Player Deleted',
-      description: `Player with id [${params.slug}] deleted on ${new Date().toLocaleString()}`,
+      description: `Player with id [${(await params).slug}] deleted on ${new Date().toLocaleString()}`,
       severity: ELogSeverity.CRITICAL,
       meta: deleted,
     });

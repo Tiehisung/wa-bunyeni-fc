@@ -13,9 +13,10 @@ connectDB();
 // GET /api/transactions/[id] - Get single transaction
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const id =(await params).id
         const session = await auth();
 
         if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
@@ -25,7 +26,7 @@ export async function GET(
             }, { status: 401 });
         }
 
-        const transaction = await TransactionModel.findById(params.id).lean();
+        const transaction = await TransactionModel.findById(id).lean();
 
         if (!transaction) {
             return NextResponse.json({
@@ -50,9 +51,10 @@ export async function GET(
 // PUT /api/transactions/[id] - Update transaction
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+      { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const id =(await params).id
         const session = await auth();
 
         if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
@@ -65,7 +67,7 @@ export async function PUT(
         const updates = await request.json();
         delete updates._id;
 
-        const existingTransaction = await TransactionModel.findById(params.id);
+        const existingTransaction = await TransactionModel.findById(id);
         if (!existingTransaction) {
             return NextResponse.json({
                 success: false,
@@ -74,7 +76,7 @@ export async function PUT(
         }
 
         const updatedTransaction = await TransactionModel.findByIdAndUpdate(
-            params.id,
+            id,
             { $set: { ...updates, updatedAt: new Date() } },
             { new: true, runValidators: true }
         );
@@ -98,9 +100,10 @@ export async function PUT(
 // DELETE /api/transactions/[id] - Delete transaction
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+      { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const id =(await params).id
         const session = await auth();
 
         if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
@@ -110,7 +113,7 @@ export async function DELETE(
             }, { status: 401 });
         }
 
-        const transaction = await TransactionModel.findById(params.id);
+        const transaction = await TransactionModel.findById(id);
         if (!transaction) {
             return NextResponse.json({
                 success: false,
@@ -118,7 +121,7 @@ export async function DELETE(
             }, { status: 404 });
         }
 
-        const deleted = await TransactionModel.findByIdAndDelete(params.id);
+        const deleted = await TransactionModel.findByIdAndDelete(id);
 
         LoggerService.info('💰 Transaction Deleted', `Transaction ${transaction.description} deleted`, request);
 

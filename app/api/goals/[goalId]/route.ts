@@ -15,10 +15,10 @@ connectDB();
 // GET /api/goals/[goalId] - Get single goal
 export async function GET(
     request: NextRequest,
-    { params }: { params: { goalId: string } }
+    { params }: { params: Promise<{ goalId: string }> }
 ) {
     try {
-        const goal = await GoalModel.findById(params.goalId)
+        const goal = await GoalModel.findById((await params).goalId)
             .populate('match', 'title date competition')
             .populate('scorer', 'name number position')
             .populate('assist', 'name number position')
@@ -47,7 +47,7 @@ export async function GET(
 // PUT /api/goals/[goalId] - Update goal
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { goalId: string } }
+    { params }: { params: Promise<{ goalId: string }> }
 ) {
     try {
         const session = await auth();
@@ -63,7 +63,7 @@ export async function PUT(
         delete updates._id;
 
         const updatedGoal = await GoalModel.findByIdAndUpdate(
-            params.goalId,
+            (await params).goalId,
             {
                 $set: {
                     ...updates,
@@ -98,9 +98,10 @@ export async function PUT(
 // DELETE /api/goals/[goalId] - Delete goal
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { goalId: string } }
+    { params }: { params: Promise<{ goalId: string }> }
 ) {
     try {
+        const goalId = (await params).goalId
         const session = await auth();
 
         if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -110,7 +111,7 @@ export async function DELETE(
             }, { status: 401 });
         }
 
-        const goalToDelete = await GoalModel.findById(params.goalId).lean();
+        const goalToDelete = await GoalModel.findById(goalId).lean();
 
         if (!goalToDelete) {
             return NextResponse.json({
@@ -121,7 +122,7 @@ export async function DELETE(
 
         const { forKFC, match, scorer, assist } = goalToDelete;
 
-        const deletedGoal = await GoalModel.findByIdAndDelete(params.goalId);
+        const deletedGoal = await GoalModel.findByIdAndDelete(goalId);
 
         if (!deletedGoal) {
             return NextResponse.json({
@@ -133,7 +134,7 @@ export async function DELETE(
         // Update Match - remove goal reference
         const updatedMatch = await MatchModel.findByIdAndUpdate(
             match,
-            { $pull: { goals: params.goalId } },
+            { $pull: { goals: goalId } },
             { new: true }
         );
 
@@ -141,13 +142,13 @@ export async function DELETE(
         if (forKFC && scorer) {
             await PlayerModel.findByIdAndUpdate(
                 scorer._id,
-                { $pull: { goals: params.goalId } }
+                { $pull: { goals: goalId } }
             );
 
             if (assist) {
                 await PlayerModel.findByIdAndUpdate(
                     assist._id,
-                    { $pull: { assists: params.goalId } }
+                    { $pull: { assists: goalId } }
                 );
             }
         }

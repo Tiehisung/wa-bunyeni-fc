@@ -14,7 +14,7 @@ connectDB();
 // GET /api/logs/severity/[severity] - Get logs by severity
 export async function GET(
     request: NextRequest,
-    { params }: { params: { severity: string } }
+    { params }: { params: Promise<{ severity: string }> }
 ) {
     try {
         const session = await auth();
@@ -26,7 +26,7 @@ export async function GET(
             }, { status: 401 });
         }
 
-        const { severity } = params;
+        const  severity  = (await params).severity;
         const searchParams = request.nextUrl.searchParams;
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '20');

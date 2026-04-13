@@ -8,7 +8,7 @@ connectDB();
 // GET /api/captains/history/[role] - Get captaincy history by role
 export async function GET(
     request: NextRequest,
-    { params }: { params: { role: string } }
+    { params }: { params: Promise<{ role: string }> }
 ) {
     try {
 
@@ -18,13 +18,13 @@ export async function GET(
         const limit = parseInt(searchParams.get('limit') || '20');
         const skip = (page - 1) * limit;
 
-        const history = await CaptaincyModel.find({ role: params.role })
+        const history = await CaptaincyModel.find({ role: (await params).role })
             .sort({ startDate: -1 })
             .skip(skip)
             .limit(limit)
             .lean();
 
-        const total = await CaptaincyModel.countDocuments({ role: params.role });
+        const total = await CaptaincyModel.countDocuments({ role: (await params).role });
 
         return NextResponse.json({
             success: true,

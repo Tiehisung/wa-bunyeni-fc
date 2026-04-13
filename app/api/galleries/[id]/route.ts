@@ -14,10 +14,11 @@ connectDB();
 // GET /api/galleries/[id] - Get single gallery
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const gallery = await GalleryModel.findById(params.id)
+    const id =(await params).id
+    const gallery = await GalleryModel.findById(id)
       .populate('files')
       .populate('createdBy', 'name role')
       .lean();
@@ -45,9 +46,10 @@ export async function GET(
 // PUT /api/galleries/[id] - Update gallery
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const id =(await params).id
     const session = await auth();
 
     if (!session) {
@@ -59,7 +61,7 @@ export async function PUT(
 
     const { files, tags, title, description } = await request.json();
 
-    const existingGallery = await GalleryModel.findById(params.id);
+    const existingGallery = await GalleryModel.findById(id);
     if (!existingGallery) {
       return NextResponse.json({
         success: false,
@@ -74,7 +76,7 @@ export async function PUT(
     }
 
     const updatedGallery = await GalleryModel.findByIdAndUpdate(
-      params.id,
+      id,
       {
         $set: {
           files: fileIds,
@@ -105,9 +107,10 @@ export async function PUT(
 // PATCH /api/galleries/[id] - Partial update gallery
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const id =(await params).id
     const session = await auth();
 
     if (!session) {
@@ -128,7 +131,7 @@ export async function PATCH(
     delete updates.files;
 
     const updatedGallery = await GalleryModel.findByIdAndUpdate(
-      params.id,
+      id,
       {
         $set: {
           ...updates,
@@ -163,9 +166,10 @@ export async function PATCH(
 // DELETE /api/galleries/[id] - Delete gallery
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const id =(await params).id
     const session = await auth();
 
     if (!session) {
@@ -175,7 +179,7 @@ export async function DELETE(
       }, { status: 401 });
     }
 
-    const gallery = await GalleryModel.findById(params.id);
+    const gallery = await GalleryModel.findById(id);
     if (!gallery) {
       return NextResponse.json({
         success: false,
@@ -187,7 +191,7 @@ export async function DELETE(
       await FileModel.deleteMany({ _id: { $in: gallery.files } });
     }
 
-    await GalleryModel.findByIdAndDelete(params.id);
+    await GalleryModel.findByIdAndDelete(id);
 
     return NextResponse.json({
       message: 'Gallery deleted successfully',

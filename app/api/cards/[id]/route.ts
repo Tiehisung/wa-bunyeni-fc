@@ -18,10 +18,11 @@ connectDB();
 // GET /api/cards/[id] - Get single card
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const card = await CardModel.findById(params.id)
+        const id = (await params).id
+        const card = await CardModel.findById(id)
             .populate('player', 'name number position avatar')
             .populate('match', 'title date competition opponent')
             .lean();
@@ -49,9 +50,10 @@ export async function GET(
 // PUT /api/cards/[id] - Update card
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const id = (await params).id
         const session = await auth();
 
         if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -65,7 +67,7 @@ export async function PUT(
         delete updates._id;
 
         const updatedCard = await CardModel.findByIdAndUpdate(
-            params.id,
+            id,
             {
                 $set: {
                     ...updates,
@@ -100,9 +102,10 @@ export async function PUT(
 // DELETE /api/cards/[id] - Delete card
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const id = (await params).id
         const session = await auth();
 
         if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
@@ -112,7 +115,7 @@ export async function DELETE(
             }, { status: 401 });
         }
 
-        const cardToDelete = await CardModel.findById(params.id);
+        const cardToDelete = await CardModel.findById(id);
 
         if (!cardToDelete) {
             return NextResponse.json({
@@ -121,13 +124,13 @@ export async function DELETE(
             }, { status: 404 });
         }
 
-        const deleted = await CardModel.findByIdAndDelete(params.id);
+        const deleted = await CardModel.findByIdAndDelete(id);
 
         // Update Player - remove card reference
         if (cardToDelete.player) {
             await PlayerModel.findByIdAndUpdate(
                 cardToDelete.player._id,
-                { $pull: { cards: params.id } }
+                { $pull: { cards: id } }
             );
         }
 
@@ -135,7 +138,7 @@ export async function DELETE(
         if (cardToDelete.match) {
             await MatchModel.findByIdAndUpdate(
                 cardToDelete.match._id,
-                { $pull: { cards: params.id } }
+                { $pull: { cards: id } }
             );
         }
 
@@ -153,7 +156,7 @@ export async function DELETE(
             description: `${cardToDelete.type} card for ${cardToDelete.player?.name} revoked`,
             severity: ELogSeverity.WARNING,
             meta: {
-                cardId: params.id,
+                cardId: id,
                 matchId: cardToDelete.match?._id,
                 playerId: cardToDelete.player?._id,
                 type: cardToDelete.type,

@@ -6,16 +6,14 @@ import CaptaincyModel from "@/models/captain";
 import { ELogSeverity } from "@/types/log.interface";
 import { NextRequest, NextResponse } from "next/server";
 
-
 connectDB();
 // PUT /api/captains/[id]/end - End a captain's tenure
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-
-
+        const id = (await params).id
         const session = await auth();
 
         if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -27,7 +25,7 @@ export async function PUT(
 
         const { reason } = await request.json();
 
-        const captaincy = await CaptaincyModel.findById(params.id);
+        const captaincy = await CaptaincyModel.findById(id);
 
         if (!captaincy) {
             return NextResponse.json({
@@ -44,7 +42,7 @@ export async function PUT(
         }
 
         const updated = await CaptaincyModel.findByIdAndUpdate(
-            params.id,
+            id,
             {
                 $set: {
                     isActive: false,
@@ -60,7 +58,7 @@ export async function PUT(
             description: `${captaincy.player?.name}'s tenure as ${captaincy.role} ended`,
             severity: ELogSeverity.INFO,
             meta: {
-                captaincyId: params.id,
+                captaincyId: id,
                 playerId: captaincy.player?._id,
                 role: captaincy.role,
                 reason,

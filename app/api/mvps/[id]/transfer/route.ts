@@ -15,9 +15,10 @@ connectDB();
 // POST /api/mvps/[id]/transfer - Transfer MVP to different player
 export async function POST(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const id = (await params).id
         const session = await auth();
 
         if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
@@ -36,7 +37,7 @@ export async function POST(
             }, { status: 400 });
         }
 
-        const currentMvp = await MvPModel.findById(params.id)
+        const currentMvp = await MvPModel.findById(id)
             .populate('player')
             .populate('match');
 
@@ -53,18 +54,18 @@ export async function POST(
         if (oldPlayerId) {
             await PlayerModel.findByIdAndUpdate(
                 oldPlayerId,
-                { $pull: { mvps: params.id } }
+                { $pull: { mvps: id } }
             );
         }
 
         // Add to new player
         await PlayerModel.findByIdAndUpdate(
             newPlayerId,
-            { $push: { mvps: params.id } }
+            { $push: { mvps: id } }
         );
 
         const updated = await MvPModel.findByIdAndUpdate(
-            params.id,
+            id,
             {
                 $set: {
                     player: newPlayerId,
@@ -72,7 +73,7 @@ export async function POST(
                     transferReason: reason,
                 },
             },
-            { new: true }
+           
         ).populate('player', 'name number position avatar')
             .populate('match', 'title date competition opponent');
 
@@ -81,7 +82,7 @@ export async function POST(
             description: `MVP transferred to ${updated?.player?.name}`,
             severity: ELogSeverity.WARNING,
             meta: {
-                mvpId: params.id,
+                mvpId: id,
                 fromPlayer: oldPlayerId,
                 toPlayer: newPlayerId,
                 reason,

@@ -12,7 +12,7 @@ connectDB();
 // PATCH /api/squads/[id]/substitutions - Add substitution
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const session = await auth();
@@ -34,7 +34,7 @@ export async function PATCH(
         }
 
         const updated = await SquadModel.findByIdAndUpdate(
-            params.id,
+            (await params).id,
             {
                 $push: {
                     substitutions: {

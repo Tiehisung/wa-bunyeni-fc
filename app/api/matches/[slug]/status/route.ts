@@ -11,9 +11,10 @@ connectDB();
 // PATCH /api/matches/[slug]/status - Update match status
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { slug: string } }
+    { params }: { params: Promise<{ slug: string }> }
 ) {
     try {
+        const slug = (await params).slug
         const session = await auth();
 
         if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -33,7 +34,7 @@ export async function PATCH(
         }
 
         const updated = await MatchModel.findOneAndUpdate(
-            { slug: params.slug },
+            { slug:  slug },
             { $set: { status, updatedAt: new Date() } },
             { new: true }
         );

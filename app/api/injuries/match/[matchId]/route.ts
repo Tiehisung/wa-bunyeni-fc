@@ -11,10 +11,10 @@ connectDB();
 // GET /api/injuries/match/[matchId] - Get injuries by match
 export async function GET(
     request: NextRequest,
-    { params }: { params: { matchId: string } }
+    { params }: { params: Promise<{ matchId: string }> }
 ) {
     try {
-        const injuries = await InjuryModel.find({ match: params.matchId })
+        const injuries = await InjuryModel.find({ match: (await params).matchId })
             .sort({ minute: 'asc' })
             .lean();
 

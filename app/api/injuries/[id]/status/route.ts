@@ -11,7 +11,7 @@ connectDB();
 // PATCH /api/injuries/[id]/status - Update injury status
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params:Promise <{ id: string }> }
 ) {
     try {
         const session = await auth();
@@ -34,7 +34,7 @@ export async function PATCH(
         }
 
         const updatedInjury = await InjuryModel.findByIdAndUpdate(
-            params.id,
+            (await params).id,
             {
                 $set: {
                     status,
@@ -43,7 +43,7 @@ export async function PATCH(
                     recoveredAt: status === 'recovered' ? new Date() : undefined,
                 },
             },
-            { new: true }
+            
         ).populate('player', 'name number position avatar');
 
         if (!updatedInjury) {

@@ -15,10 +15,11 @@ connectDB();
 // GET /api/documents/[docId] - Get single document
 export async function GET(
     request: NextRequest,
-    { params }: { params: { docId: string } }
+    { params }: { params: Promise<{ docId: string }> }
 ) {
     try {
-        const document = await DocModel.findById(params.docId)
+        const docId = (await params).docId
+        const document = await DocModel.findById(docId)
             .populate('folder', 'name docsCount')
             .populate('createdBy', 'name role')
             .lean();
@@ -46,9 +47,10 @@ export async function GET(
 // PUT /api/documents/[docId] - Update document
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { docId: string } }
+      { params }: { params: Promise<{ docId: string }> }
 ) {
     try {
+        const docId = (await params).docId
         const session = await auth();
 
         if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -61,7 +63,7 @@ export async function PUT(
         const updates = await request.json();
 
         const updatedDoc = await DocModel.findByIdAndUpdate(
-            params.docId,
+            docId,
             {
                 $set: {
                     ...updates,
@@ -82,13 +84,13 @@ export async function PUT(
         // If folder changed, update folder associations
         if (updates.folder && updates.folder !== updatedDoc.folder) {
             await FolderModel.updateMany(
-                { documents: params.docId },
-                { $pull: { documents: params.docId } }
+                { documents: docId },
+                { $pull: { documents: docId } }
             );
 
             await FolderModel.findOneAndUpdate(
                 { name: updates.folder },
-                { $addToSet: { documents: params.docId } },
+                { $addToSet: { documents: docId } },
                 { upsert: true }
             );
         }
@@ -110,9 +112,10 @@ export async function PUT(
 // DELETE /api/documents/[docId] - Delete single document
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { docId: string } }
+      { params }: { params: Promise<{ docId: string }> }
 ) {
     try {
+        const docId = (await params).docId
         const session = await auth();
 
         if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -122,7 +125,7 @@ export async function DELETE(
             }, { status: 401 });
         }
 
-        const documentFile = await DocModel.findById(params.docId).lean();
+        const documentFile = await DocModel.findById(docId).lean();
 
         if (!documentFile) {
             return NextResponse.json({
@@ -133,18 +136,18 @@ export async function DELETE(
 
         await deleteCldAssets([documentFile as any]);
 
-        const deleteFromDb = await DocModel.findByIdAndDelete(params.docId);
+        const deleteFromDb = await DocModel.findByIdAndDelete(docId);
 
         await FolderModel.updateMany(
-            { documents: params.docId },
-            { $pull: { documents: params.docId } }
+            { documents: docId },
+            { $pull: { documents: docId } }
         );
 
         await logAction({
             title: `Document deleted - ${documentFile?.name ?? documentFile?.original_filename}`,
             description: `${documentFile?.original_filename} deleted from ${documentFile?.folder}`,
             severity: ELogSeverity.CRITICAL,
-            meta: { documentId: params.docId, folder: documentFile?.folder },
+            meta: { documentId: docId, folder: documentFile?.folder },
         });
 
         return NextResponse.json({

@@ -10,13 +10,13 @@ connectDB();
 // GET /api/goals/player/[playerId] - Get goals by player (scored or assisted)
 export async function GET(
     request: NextRequest,
-    { params }: { params: { playerId: string } }
+    { params }: { params: Promise<{ playerId: string }> }
 ) {
     try {
         const goals = await GoalModel.find({
             $or: [
-                { 'scorer._id': params.playerId },
-                { 'assist._id': params.playerId }
+                { 'scorer._id': (await params).playerId },
+                { 'assist._id': (await params).playerId }
             ]
         })
             .populate('match', 'title date competition')

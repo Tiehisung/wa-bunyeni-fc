@@ -16,10 +16,11 @@ connectDB();
 // GET /api/teams/[id] - Get single team
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const team = await TeamModel.findById(params.id).lean();
+    const id =(await params).id
+    const team = await TeamModel.findById(id).lean();
 
     if (!team) {
       return NextResponse.json({
@@ -44,9 +45,10 @@ export async function GET(
 // PUT /api/teams/[id] - Update team
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const id =(await params).id
     const session = await auth();
 
     // Optional: Uncomment for auth check
@@ -61,7 +63,7 @@ export async function PUT(
     delete teamData._id;
 
     const updated = await TeamModel.findByIdAndUpdate(
-      params.id,
+      id,
       {
         $set: {
           ...teamData,
@@ -69,7 +71,7 @@ export async function PUT(
           updatedBy: session?.user?.id,
         },
       },
-      { new: true, runValidators: true }
+      {  runValidators: true }
     );
 
     if (!updated) {
@@ -84,7 +86,7 @@ export async function PUT(
       description: 'Team details updated',
       severity: ELogSeverity.INFO,
       meta: {
-        teamId: params.id,
+        teamId: id,
         updates: Object.keys(teamData),
       },
     });
@@ -106,9 +108,10 @@ export async function PUT(
 // PATCH /api/teams/[id] - Partial update team
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const id =(await params).id
     const session = await auth();
 
     if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -128,7 +131,7 @@ export async function PATCH(
     delete updates._id;
 
     const updated = await TeamModel.findByIdAndUpdate(
-      params.id,
+      id,
       {
         $set: {
           ...updates,
@@ -163,9 +166,10 @@ export async function PATCH(
 // DELETE /api/teams/[id] - Delete team
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const id =(await params).id
     const session = await auth();
 
     // Optional: Uncomment for auth check
@@ -176,7 +180,7 @@ export async function DELETE(
     //     }, { status: 401 });
     // }
 
-    const teamToDelete = await TeamModel.findById(params.id);
+    const teamToDelete = await TeamModel.findById(id);
 
     if (!teamToDelete) {
       return NextResponse.json({
@@ -185,11 +189,11 @@ export async function DELETE(
       }, { status: 404 });
     }
 
-    const deleted = await TeamModel.findByIdAndDelete(params.id);
+    const deleted = await TeamModel.findByIdAndDelete(id);
 
     await ArchiveModel.create({
       sourceCollection: EArchivesCollection.TEAMS,
-      originalId: params.id,
+      originalId: id,
       data: teamToDelete,
       archivedAt: new Date(),
       archivedBy: session?.user?.id,
@@ -201,7 +205,7 @@ export async function DELETE(
       description: `Team ${teamToDelete.name} deleted on ${formatDate(new Date().toISOString())}`,
       severity: ELogSeverity.CRITICAL,
       meta: {
-        teamId: params.id,
+        teamId: id,
         clubId: teamToDelete.clubId,
         season: teamToDelete.season,
       },

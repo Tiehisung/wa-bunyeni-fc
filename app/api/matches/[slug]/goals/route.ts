@@ -14,9 +14,10 @@ connectDB();
 // POST /api/matches/[slug]/goals - Add goal to match
 export async function POST(
     request: NextRequest,
-    { params }: { params: { slug: string } }
+    { params }: { params: Promise<{ slug: string }> }
 ) {
     try {
+        const slug = (await params).slug
         const session = await auth();
 
         if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -26,7 +27,7 @@ export async function POST(
             }, { status: 401 });
         }
 
-        const filter = slugIdFilters(params.slug);
+        const filter = slugIdFilters( slug);
         const goalData = await request.json();
 
         const match = await MatchModel.findOne(filter);

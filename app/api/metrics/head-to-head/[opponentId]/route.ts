@@ -11,10 +11,10 @@ connectDB();
 // GET /api/metrics/head-to-head/[opponentId] - Get head-to-head metrics
 export async function GET(
     request: NextRequest,
-    { params }: { params: { opponentId: string } }
+    { params }: { params: Promise<{ opponentId: string }> }
 ) {
     try {
-        const matches = await MatchModel.find({ opponent: params.opponentId, status: 'FT' })
+        const matches = await MatchModel.find({ opponent: (await params).opponentId, status: 'FT' })
             .populate('opponent')
             .populate('goals') as IMatch[];
 

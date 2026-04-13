@@ -13,7 +13,7 @@ connectDB();
 // GET /api/transactions/type/[type] - Get transactions by type
 export async function GET(
     request: NextRequest,
-    { params }: { params: { type: string } }
+    { params }: { params: Promise<{ type: string }> }
 ) {
     try {
         const session = await auth();
@@ -25,7 +25,7 @@ export async function GET(
             }, { status: 401 });
         }
 
-        const { type } = params;
+        const   type   = (await params).type;
         const searchParams = request.nextUrl.searchParams;
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '20');

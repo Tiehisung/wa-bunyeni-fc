@@ -12,9 +12,10 @@ connectDB();
 // POST /api/fans/register/[userId] - Register as fan
 export async function POST(
     request: NextRequest,
-    { params }: { params: { userId: string } }
+    { params }: { params: Promise<{ userId: string }> }
 ) {
     try {
+        const userId=(await params).userId
         const session = await auth();
 
         if (!session) {
@@ -25,7 +26,7 @@ export async function POST(
         }
 
         const user = await UserModel.findByIdAndUpdate(
-            params.userId,
+          userId,
             {
                 isFan: true,
                 fanSince: new Date(),

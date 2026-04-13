@@ -11,13 +11,13 @@ connectDB();
 // POST /api/highlights/[highlightId]/view - Increment view count
 export async function POST(
     request: NextRequest,
-    { params }: { params: { highlightId: string } }
+    { params }: { params: Promise<{ highlightId: string }> }
 ) {
     try {
         const updated = await HighlightModel.findByIdAndUpdate(
-            params.highlightId,
+            (await params).highlightId,
             { $inc: { views: 1 } },
-            { new: true }
+            
         );
 
         if (!updated) {

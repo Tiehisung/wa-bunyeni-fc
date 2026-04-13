@@ -13,7 +13,7 @@ connectDB();
 // DELETE /api/teams/[id]/players/[playerId] - Remove player from team
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string; playerId: string } }
+    { params }: { params: Promise<{ id: string; playerId: string }> }
 ) {
     try {
         const session = await auth();
@@ -27,12 +27,12 @@ export async function DELETE(
         // }
 
         const team = await TeamModel.findByIdAndUpdate(
-            params.id,
+            (await params).id,
             {
-                $pull: { players: params.playerId },
+                $pull: { players: (await params).playerId },
                 $set: { updatedAt: new Date() },
             },
-            { new: true }
+        
         ).populate('players');
 
         if (!team) {

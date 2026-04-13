@@ -16,10 +16,11 @@ connectDB();
 // GET /api/injuries/[id] - Get single injury
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const injury = await InjuryModel.findById(params.id).lean();
+        const id = (await params).id
+        const injury = await InjuryModel.findById(id).lean();
 
         if (!injury) {
             return NextResponse.json({
@@ -44,9 +45,10 @@ export async function GET(
 // PUT /api/injuries/[id] - Update injury
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const id = (await params).id
         const session = await auth();
 
         if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -60,7 +62,7 @@ export async function PUT(
         delete updates._id;
 
         const updatedInjury = await InjuryModel.findByIdAndUpdate(
-            params.id,
+            id,
             {
                 $set: {
                     ...updates,
@@ -68,7 +70,7 @@ export async function PUT(
                     updatedBy: session.user?.id,
                 },
             },
-            { new: true, runValidators: true }
+            { runValidators: true }
         );
 
         if (!updatedInjury) {
@@ -83,7 +85,7 @@ export async function PUT(
             description: 'Injury record updated',
             severity: ELogSeverity.INFO,
             meta: {
-                injuryId: params.id,
+                injuryId: id,
                 updates: Object.keys(updates),
             },
         });
@@ -105,9 +107,10 @@ export async function PUT(
 // DELETE /api/injuries/[id] - Delete injury
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const id = (await params).id
         const session = await auth();
 
         if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
@@ -117,7 +120,7 @@ export async function DELETE(
             }, { status: 401 });
         }
 
-        const injuryToDelete = await InjuryModel.findById(params.id);
+        const injuryToDelete = await InjuryModel.findById(id);
 
         if (!injuryToDelete) {
             return NextResponse.json({
@@ -126,19 +129,19 @@ export async function DELETE(
             }, { status: 404 });
         }
 
-        const deletedInjury = await InjuryModel.findByIdAndDelete(params.id);
+        const deletedInjury = await InjuryModel.findByIdAndDelete(id);
 
         // Update Player - remove injury reference
         await PlayerModel.findByIdAndUpdate(
             injuryToDelete.player,
-            { $pull: { injuries: params.id } }
+            { $pull: { injuries: id } }
         );
 
         // Update Match - remove injury reference
         if (injuryToDelete.match) {
             await MatchModel.findByIdAndUpdate(
                 injuryToDelete.match,
-                { $pull: { injuries: params.id } }
+                { $pull: { injuries: id } }
             );
         }
 
@@ -147,7 +150,7 @@ export async function DELETE(
             description: 'Injury record deleted',
             severity: ELogSeverity.CRITICAL,
             meta: {
-                injuryId: params.id,
+                injuryId: id,
                 playerId: injuryToDelete.player,
             },
         });

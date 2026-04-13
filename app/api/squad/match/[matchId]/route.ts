@@ -11,10 +11,10 @@ connectDB();
 // GET /api/squads/match/[matchId] - Get squad by match
 export async function GET(
     request: NextRequest,
-    { params }: { params: { matchId: string } }
+    { params }: { params: Promise<{ matchId: string }> }
 ) {
     try {
-        const squad = await SquadModel.findOne({ match: params.matchId })
+        const squad = await SquadModel.findOne({ match: (await params).matchId })
             .populate('match')
             .lean();
 

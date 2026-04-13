@@ -14,9 +14,10 @@ connectDB();
 // POST /api/galleries/[id]/files - Add files to gallery
 export async function POST(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const id = (await params).id
         const session = await auth();
 
         if (!session) {
@@ -39,7 +40,7 @@ export async function POST(
         const fileIds = savedFiles.map(file => file._id);
 
         const updatedGallery = await GalleryModel.findByIdAndUpdate(
-            params.id,
+            id,
             {
                 $push: { files: { $each: fileIds } },
                 $set: { updatedAt: new Date(), updatedBy: session.user?.id },

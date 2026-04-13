@@ -10,10 +10,11 @@ connectDB();
 // GET /api/cards/match/[matchId] - Get cards by match
 export async function GET(
     request: NextRequest,
-    { params }: { params: { matchId: string } }
+    { params }: { params: Promise<{ matchId: string }> }
 ) {
     try {
-        const cards = await CardModel.find({ match: params.matchId })
+        const matchId = (await params).matchId
+        const cards = await CardModel.find({ match: matchId })
             .populate('player', 'name number position avatar')
             .sort({ minute: 'asc' })
             .lean();

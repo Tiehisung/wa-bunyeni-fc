@@ -1,23 +1,24 @@
 // app/api/highlights/[highlightId]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
- 
+
 import { auth } from '@/auth';
 import HighlightModel from '@/models/highlight';
 import connectDB from '@/config/db.config';
 import { getApiErrorMessage } from '@/lib/error-api';
 import { LoggerService } from '@/shared/log.service';
 import { logAction } from '../../logs/helper';
- 
+
 
 connectDB();
 
 // GET /api/highlights/[highlightId] - Get single highlight
 export async function GET(
   request: NextRequest,
-  { params }: { params: { highlightId: string } }
+  { params }: { params: Promise<{ highlightId: string }> }
 ) {
   try {
-    const highlight = await HighlightModel.findById(params.highlightId)
+    const highlightId = (await params).highlightId
+    const highlight = await HighlightModel.findById(highlightId)
       .populate('match')
       .populate('createdBy', 'name role')
       .lean();
@@ -45,9 +46,10 @@ export async function GET(
 // PUT /api/highlights/[highlightId] - Update highlight
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { highlightId: string } }
+  { params }: { params: Promise<{ highlightId: string }> }
 ) {
   try {
+    const highlightId = (await params).highlightId
     const session = await auth();
 
     if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -59,7 +61,7 @@ export async function PUT(
 
     const updates = await request.json();
 
-    const existingHighlight = await HighlightModel.findById(params.highlightId);
+    const existingHighlight = await HighlightModel.findById(highlightId);
     if (!existingHighlight) {
       return NextResponse.json({
         success: false,
@@ -68,7 +70,7 @@ export async function PUT(
     }
 
     const updatedHighlight = await HighlightModel.findByIdAndUpdate(
-      params.highlightId,
+      highlightId,
       {
         $set: {
           ...updates,
@@ -83,7 +85,7 @@ export async function PUT(
       title: `Highlight updated - [${updates.title || existingHighlight.title}]`,
       description: 'Highlight was updated',
       meta: {
-        highlightId: params.highlightId,
+        highlightId: highlightId,
         changes: Object.keys(updates),
       },
     });
@@ -105,9 +107,10 @@ export async function PUT(
 // PATCH /api/highlights/[highlightId] - Partial update highlight
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { highlightId: string } }
+  { params }: { params: Promise<{ highlightId: string }> }
 ) {
   try {
+    const highlightId = (await params).highlightId
     const session = await auth();
 
     if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -126,7 +129,7 @@ export async function PATCH(
     });
 
     const updatedHighlight = await HighlightModel.findByIdAndUpdate(
-      params.highlightId,
+      highlightId,
       {
         $set: {
           ...updates,
@@ -161,9 +164,10 @@ export async function PATCH(
 // DELETE /api/highlights/[highlightId] - Delete highlight
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { highlightId: string } }
+  { params }: { params: Promise<{ highlightId: string }> }
 ) {
   try {
+    const highlightId = (await params).highlightId
     const session = await auth();
 
     if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -173,7 +177,7 @@ export async function DELETE(
       }, { status: 401 });
     }
 
-    const deletedHighlight = await HighlightModel.findByIdAndDelete(params.highlightId);
+    const deletedHighlight = await HighlightModel.findByIdAndDelete(highlightId);
 
     if (!deletedHighlight) {
       return NextResponse.json({
@@ -186,7 +190,7 @@ export async function DELETE(
       title: `Highlight deleted - [${deletedHighlight.title}]`,
       description: 'Highlight was deleted',
       meta: {
-        highlightId: params.highlightId,
+        highlightId: highlightId,
         matchId: deletedHighlight.match,
         title: deletedHighlight.title,
       },

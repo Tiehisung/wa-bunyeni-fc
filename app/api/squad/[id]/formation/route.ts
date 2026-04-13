@@ -12,7 +12,7 @@ connectDB();
 // PATCH /api/squads/[id]/formation - Update formation
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const session = await auth();
@@ -27,9 +27,9 @@ export async function PATCH(
         const { formation, tactics } = await request.json();
 
         const updated = await SquadModel.findByIdAndUpdate(
-            params.id,
+            (await params).id,
             { $set: { formation, tactics } },
-            { new: true }
+     
         );
 
         if (!updated) {

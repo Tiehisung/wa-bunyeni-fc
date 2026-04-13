@@ -11,9 +11,10 @@ connectDB();
 // GET /api/documents/folders/[folderId]/documents - Get documents in folder
 export async function GET(
     request: NextRequest,
-    { params }: { params: { folderId: string } }
+    { params }: { params: Promise<{ folderId: string }> }
 ) {
     try {
+        const folderId = (await params).folderId
         const searchParams = request.nextUrl.searchParams;
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '20');
@@ -23,7 +24,7 @@ export async function GET(
         const regex = new RegExp(search, 'i');
 
         const query: any = {
-            folder: params.folderId,
+            folder: folderId,
         };
 
         if (search) {

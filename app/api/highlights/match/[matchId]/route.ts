@@ -11,7 +11,7 @@ connectDB();
 // GET /api/highlights/match/[matchId] - Get highlights by match
 export async function GET(
     request: NextRequest,
-    { params }: { params: { matchId: string } }
+    { params }: { params: Promise<{ matchId: string }> }
 ) {
     try {
         const searchParams = request.nextUrl.searchParams;
@@ -19,7 +19,7 @@ export async function GET(
         const limit = parseInt(searchParams.get('limit') || '10');
         const skip = (page - 1) * limit;
 
-        const highlights = await HighlightModel.find({ match: params.matchId })
+        const highlights = await HighlightModel.find({ match: (await params).matchId })
             .populate('match')
             .populate('createdBy', 'name role')
             .sort({ createdAt: -1 })
@@ -27,7 +27,7 @@ export async function GET(
             .limit(limit)
             .lean();
 
-        const total = await HighlightModel.countDocuments({ match: params.matchId });
+        const total = await HighlightModel.countDocuments({ match: (await params).matchId });
 
         return NextResponse.json({
             success: true,

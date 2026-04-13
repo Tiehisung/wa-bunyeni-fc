@@ -17,10 +17,11 @@ connectDB();
 // GET /api/matches/[slug] - Get single match by slug or ID
 export async function GET(
     request: NextRequest,
-    { params }: { params: { slug: string } }
+    { params }: { params: Promise<{ slug: string }> }
 ) {
     try {
-        const filter = slugIdFilters(params.slug);
+        const slug =(await params).slug
+        const filter = slugIdFilters(slug);
 
         const match = await MatchModel.findOne(filter)
             .populate('opponent')
@@ -52,9 +53,10 @@ export async function GET(
 // PUT /api/matches/[slug] - Update match
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { slug: string } }
+     { params }: { params: Promise<{ slug: string }> }
 ) {
     try {
+        const slug =(await params).slug
         const session = await auth();
 
         if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -64,7 +66,7 @@ export async function PUT(
             }, { status: 401 });
         }
 
-        const filter = slugIdFilters(params.slug);
+        const filter = slugIdFilters(slug);
         const body = await request.json();
         delete body._id;
 
@@ -107,9 +109,10 @@ export async function PUT(
 // PATCH /api/matches/[slug] - Partial update match
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { slug: string } }
+     { params }: { params: Promise<{ slug: string }> }
 ) {
     try {
+        const slug =(await params).slug
         const session = await auth();
 
         if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -119,7 +122,7 @@ export async function PATCH(
             }, { status: 401 });
         }
 
-        const filter = slugIdFilters(params.slug);
+        const filter = slugIdFilters(slug);
         const updates = await request.json();
 
         Object.keys(updates).forEach(key => {
@@ -158,9 +161,10 @@ export async function PATCH(
 // DELETE /api/matches/[slug] - Delete match
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { slug: string } }
+     { params }: { params: Promise<{ slug: string }> }
 ) {
     try {
+        const slug =(await params).slug
         const session = await auth();
 
         if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
@@ -170,7 +174,7 @@ export async function DELETE(
             }, { status: 401 });
         }
 
-        const filter = slugIdFilters(params.slug);
+        const filter = slugIdFilters(slug);
         const deleted = await MatchModel.findOneAndDelete(filter);
 
         if (!deleted) {

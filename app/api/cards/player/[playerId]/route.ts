@@ -11,22 +11,23 @@ connectDB();
 // GET /api/cards/player/[playerId] - Get cards by player
 export async function GET(
     request: NextRequest,
-    { params }: { params: { playerId: string } }
+    { params }: { params: Promise<{ playerId: string }> }
 ) {
     try {
+        const playerId = (await params).playerId
         const searchParams = request.nextUrl.searchParams;
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '10');
         const skip = (page - 1) * limit;
 
-        const cards = await CardModel.find({ player: params.playerId })
+        const cards = await CardModel.find({ player: playerId })
             .populate('match', 'title date competition opponent')
             .sort({ createdAt: 'desc' })
             .skip(skip)
             .limit(limit)
             .lean();
 
-        const total = await CardModel.countDocuments({ player: params.playerId });
+        const total = await CardModel.countDocuments({ player: playerId });
 
         return NextResponse.json({
             success: true,

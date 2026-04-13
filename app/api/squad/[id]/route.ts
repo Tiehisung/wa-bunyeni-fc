@@ -20,10 +20,11 @@ connectDB();
 // GET /api/squads/[id] - Get single squad
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const squad = await SquadModel.findById(params.id)
+    const id = (await params).id
+    const squad = await SquadModel.findById(id)
       .populate('match')
       .lean();
 
@@ -50,9 +51,10 @@ export async function GET(
 // PUT /api/squads/[id] - Update squad
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const id = (await params).id
     const session = await auth();
 
     if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -66,7 +68,7 @@ export async function PUT(
     delete updates._id;
 
     const updated = await SquadModel.findByIdAndUpdate(
-      params.id,
+      id,
       { $set: { ...updates } },
       { new: true, runValidators: true }
     ).populate('match', 'title date competition opponent');
@@ -83,7 +85,7 @@ export async function PUT(
       description: `Squad for ${updated.title} updated`,
       severity: ELogSeverity.INFO,
       meta: {
-        squadId: params.id,
+        squadId: id,
         updates: Object.keys(updates),
       },
     });
@@ -105,9 +107,10 @@ export async function PUT(
 // DELETE /api/squads/[id] - Delete squad
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const id = (await params).id
     const session = await auth();
 
     if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
@@ -117,7 +120,7 @@ export async function DELETE(
       }, { status: 401 });
     }
 
-    const squad = await SquadModel.findById(params.id);
+    const squad = await SquadModel.findById(id);
 
     if (!squad) {
       return NextResponse.json({
@@ -126,7 +129,7 @@ export async function DELETE(
       }, { status: 404 });
     }
 
-    const deleted = await SquadModel.findByIdAndDelete(params.id);
+    const deleted = await SquadModel.findByIdAndDelete(id);
 
     if (squad.match) {
       await MatchModel.findByIdAndUpdate(
@@ -142,7 +145,7 @@ export async function DELETE(
       description: `Squad for ${squad.title} deleted on ${formatDate(new Date().toISOString())}`,
       severity: ELogSeverity.CRITICAL,
       meta: {
-        squadId: params.id,
+        squadId: id,
         matchId: squad.match,
         playerCount: squad.players?.length,
       },

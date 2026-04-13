@@ -11,10 +11,10 @@ connectDB();
 // GET /api/goals/match/[matchId] - Get goals by match
 export async function GET(
     request: NextRequest,
-    { params }: { params: { matchId: string } }
+    { params }: { params: Promise<{ matchId: string }> }
 ) {
     try {
-        const goals = await GoalModel.find({ match: params.matchId })
+        const goals = await GoalModel.find({ match: (await params).matchId })
             .populate('scorer', 'name number position')
             .populate('assist', 'name number position')
             .sort({ minute: 'asc' })

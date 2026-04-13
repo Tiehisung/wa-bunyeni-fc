@@ -13,7 +13,7 @@ connectDB();
 // GET /api/transactions/category/[category] - Get transactions by category
 export async function GET(
     request: NextRequest,
-    { params }: { params: { category: string } }
+    { params }: { params: Promise<{ category: string } >}
 ) {
     try {
         const session = await auth();
@@ -25,7 +25,7 @@ export async function GET(
             }, { status: 401 });
         }
 
-        const { category } = params;
+        const  category   = (await params).category;
         const searchParams = request.nextUrl.searchParams;
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '20');

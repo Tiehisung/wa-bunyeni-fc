@@ -10,10 +10,10 @@ connectDB();
 // GET /api/metrics/player/[playerId] - Get player metrics
 export async function GET(
     request: NextRequest,
-    { params }: { params: { playerId: string } }
+    { params }: { params: Promise<{ playerId: string }> }
 ) {
     try {
-        const player = await PlayerModel.findById(params.playerId)
+        const player = await PlayerModel.findById((await params).playerId)
             .populate('goals')
             .populate('assists')
             .populate('cards')

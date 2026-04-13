@@ -7,12 +7,12 @@ connectDB()
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { playerId: string } }
+    { params }: { params:Promise< { playerId: string }> }
 ) {
     try {
 
 
-        const captaincies = await CaptaincyModel.find({ 'player._id': params.playerId })
+        const captaincies = await CaptaincyModel.find({ 'player._id': (await params).playerId })
             .sort({ startDate: -1 })
             .lean();
 

@@ -10,7 +10,7 @@ connectDB();
 // GET /api/teams/season/[season] - Get teams by season
 export async function GET(
     request: NextRequest,
-    { params }: { params: { season: string } }
+    { params }: { params: Promise<{ season: string }> }
 ) {
     try {
         const searchParams = request.nextUrl.searchParams;
@@ -18,15 +18,13 @@ export async function GET(
         const limit = parseInt(searchParams.get('limit') || '10');
         const skip = (page - 1) * limit;
 
-        const teams = await TeamModel.find({ season: params.season })
-            .populate('clubId', 'name logo')
-            .populate('logo')
+        const teams = await TeamModel.find({ season: (await params).season })
             .skip(skip)
             .limit(limit)
             .lean()
             .sort({ name: 'asc' });
 
-        const total = await TeamModel.countDocuments({ season: params.season });
+        const total = await TeamModel.countDocuments({ season: (await params).season });
 
         return NextResponse.json({
             success: true,

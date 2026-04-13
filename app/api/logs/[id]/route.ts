@@ -13,9 +13,10 @@ connectDB();
 // GET /api/logs/[id] - Get single log
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const id = (await params).id
     const session = await auth();
 
     if (!session || !['admin', 'super_admin', 'coach', 'player'].includes(session.user?.role || '')) {
@@ -25,7 +26,7 @@ export async function GET(
       }, { status: 401 });
     }
 
-    const log = await LogModel.findById(params.id).lean();
+    const log = await LogModel.findById(id).lean();
 
     if (!log) {
       return NextResponse.json({
@@ -50,9 +51,10 @@ export async function GET(
 // DELETE /api/logs/[id] - Delete specific log (admin only)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const id =(await params).id
     const session = await auth();
 
     if (session?.user?.role !== 'super_admin') {
@@ -62,7 +64,7 @@ export async function DELETE(
       }, { status: 401 });
     }
 
-    const log = await LogModel.findByIdAndDelete(params.id);
+    const log = await LogModel.findByIdAndDelete(id);
 
     if (!log) {
       return NextResponse.json({

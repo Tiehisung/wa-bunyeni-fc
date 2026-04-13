@@ -11,10 +11,10 @@ connectDB();
 // GET /api/metrics/season/[season] - Get season metrics
 export async function GET(
     request: NextRequest,
-    { params }: { params: { season: string } }
+    { params }: { params: Promise<{ season: string }> }
 ) {
     try {
-        const matches = await MatchModel.find({ status: 'FT', season: params.season })
+        const matches = await MatchModel.find({ status: 'FT', season: (await params).season })
             .populate('opponent')
             .populate('goals') as IMatch[];
 
@@ -34,7 +34,7 @@ export async function GET(
         return NextResponse.json({
             success: true,
             data: {
-                season: params.season,
+                season: (await params).season,
                 matchStats: {
                     wins: matchStats.wins.length,
                     draws: matchStats.draws.length,
