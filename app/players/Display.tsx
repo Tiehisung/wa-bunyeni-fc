@@ -1,3 +1,5 @@
+'use client'
+
 import Loader from "@/components/loaders/Loader";
 import { getAgeFromDOB } from "@/lib/timeAndDate";
 import { useGetPlayersQuery } from "@/services/player.endpoints";
