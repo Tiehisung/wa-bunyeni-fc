@@ -1,18 +1,21 @@
+'use client'
+
+import Loader from "@/components/loaders/Loader";
 import { getAgeFromDOB } from "@/lib/timeAndDate";
-import { IQueryResponse } from "@/types";
-import { IPlayer } from "@/types/player.interface";
+import { useGetPlayersQuery } from "@/services/player.endpoints";
 import Link from "next/link";
- 
 
-interface IProps {
-  players?: IQueryResponse<IPlayer[]>;
-}
+export default function OurPlayers() {
+  const { data, isLoading } = useGetPlayersQuery('');
 
-export default function OurPlayers({ players }: IProps) {
+  if (isLoading) return <Loader />;
+
+  const players = data?.data;
+  
   return (
     <div className=" py-6">
       <ul className="space-y-5">
-        {players?.data?.map((player) => (
+        {players?.map((player) => (
           <li key={player._id} className="border-b border-primary pb-6">
             <h2 className="font-bold">#{player?.number}</h2>
 

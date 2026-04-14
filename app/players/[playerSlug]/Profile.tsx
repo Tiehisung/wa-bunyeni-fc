@@ -21,10 +21,14 @@ import Link from "next/link";
 import useGetParam from "@/hooks/params";
 import { SharePage } from "@/components/SocialShare";
 import Image from "next/image";
-import { useGetPlayerQuery } from "@/services/player.endpoints";
+import {
+  useGetPlayerQuery,
+  useGetPlayerStatsQuery,
+} from "@/services/player.endpoints";
 import { useParams } from "next/navigation";
 import DataErrorAlert from "@/components/error/DataError";
 import PageLoader from "@/components/loaders/Page";
+import { useGetGalleriesQuery } from "@/services/gallery.endpoints";
 
 const statsData = [
   { stat: "PAS", value: 82 },
@@ -36,11 +40,11 @@ const statsData = [
 ];
 
 interface PageProps {
-  galleries?: IGallery[];
+   
   stats?: IPlayerStats;
 }
 
-export default function PlayerProfile({ galleries, stats }: PageProps) {
+export default function PlayerProfile({   stats }: PageProps) {
   const { playerSlug } = useParams();
   const {
     data: playerData,
@@ -49,8 +53,14 @@ export default function PlayerProfile({ galleries, stats }: PageProps) {
   } = useGetPlayerQuery((playerSlug as string) ?? "");
 
   const player = playerData?.data;
+  const { data: galleriesData } = useGetGalleriesQuery(`tags=${player?._id}`, {
+    skip: !player?._id,
+  });
+  const { data: statsData } = useGetPlayerStatsQuery(player?._id as string, {
+    skip: !player?._id,
+  });
 
-  const { images } = usePlayerGalleryUtils(galleries);
+  const { images } = usePlayerGalleryUtils(galleriesData?.data);
   const slides = images?.slice(0, 10)?.map((file) => (
     <div key={file?.public_id as string}>
       <Image
@@ -251,7 +261,7 @@ export default function PlayerProfile({ galleries, stats }: PageProps) {
 
       <section className="h-64 w-full flex justify-center">
         <ResponsiveContainer width="100%" height="100%">
-          <RadarChart data={statsData}>
+          <RadarChart data={statsData as any}>
             <PolarGrid stroke="#333" />
             <PolarAngleAxis dataKey="stat" tick={{ fontSize: 12 }} />
             <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} />
@@ -269,7 +279,7 @@ export default function PlayerProfile({ galleries, stats }: PageProps) {
         <div className="my-6 _title p-4 flex items-center gap-6 justify-between">
           <span>GALLERIES</span>
         </div>
-        <GalleryGrid galleries={galleries as IGallery[]} />
+        <GalleryGrid galleries={galleriesData?.data as IGallery[]} />
       </section>
     </main>
   );

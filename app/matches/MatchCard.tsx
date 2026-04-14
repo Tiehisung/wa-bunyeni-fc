@@ -1,6 +1,8 @@
+"use client";
+
 import { AVATAR } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import {   checkTeams } from "@/lib/compute/match";
+import { checkTeams } from "@/lib/compute/match";
 import {
   formatDate,
   formatTimeToAmPm,
@@ -12,8 +14,11 @@ import { Users } from "lucide-react";
 
 import SquadCard from "../admin/squad/SquadCard";
 import { IMatch } from "@/types/match.interface";
+import { Button } from "@/components/buttons/Button";
+import { useRouter } from "next/navigation";
 
 export function MatchFixtureCard({ match }: { match?: IMatch }) {
+  const router = useRouter();
   const { away, home } = checkTeams(match);
   const status = match?.status;
 
@@ -73,26 +78,33 @@ export function MatchFixtureCard({ match }: { match?: IMatch }) {
           )}
         </div>
       </div>
+
       <hr />
-      <div>
-        <div className="flex items-center text-sm gap-5">
-          {match?.squad && (
-            <DIALOG
-              trigger={
-                <>
-                  <Users size={16} />
-                  Squad
-                </>
-              }
-              title=""
-              className="min-w-[80vw]"
-              variant={"ghost"}
-            >
-              <SquadCard match={match} />
-            </DIALOG>
-          )}
-        </div>
-      </div>
+
+      <footer className="flex items-center justify-between text-sm gap-5">
+        {match?.squad && (
+          <DIALOG
+            trigger={
+              <>
+                <Users size={16} />
+                Squad
+              </>
+            }
+            title=""
+            className="min-w-[80vw]"
+            variant={"ghost"}
+          >
+            <SquadCard match={match} />
+          </DIALOG>
+        )}
+
+        <Button
+          onClick={() => router.push("/matches/" + (match?.slug || match?._id))}
+          primaryText="Details"
+          variant="secondary"
+          className="rounded-full px-4 "
+        />
+      </footer>
     </div>
   );
 }

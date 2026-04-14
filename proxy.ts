@@ -1,79 +1,72 @@
 import { NextRequest, NextResponse } from "next/server";
-import {jwtDecode,} from "jwt-decode";
-import { EUserRole } from "./types/user";
+import { auth } from "./auth";
+import { EUserRole, ISession } from "./types/user";
 
-interface JwtPayload {
-    role: EUserRole;
-    exp: number;
-}
-
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
+    const session = (await auth()) as ISession | null;
+    const role = session?.user?.role;
 
-    const token = request.cookies.get("accessToken")?.value;
+    // const resolvedPathname = pathname.startsWith('/auth/login') ? (role == 'player' ? '/players/dashboard' : role?.includes('admin') ? '/admin' : '/') : pathname
 
-    // console.log('token',token)
-
-    let role: EUserRole | null = null;
-
-    if (token) {
-        try {
-            const decoded = jwtDecode<JwtPayload>(token);
-            role = decoded.role;
-
-            // Optional: check expiration
-            if (decoded.exp * 1000 < Date.now()) {
-                role = null;
-            }
-        } catch {
-            role = null;
-        }
-    }
-
+    // Define protected paths
     const isAdminPath = pathname.startsWith("/admin");
     const isPlayerDashboardPath = pathname.startsWith("/players/dashboard");
+
+    // Check if path is protected
     const isProtectedPath = isAdminPath || isPlayerDashboardPath;
 
+    // If NOT a protected path, allow access
     if (!isProtectedPath) {
         return NextResponse.next();
     }
 
-    // ❌ Not logged in
-    if (!token || !role) {
+    // If no session, redirect to login
+    if (!session?.user) {
         return NextResponse.redirect(
             new URL(`/auth/signin?callbackUrl=${encodeURIComponent(pathname)}`, request.url)
         );
     }
 
-    // ✅ Admin routes
-    if (isAdminPath) {
-        if (role.includes(EUserRole.ADMIN)) {
-            return NextResponse.next();
-        }
 
+    // **FIXED LOGIC:**
+    // Check admin access
+    if (isAdminPath) {
+
+        // Allow only admins
+        if (role?.includes(EUserRole.ADMIN)) {
+            return NextResponse.next(); // ✅ Admin can access admin routes
+        }
+        // Redirect non-admins
         if (role === EUserRole.PLAYER) {
             return NextResponse.redirect(new URL("/players/dashboard", request.url));
         }
-
         return NextResponse.redirect(new URL("/auth/not-authorized", request.url));
     }
 
-    // ✅ Player routes
+    // Check player dashboard access
     if (isPlayerDashboardPath) {
-        if (role === EUserRole.PLAYER) {
-            return NextResponse.next();
-        }
 
-        if (role.includes(EUserRole.ADMIN)) {
+        // Allow only players
+        if (role === EUserRole.PLAYER) {
+            return NextResponse.next(); // ✅ Player can access player dashboard
+        }
+        // Redirect non-players
+        if (role?.includes(EUserRole.ADMIN)) {
             return NextResponse.redirect(new URL("/admin", request.url));
         }
-
         return NextResponse.redirect(new URL("/auth/not-authorized", request.url));
     }
 
+
+
+    // Default fallback (shouldn't reach here for protected paths)
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/admin/:path*", "/players/dashboard/:path*"],
+    matcher: [
+        "/admin/:path*",
+        "/players/dashboard/:path*",
+    ],
 };

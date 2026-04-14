@@ -43,6 +43,7 @@ export interface IQueryResponse<T = unknown> {
 export interface IPageProps {
   searchParams: Promise<Record<string, string | undefined>>;
   params: Promise<Record<string, string | undefined>>;
+  [k: string]: any
 }
 
 export interface IFormEvents<

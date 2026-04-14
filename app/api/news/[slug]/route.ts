@@ -21,7 +21,11 @@ export async function GET(
     const slug = (await params).slug;
 
     const news = await NewsModel.findOne(slugIdFilters(slug));
-    return NextResponse.json(news);
+    return NextResponse.json({
+        message: "News deleted",
+        success: true,
+        data:news
+    });
 }
 
 export async function DELETE(

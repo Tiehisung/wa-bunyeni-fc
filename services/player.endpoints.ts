@@ -1,7 +1,7 @@
 import type { IQueryResponse } from "@/types";
 import { api } from "./api";
 import type { IPlayer,   } from "@/types/player.interface";
-import { IPlayerStats } from "@/types/stats";
+import { IPlayersStats, IPlayerStats } from "@/types/stats";
 import { IPostPlayer } from "@/app/admin/players/new/NewSigningForms";
 
 
@@ -49,8 +49,12 @@ const playerApi = api.injectEndpoints({
             }),
             invalidatesTags: ["Players"],
         }),
+        getPlayersStats: builder.query<IQueryResponse<IPlayersStats>, void>({
+            query: () => `/players/stats`,
+            providesTags: (_result, _error,) => ['Players'],
+        }),
         getPlayerStats: builder.query<IQueryResponse<IPlayerStats>, string>({
-            query: (playerId) => `/players/${playerId}`,
+            query: (playerId) => `/players/stats/${playerId}`,
             providesTags: (_result, _error,) => ['Players'],
         }),
 
@@ -62,6 +66,7 @@ export const {
     useGetPlayersQuery,
     useGetPlayerQuery,
     useGetPlayerStatsQuery,
+    useGetPlayersStatsQuery,
 
     useCreatePlayerMutation,
     useUpdatePlayerMutation,

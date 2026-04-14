@@ -5,19 +5,22 @@ import { IPlayer } from "@/types/player.interface";
 import { getInitials } from "@/lib";
 import Link from "next/link";
 import { useParams } from "next/navigation";
- 
+import { useGetPlayersQuery } from "@/services/player.endpoints";
 
-export function PlayerHeadList({ players }: { players: IPlayer[] }) {
- 
-  const {playerSlug} = useParams();
+export function PlayerHeadList(  ) {
+  const { playerSlug } = useParams();
 
-  if (!players || players.length === 0) {
+  const { data: playersData, isLoading } = useGetPlayersQuery("");
+
+  const otherPlayers = playersData?.data?.filter((p) => p?.slug !== playerSlug);
+
+  if (!playersData && !isLoading) {
     return null;
   }
 
   return (
     <div className="fixed top-20 -left-2 z-10 flex items-center gap-4 flex-col border rounded-full p-1 bg-secondary/20 backdrop:blur-xs shadow-md max-h-[45vh] w-fit overflow-y-auto _hideScrollbar">
-      {players.map((player) => {
+      {otherPlayers?.map((player) => {
         const isSelected = playerSlug === player?.slug;
 
         return (

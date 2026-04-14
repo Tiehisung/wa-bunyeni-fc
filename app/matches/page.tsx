@@ -1,42 +1,76 @@
-"use client";
-
 import FixturesSection from "./Fixtures";
 import HEADER from "@/components/Element";
-import { useGetMatchesQuery } from "@/services/match.endpoints";
-import DataErrorAlert from "@/components/error/DataError";
-import { getErrorMessage } from "@/lib/error";
-import TableLoader from "@/components/loaders/Table";
-// import { PageSEO } from "@/utils/PageSEO";
+import { Metadata } from "next";
+import { ENV } from "@/lib/env";
+import { apiConfig } from "@/lib/configs";
 
-export default function MatchesPage() {
-  const { data: fixtures, isLoading, error } = useGetMatchesQuery({});
+export const metadata: Metadata = {
+  title: `Matches & Fixtures | ${ENV.TEAM_NAME}`,
+  description: `View ${ENV.TEAM_NAME} upcoming fixtures, live scores, and match results. Stay updated with all match schedules, venues, and outcomes. Follow your team throughout the season.`,
+  keywords: [
+    `${ENV.TEAM_NAME} matches`,
+    "fixtures",
+    "results",
+    "live scores",
+    "match schedule",
+    "football fixtures",
+  ],
+  openGraph: {
+    title: `Matches & Fixtures | ${ENV.TEAM_NAME}`,
+    description: `View upcoming fixtures, live scores, and match results for ${ENV.TEAM_NAME}.`,
+    url: `${ENV.APP_URL}/matches`,
+    siteName: ENV.TEAM_NAME,
+    type: "website",
+    images: [
+      {
+        url: `${ENV.APP_URL}/matchday.jpg`,
+        width: 1200,
+        height: 630,
+        alt: `${ENV.TEAM_NAME} Match Day`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Matches & Fixtures | ${ENV.TEAM_NAME}`,
+    description: `Upcoming fixtures, live scores, and match results.`,
+    images: [`${ENV.APP_URL}/matchday.jpg`],
+  },
+  alternates: {
+    canonical: `${ENV.APP_URL}/matches`,
+  },
+};
 
-  if (isLoading) {
-    return (
-      <div>
-        <HEADER title="Scores & Fixtures" />
-        <TableLoader />
-      </div>
-    );
+export const getMatches = async (query?: string): Promise<any> => {
+  try {
+    const cleaned = query?.startsWith("?") ? query : "?" + query;
+    const response = await fetch(`${apiConfig.matches}${cleaned ?? ""}`, {
+      cache: "no-store",
+    });
+    const fixtures = await response.json();
+    return fixtures;
+  } catch {
+    return null;
   }
+};
 
-  if (error) {
-    return (
-      <div>
-        <HEADER title="Scores & Fixtures" />
-        <DataErrorAlert message={getErrorMessage(error)} />
-      </div>
-    );
+export const getMatch = async (idOrSlug: string): Promise<any> => {
+  try {
+    const response = await fetch(`${apiConfig.matches}/${idOrSlug}`, {
+      cache: "no-store",
+    });
+    const match = await response.json();
+    return match;
+  } catch {
+    return null;
   }
+};
 
+export default async function MatchesPage() {
   return (
     <div className="">
-      {/* <PageSEO page="matches" /> */}
-
       <HEADER title="Scores & Fixtures" />
-      <section className="pb-6  ">
-        <FixturesSection fixtures={fixtures} />
-      </section>
+      <FixturesSection />
     </div>
   );
 }

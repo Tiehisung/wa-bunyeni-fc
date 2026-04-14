@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { DIALOG } from "../Dialog";
 import { ReactNode } from "react";
@@ -6,7 +6,15 @@ import { TButtonVariant } from "../ui/button";
 import { CredentialsLoginForm } from "./LoginCredentials";
 import Divider from "../Divider";
 import { usePathname } from "next/navigation";
- 
+import { GoogleLoginBtn } from "./GoogleLoginBtn";
+
+interface Props {
+  className?: string;
+  redirectTo?: string;
+  trigger?: ReactNode;
+  description?: ReactNode;
+  variant?: TButtonVariant;
+}
 
 /**
  * id - login-controller
@@ -14,20 +22,12 @@ import { usePathname } from "next/navigation";
  * @returns A button to trigger google account selector.
  */
 const LoginController = ({
-  // text = "Sign In with Google",
   description,
   trigger,
   variant = "ghost",
   redirectTo,
-}: {
-  className?: string;
-  redirectTo?: string;
-  text?: string;
-  trigger?: ReactNode;
-  description?: ReactNode;
-  variant?: TButtonVariant;
-}) => {
-  const  pathname   = usePathname();
+}: Props) => {
+  const pathname = usePathname();
   return (
     <DIALOG
       trigger={trigger}
@@ -35,17 +35,10 @@ const LoginController = ({
       id="login-controller"
       variant={variant}
     >
-      {/* <LoginBtn
-        text={text}
-        variant={"outline"}
-        className=" w-full "
-        redirectTo={getUrlToShare()}
-        size={"lg"}
-      >
-        <FcGoogle size={24} />
-      </LoginBtn> */}
+      <GoogleLoginBtn className="w-full" />
 
- 
+      <Divider className="px-4 my-4" />
+
       <CredentialsLoginForm
         redirectTo={redirectTo || (pathname !== "/" ? pathname : "")}
       />
