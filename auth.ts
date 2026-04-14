@@ -6,16 +6,12 @@ import { EUserRole, ISession, } from './types/user';
 import UserModel from "./models/user";
 import { logAction } from "./app/api/logs/helper";
 import connectDB from "./config/db.config";
-// import bcrypt from 'bcryptjs'
-// import { isValidEmail } from "./lib/validate";
-// import { getUserById } from "./app/admin/authorization/page";
-
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     providers: [
         Google({
-            clientId: process.env.AUTH_GOOGLE_ID!,
-            clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
 
             async profile(profile) {
                 connectDB();
@@ -91,38 +87,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                     }
                 }
 
-                // const { username, password } = credentials as { username: string; password: string }
 
-                // ConnectMongoDb();
-
-                // const email = isValidEmail(username) ? username : username.concat('@kfc.com')
-
-                // const foundUser = await getUserById(email) as IUser | null;
-
-                // if (foundUser) {
-                //     //Compare passwords
-                //     const matched = await bcrypt.compare(password, foundUser.password as string);
-
-
-                //     if (matched) {
-                //         const { _id, name, image, role, email } = foundUser; //Eliminate pass
-                //         const safeUser = {
-                //             name,
-                //             image,
-                //             role,
-                //             email,
-                //             id: _id,
-                //         };
-
-                //         //Normal user
-                //         return { ...safeUser };
-                //     } else {
-
-                //         return null;
-                //     }
-                // } else {
-                //     return null;
-                // }
 
                 return null;
             },
