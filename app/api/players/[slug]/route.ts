@@ -41,7 +41,7 @@ export async function GET(
       .populate('injuries')
       .populate('goals')
       .populate('assists')
-      .populate('createdBy', 'name role')
+      .populate('createdBy', 'name role email avatar')
       .lean();
 
     if (!player) {
