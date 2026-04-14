@@ -6,7 +6,7 @@ import { TButtonVariant } from "../ui/button";
 import { CredentialsLoginForm } from "./LoginCredentials";
 import Divider from "../Divider";
 import { usePathname } from "next/navigation";
-import { GoogleLoginBtn } from "./GoogleLoginBtn";
+ 
 
 interface Props {
   className?: string;
@@ -35,9 +35,7 @@ const LoginController = ({
       id="login-controller"
       variant={variant}
     >
-      <GoogleLoginBtn className="w-full" />
-
-      <Divider className="px-4 my-4" />
+      
 
       <CredentialsLoginForm
         redirectTo={redirectTo || (pathname !== "/" ? pathname : "")}

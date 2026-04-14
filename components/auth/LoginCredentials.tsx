@@ -12,6 +12,8 @@ import { useAuth } from "@/store/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { smartToast } from "@/utils/toast";
+import { GoogleLoginBtn } from "./GoogleLoginBtn";
+import Divider from "../Divider";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -67,7 +69,9 @@ export function CredentialsLoginForm({
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
+      <GoogleLoginBtn className="w-full" />
 
+      <Divider className="px-4 my-4" />
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         <Controller
           control={control}
