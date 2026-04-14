@@ -1,3 +1,5 @@
+'use client'
+
 import { SearchQueryUpdator } from "./Headers";
 import { IQueryResponse } from "@/types";
 import { MotionWrapper } from "@/components/Animate/MotionWrapper";

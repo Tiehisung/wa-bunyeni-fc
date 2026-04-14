@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const getMatches = async (query?: string) => {
+export const getMatches = async (query?: string): Promise<any> => {
   try {
     const cleaned = query?.startsWith("?") ? query : "?" + query;
     const response = await fetch(`${apiConfig.matches}${cleaned ?? ""}`, {
@@ -54,7 +54,7 @@ export const getMatches = async (query?: string) => {
   }
 };
 
-export const getMatch = async (idOrSlug: string) => {
+export const getMatch = async (idOrSlug: string): Promise<any> => {
   try {
     const response = await fetch(`${apiConfig.matches}/${idOrSlug}`, {
       cache: "no-store",
@@ -65,7 +65,6 @@ export const getMatch = async (idOrSlug: string) => {
     return null;
   }
 };
-
 
 export default async function MatchesPage() {
   return (
