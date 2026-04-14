@@ -2,6 +2,7 @@ import FixturesSection from "./Fixtures";
 import HEADER from "@/components/Element";
 import { Metadata } from "next";
 import { ENV } from "@/lib/env";
+import { apiConfig } from "@/lib/configs";
 
 export const metadata: Metadata = {
   title: `Matches & Fixtures | ${ENV.TEAM_NAME}`,
@@ -39,7 +40,30 @@ export const metadata: Metadata = {
     canonical: `${ENV.APP_URL}/matches`,
   },
 };
+export const getMatches = async (query?: string) => {
+  try {
+    const cleaned = query?.startsWith("?") ? query : "?" + query;
+    const response = await fetch(`${apiConfig.matches}${cleaned ?? ""}`, {
+      cache: "no-store",
+    });
+    const fixtures = await response.json();
+    return fixtures;
+  } catch {
+    return null;
+  }
+};
 
+export const getMatch = async (idOrSlug: string) => {
+  try {
+    const response = await fetch(`${apiConfig.matches}/${idOrSlug}`, {
+      cache: "no-store",
+    });
+    const match = await response.json();
+    return match;
+  } catch {
+    return null;
+  }
+};
 export default function MatchesPage() {
   return (
     <div className="">

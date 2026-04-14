@@ -1,11 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { SearchX } from "lucide-react";
 
- 
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import BackBtn from "@/components/buttons/BackBtn";
 
 export default function NotFound() {
   const pathname = usePathname();
@@ -24,18 +23,15 @@ export default function NotFound() {
       <div className="flex flex-col items-center space-y-6">
         <SearchX className="w-20 h-20 text-muted-foreground" />
 
-        <h1 className="text-4xl font-bold text-muted-foreground">Page Not Resolved</h1>
+        <h1 className="text-4xl font-bold text-muted-foreground">
+          Page Not Resolved
+        </h1>
 
         <p className="text-muted-foreground max-w-md">
           The page you're looking for can not be resolved at the moment.
         </p>
 
-        <Link
-          href="/"
-          className="mt-4 inline-block rounded-lg bg-blue-600 px-6 py-3 text-white font-medium hover:bg-blue-700 transition"
-        >
-          Go Back Home
-        </Link>
+        <BackBtn label="Return" />
       </div>
     </main>
   );
