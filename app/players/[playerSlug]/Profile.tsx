@@ -279,7 +279,7 @@ export default function PlayerProfile({   stats }: PageProps) {
         <div className="my-6 _title p-4 flex items-center gap-6 justify-between">
           <span>GALLERIES</span>
         </div>
-        <GalleryGrid galleries={galleries as IGallery[]} />
+        <GalleryGrid galleries={galleriesData?.data as IGallery[]} />
       </section>
     </main>
   );
