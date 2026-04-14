@@ -8,6 +8,7 @@ import { TSearchKey } from "@/types";
 import { removeEmptyKeys } from "@/lib";
 import { slugify } from "@/lib/slugging";
 import { getApiErrorMessage } from "../../../lib/error-api";
+import { auth } from "@/auth";
 
 connectDB();
 export async function GET(request: NextRequest) {
@@ -59,14 +60,18 @@ export async function GET(request: NextRequest) {
 
   const cleaned = removeEmptyKeys(query)
 
-  const news = await NewsModel.find(cleaned).sort({ createdAt: "desc" }).skip(skip)
+  const news = await NewsModel.find(cleaned)
+
+    .sort({ createdAt: "desc" }).skip(skip)
     .limit(limit)
-    .lean();
+    .lean({ virtuals: true });
 
   const total = await NewsModel.countDocuments(cleaned)
 
   return NextResponse.json({
-    success: true, data: news, pagination: {
+    success: true,
+    data: news,
+    pagination: {
       page,
       limit,
       total,
@@ -77,6 +82,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth()
     const { headline, details, }: IPostNews = await request.json();
     const slug = slugify(headline.text as string);
 
@@ -85,6 +91,7 @@ export async function POST(request: NextRequest) {
       slug,
       headline,
       details,
+      createdBy: session?.user
     });
     // log
     await logAction({

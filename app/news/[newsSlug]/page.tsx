@@ -1,32 +1,52 @@
 import OtherNews from "./OtherNews";
 import { SearchAndFilterNews } from "./SearchAndFilter";
 import NewsItemClient from "./NewsClient";
-import { IPageProps } from "@/types";
+
 import { INewsProps } from "@/types/news.interface";
-import { getNewsItem } from "../page";
+ 
 import { Metadata } from "next";
 import { ENV } from "@/lib/env";
+import { IPageProps, IQueryResponse } from "@/types";
+import { apiConfig } from "@/lib/configs";
+
+
+export const getNewsItem = async (slug: string) => {
+  try {
+    const response = await fetch(`${apiConfig.news}/${slug}`, {
+      cache: "no-store",
+    });
+    const news = await response.json();
+    return news;
+  } catch {
+    return null;
+  }
+};
+
+
 
 export async function generateMetadata({
   params,
 }: IPageProps): Promise<Metadata> {
-  const slug = (await params).newsId as string;
-  const article: INewsProps = await getNewsItem(slug);
+  const { newsId: slug } = await params;
+  const articleData: IQueryResponse<INewsProps> = await getNewsItem(slug as string);
+
+  const article = articleData?.data;
 
   if (!article) {
     return {
-      title: "News | Konjiehi FC",
-      description: "Latest updates from Konjiehi FC",
+      title: `${ENV.TEAM_NAME} News`,
+      description: `Latest news and updates from ${ENV.TEAM_NAME}`,
     };
   }
 
-  const title = `Konjiehi FC - ${article?.headline?.text} | Konjiehi FC`;
+  const title = `${ENV.TEAM_NAME} - ${article?.headline?.text}`;
   const description =
-    article?.details?.find((d) => d.text)?.text ||
-    "Read the latest news and updates from Konjiehi FC.";
+    article?.details?.find((d) => d.text)?.text?.substring(0, 200) ||
+    `Read the latest news and updates from ${ENV.TEAM_NAME}.`;
 
   const image = article?.headline?.image || ENV.LOGO_URL;
   const url = `${ENV.APP_URL}/news/${slug}`;
+  const publishedDate = article?.createdAt || article?.updatedAt;
 
   return {
     title,
@@ -36,6 +56,12 @@ export async function generateMetadata({
       description,
       url,
       siteName: ENV.TEAM_NAME,
+      type: "article",
+      publishedTime: publishedDate,
+      authors: [
+        article?.reporter?.name || ENV.TEAM_NAME,
+        (article?.createdBy?.name as string) || "",
+      ] as string[],
       images: [
         {
           url: image as string,
@@ -44,7 +70,6 @@ export async function generateMetadata({
           alt: article?.headline?.text,
         },
       ],
-      type: "article",
     },
     twitter: {
       card: "summary_large_image",
@@ -52,11 +77,16 @@ export async function generateMetadata({
       description,
       images: [image as string],
     },
+    keywords: article?.tags || [`${ENV.TEAM_NAME}`, "news", "football"],
+    alternates: {
+      canonical: url,
+    },
   };
 }
+
 export default function NewsItemPage() {
   return (
-    <div className="flex max-lg:flex-wrap items-start gap-6 relative pt-6 md:pl-10">
+    <article className="flex max-lg:flex-wrap items-start gap-6 relative pt-6 md:pl-10">
       <section className="grow min-w-3/4">
         <NewsItemClient />
       </section>
@@ -65,6 +95,6 @@ export default function NewsItemPage() {
         <br />
         <OtherNews />
       </section>
-    </div>
+    </article>
   );
 }

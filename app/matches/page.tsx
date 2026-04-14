@@ -1,42 +1,50 @@
-"use client";
-
 import FixturesSection from "./Fixtures";
 import HEADER from "@/components/Element";
-import { useGetMatchesQuery } from "@/services/match.endpoints";
-import DataErrorAlert from "@/components/error/DataError";
-import { getErrorMessage } from "@/lib/error";
-import TableLoader from "@/components/loaders/Table";
-// import { PageSEO } from "@/utils/PageSEO";
+import { Metadata } from "next";
+import { ENV } from "@/lib/env";
+
+export const metadata: Metadata = {
+  title: `Matches & Fixtures | ${ENV.TEAM_NAME}`,
+  description: `View ${ENV.TEAM_NAME} upcoming fixtures, live scores, and match results. Stay updated with all match schedules, venues, and outcomes. Follow your team throughout the season.`,
+  keywords: [
+    `${ENV.TEAM_NAME} matches`,
+    "fixtures",
+    "results",
+    "live scores",
+    "match schedule",
+    "football fixtures",
+  ],
+  openGraph: {
+    title: `Matches & Fixtures | ${ENV.TEAM_NAME}`,
+    description: `View upcoming fixtures, live scores, and match results for ${ENV.TEAM_NAME}.`,
+    url: `${ENV.APP_URL}/matches`,
+    siteName: ENV.TEAM_NAME,
+    type: "website",
+    images: [
+      {
+        url: `${ENV.APP_URL}/matchday.jpg`,
+        width: 1200,
+        height: 630,
+        alt: `${ENV.TEAM_NAME} Match Day`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Matches & Fixtures | ${ENV.TEAM_NAME}`,
+    description: `Upcoming fixtures, live scores, and match results.`,
+    images: [`${ENV.APP_URL}/matchday.jpg`],
+  },
+  alternates: {
+    canonical: `${ENV.APP_URL}/matches`,
+  },
+};
 
 export default function MatchesPage() {
-  const { data: fixtures, isLoading, error } = useGetMatchesQuery({});
-
-  if (isLoading) {
-    return (
-      <div>
-        <HEADER title="Scores & Fixtures" />
-        <TableLoader />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div>
-        <HEADER title="Scores & Fixtures" />
-        <DataErrorAlert message={getErrorMessage(error)} />
-      </div>
-    );
-  }
-
   return (
     <div className="">
-      {/* <PageSEO page="matches" /> */}
-
       <HEADER title="Scores & Fixtures" />
-      <section className="pb-6  ">
-        <FixturesSection fixtures={fixtures} />
-      </section>
+      <FixturesSection />
     </div>
   );
 }
