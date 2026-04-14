@@ -25,7 +25,7 @@ const FixturesSection = ({}: IProps) => {
   ];
 
   if (isLoading) {
-    return <TableLoader />;
+    return <TableLoader size="xl" className='rounded-xl'/>;
   }
 
   if (error) {
