@@ -40,6 +40,7 @@ export const metadata: Metadata = {
     canonical: `${ENV.APP_URL}/matches`,
   },
 };
+
 export const getMatches = async (query?: string) => {
   try {
     const cleaned = query?.startsWith("?") ? query : "?" + query;
@@ -64,7 +65,9 @@ export const getMatch = async (idOrSlug: string) => {
     return null;
   }
 };
-export default function MatchesPage() {
+
+
+export default async function MatchesPage() {
   return (
     <div className="">
       <HEADER title="Scores & Fixtures" />
