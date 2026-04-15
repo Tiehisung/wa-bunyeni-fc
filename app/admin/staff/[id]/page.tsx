@@ -28,7 +28,6 @@ import { AVATAR } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TABS } from "@/components/ui/tabs";
-
 import { formatDate, getTimeLeftOrAgo } from "@/lib/timeAndDate";
 import { smartToast } from "@/utils/toast";
 import { IStaff } from "@/types/staff.interface";
@@ -70,7 +69,7 @@ const mockAttendance = [
 ];
 
 export default function StaffDetailPage() {
-  const id = useParams().staffSlug;
+  const id = useParams().id;
   const router = useRouter();
 
   const { data, isLoading, error, refetch } = useGetStaffMemberQuery(

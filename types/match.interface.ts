@@ -70,7 +70,6 @@ export interface IMatchEvent {
   type: 'goal' | 'card' | 'injury' | 'general'
 }
 
-
 export interface ITeam {
   _id: string;
   name: string;
@@ -79,6 +78,7 @@ export interface ITeam {
   contact: string;
   contactName: string;
   logo: string;
+  images?:string[]
   currentPlayers?: IPlayerMini[];
   createdAt: string;
   updatedAt: string;
