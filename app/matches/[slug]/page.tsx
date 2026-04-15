@@ -11,7 +11,7 @@ interface PageProps {
 }
 
 // Generate metadata for SEO
-export  async function generateMetadata({
+export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -23,21 +23,17 @@ export  async function generateMetadata({
       description: "The requested match could not be found.",
     };
   }
-  const matchMetrics = checkMatchMetrics(match);
-  const homeTeam = match.isHome ? ENV.TEAM_NAME : match.opponent?.name;
-  const awayTeam = match.isHome ? match.opponent?.name : ENV.TEAM_NAME;
+  const { teams,  winStatus } = checkMatchMetrics(match);
+  const homeTeam = teams.home;
+  const awayTeam = teams.away;
   const scoreText =
     match.status === "FT"
       ? `${match.computed?.teamScore} - ${match.computed?.opponentScore}`
       : "vs";
   const resultEmoji =
-    match.computed?.result === "win"
-      ? "✅"
-      : match.computed?.result === "loss"
-        ? "❌"
-        : "🤝";
+    winStatus === "win" ? "✅" : winStatus === "loss" ? "❌" : "🤝";
 
-  const title = `${homeTeam} ${scoreText} ${awayTeam} | ${ENV.TEAM_NAME}`;
+  const title = `${homeTeam?.name} ${scoreText} ${awayTeam?.name} | ${ENV.TEAM_NAME}`;
   const description = `${ENV.TEAM_NAME} ${match.isHome ? "host" : "visit"} ${match.opponent?.name} on ${formatDate(match.date)}. ${match.computed?.result ? `${resultEmoji} Result: ${match.computed?.result.toUpperCase()}. ` : ""}Score: ${match.computed?.teamScore || 0} - ${match.computed?.opponentScore || 0}.`;
 
   return {
