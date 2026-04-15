@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/buttons/Button";
 import { IconInputWithLabel } from "@/components/input/Inputs";
-import { getErrorMessage } from "@/lib/error";
 import { AlertCircle, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +12,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { apiConfig } from "@/lib/configs";
 import { useState } from "react";
+import { getErrorMessage } from "@/lib/error";
 
 export const passwordResetSchema = z.object({
   username: z.string().min(1, "Username is required"),

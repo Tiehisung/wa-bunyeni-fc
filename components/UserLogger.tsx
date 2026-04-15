@@ -1,31 +1,30 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { LogoutBtn } from "./auth/Auth";
+import { ISession } from "@/types/user";
+import LoginModal from "./auth/Login";
 import Loader from "./loaders/Loader";
-import LoginController from "./auth/LoginModal";
-import { LogoutBtn } from "./auth/LogoutButton";
-import { useAuth } from "@/store/hooks/useAuth";
 
 export default function UserLogButtons() {
-  const { user, isLoading } = useAuth();
+  const { data: session, status } = useSession();
+ 
+  if (status == "loading") return <Loader message="" />;
 
-  if (isLoading) return <Loader message="" />;
-
-  if (user) {
+  if (session) {
     const path =
-      user?.role == "player"
-        ? "/players/dashboard"
-        : user?.role?.includes("admin")
-          ? "/admin"
-          : "";
+      (session?.user as ISession["user"])?.role == "player"
+        ? `/players/dashboard`
+        : "/admin";
     return (
       <div className="grid md:flex items-center gap-6 md:gap-2">
-        {!user?.role?.includes("guest") ? (
+        {!(session?.user as ISession["user"])?.role?.includes("guest") ? (
           <Link
             href={path}
             className="hidden md:block border _borderColor hover:ring rounded px-2 py-1 h-full"
           >
-            { user?.name?.split(" ")?.[0] ?? "Dashboard"}
+            {session?.user?.name?.split(" ")?.[0] ?? "Dashboard"}
           </Link>
         ) : (
           <span> Guest</span>
@@ -35,5 +34,5 @@ export default function UserLogButtons() {
       </div>
     );
   }
-  return <LoginController trigger="Sign In" />;
+  return <LoginModal trigger="Sign In" />;
 }

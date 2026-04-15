@@ -1,11 +1,8 @@
-'use client'
-
+// app/not-authorized/page.tsx
 import Link from "next/link";
 import { Button } from "@/components/ui/button"; // Optional: using shadcn/ui
 import { ShieldOff, Home, AlertTriangle } from "lucide-react";
-import LoginController from "@/components/auth/LoginModal";
- 
- 
+import { LoginBtn } from "@/components/auth/Auth";
 
 export default function NotAuthorizedPage() {
   return (
@@ -50,8 +47,9 @@ export default function NotAuthorizedPage() {
             </Button>
           </Link>
 
-          <LoginController
+          <LoginBtn
             className="grow w-full"
+            text="Sign In with Different Account"
             variant={"outline"}
           />
 

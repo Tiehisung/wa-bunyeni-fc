@@ -246,6 +246,8 @@ interface TrendingProps {
 const NEWSSECTION: React.FC<TrendingProps> = ({ className = "" }) => {
   const { data: newsData, isLoading } = useGetNewsQuery("");
 
+  console.log(newsData, isLoading)
+
   if (isLoading) {
     return (
       <div className=" space-y-8 flex justify-center items-center ">

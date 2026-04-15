@@ -1,6 +1,6 @@
 "use client";
 
-import { LogoutBtn } from "@/components/auth/LogoutButton";
+ 
 import { ThemeModeToggle } from "@/components/ThemeToggle";
 
 import {
@@ -14,6 +14,7 @@ import { GlassmorphicGradient } from "@/components/Glasmorphic/Gradient";
 import { POPOVER } from "@/components/ui/popover";
 import { Menu } from "lucide-react";
 import Link from "next/link";
+import { LogoutBtn } from "@/components/auth/Auth";
 
 export function LeftPaneDesktop() {
   return (

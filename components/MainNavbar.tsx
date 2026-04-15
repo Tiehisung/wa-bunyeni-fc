@@ -9,11 +9,12 @@ import { scrollToSection } from "@/lib/dom";
 import { Button } from "@/components/buttons/Button";
 import { fireEscape } from "@/hooks/Esc";
 import UserLogButtons from "./UserLogger";
-import { LogoutBtn } from "./auth/LogoutButton";
+ 
 import { ThemeModeToggle } from "./ThemeToggle";
 import { GlobalSearch } from "./searcher/Global";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import { LogoutBtn } from "./auth/Auth";
 
 interface ILink {
   label: string;

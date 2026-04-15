@@ -69,8 +69,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             async authorize(credentials, request) {
                 const userString = credentials?.user
 
-                // console.log({ userString }, JSON.parse(userString as string))
-
                 if (userString) {
                     const user = JSON.parse(userString as string) as ISession['user']
                     // Log
@@ -79,33 +77,30 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                         description: `User with email ${user?.email} logged in.`,
                     })
                     return {
-                        id: user.id,
-                        email: user.email,
-                        name: user.name,
-                        image: user.image,
-                        role: user.role ?? EUserRole.FAN,
+                        id: user?.id,
+                        email: user?.email,
+                        name: user?.name,
+                        image: user?.image,
+                        role: user?.role ?? EUserRole.FAN,
                     }
                 }
-
-
 
                 return null;
             },
         }),
     ],
 
-
     callbacks: {
         async jwt({ token, user }) {
             // First sign-in
             if (user) {
-                token.role = (user as ISession['user']).role ?? EUserRole.FAN;
+                token.role = (user as ISession['user'])?.role ?? EUserRole.FAN;
             }
             return token;
         },
 
         async session({ session, token }) {
-            if (session.user) {
+            if (session?.user) {
                 (session.user as ISession['user']).role = token.role as EUserRole;
             }
             return session;

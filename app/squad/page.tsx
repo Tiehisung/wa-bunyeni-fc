@@ -5,7 +5,7 @@ import { SharePage } from "@/components/SocialShare";
 import { getInitials } from "@/lib";
 import { ENV } from "@/lib/env";
 import { useGetSquadsQuery } from "@/services/squad.endpoints";
-// import { PageSEO } from "@/utils/PageSEO";
+ 
 
 export default function LatestMatchSquadPage() {
   const { data: squadsData, isLoading } = useGetSquadsQuery("");

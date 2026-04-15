@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { Button } from "@/components/buttons/Button";
 import { IComment, INewsProps } from "@/types/news.interface";
@@ -14,7 +14,7 @@ import { shortText } from "@/lib";
 import { BsDot, BsEye, BsFillHandThumbsUpFill } from "react-icons/bs";
 import { DIALOG } from "@/components/Dialog";
 import { getDeviceId } from "@/lib/device";
-import LoginController from "@/components/auth/LoginModal";
+ 
 import {
   useDeleteNewsCommentMutation,
   useGetNewsStatsQuery,
@@ -23,11 +23,13 @@ import {
   useUpdateNewsLikesMutation,
 } from "@/services/news.endpoints";
 import { toggleClick } from "@/lib/dom";
-import { useAuth } from "@/store/hooks/useAuth";
 import CommentForm from "./Comment";
+import { useSession } from "next-auth/react";
+import LoginModal from "@/components/auth/Login";
 
 export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
-  const { user } = useAuth();
+const { data: session,   } = useSession();
+   const user=session?.user
 
   const [updateViews] = useUpdateNewsViewsMutation();
 
@@ -45,7 +47,7 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
     updateViews({
       newsId: newsItem?._id as string,
       deviceId: getDeviceId(),
-      userId: user?._id as string,
+      userId: user?.id as string,
     });
   }, []);
 
@@ -57,7 +59,7 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
     const result = await updateLikes({
       newsId: newsItem?._id as string,
       deviceId: getDeviceId(),
-      userId: user?._id,
+      userId: user?.id,
       isLike: !localLiked,
     }).unwrap();
 
@@ -70,7 +72,7 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
     const result = await updateShares({
       newsId: newsItem?._id as string,
       deviceId: getDeviceId(),
-      userId: user?._id as string,
+      userId: user?.id as string,
     }).unwrap();
 
     if (result.success) {
@@ -124,7 +126,7 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
         </li>
         <li>
           {!user ? (
-            <LoginController
+            <LoginModal
               trigger={
                 <div className="font-light text-xs flex items-center gap-2">
                   <LiaCommentSolid
@@ -204,7 +206,8 @@ const CommentRow = ({
   comment: IComment;
   newsItem?: INewsProps;
 }) => {
-  const { user } = useAuth();
+const { data: session,   } = useSession();
+   const user=session?.user
   const [deleteComment, { isLoading: isDeleting }] =
     useDeleteNewsCommentMutation();
 
@@ -212,7 +215,7 @@ const CommentRow = ({
     const result = await deleteComment({
       newsId: newsItem?._id as string,
       commentId,
-      userId: user?._id,
+      userId: user?.id,
       isAdmin: user?.role?.includes("admin"),
     }).unwrap();
 
@@ -221,10 +224,7 @@ const CommentRow = ({
   };
   return (
     <li className="flex items-start gap-5 pb-6  ">
-      <AVATAR
-        src={com?.user?.avatar as string}
-        alt={com?.user?.name}
-      />
+      <AVATAR src={com?.user?.avatar as string} alt={com?.user?.name} />
       <section>
         <header className="flex items-start gap-6 ">
           <div className="flex items-baseline gap-0.5">
@@ -246,7 +246,7 @@ const CommentRow = ({
             className="border border-border rounded-2xl p-3 -ml-6 mt-4 _p text-wrap wrap-break-word max-sm:max-w-60 max-w-3/4 overflow-x-auto"
           />
 
-          {(user?._id == com.user || user?.role?.includes("admin")) && (
+          {(user?.id == com.user || user?.role?.includes("admin")) && (
             <Button
               onClick={() => handleDeleteComment(com._id as string)}
               className="absolute right-2 top-1 p-0.5 _hover _shrink"
