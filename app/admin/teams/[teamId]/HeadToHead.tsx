@@ -35,7 +35,6 @@ export function HeadToHead({ className }: HeadToHeadProps) {
   );
 
   const data = headToHeadData?.data;
-  // as IHeadToHeadMetrics
 
   const getResultColor = (result: string) => {
     switch (result) {
