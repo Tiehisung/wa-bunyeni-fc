@@ -78,7 +78,7 @@ export interface ITeam {
   contact: string;
   contactName: string;
   logo: string;
-  images:string[]
+  images?:string[]
   currentPlayers?: IPlayerMini[];
   createdAt: string;
   updatedAt: string;
