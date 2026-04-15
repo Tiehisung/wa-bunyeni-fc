@@ -14,7 +14,7 @@ import { CredentialsLoginForm } from "@/app/auth/signin/Credentials";
  * Access modal by programmatically clicking the trigger via id [login-controller]
  * @returns A button to trigger google account selector.
  */
-const LoginController2 = ({
+const LoginModal = ({
   text = "Sign In with Google",
   description,
   trigger,
@@ -57,5 +57,5 @@ const LoginController2 = ({
   );
 };
 
-export default LoginController2;
+export default LoginModal;
  

@@ -25,7 +25,7 @@ import {
 import { toggleClick } from "@/lib/dom";
 import CommentForm from "./Comment";
 import { useSession } from "next-auth/react";
-import LoginController2 from "@/components/auth/Login";
+import LoginModal from "@/components/auth/Login";
 
 export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
 const { data: session,   } = useSession();
@@ -126,7 +126,7 @@ const { data: session,   } = useSession();
         </li>
         <li>
           {!user ? (
-            <LoginController2
+            <LoginModal
               trigger={
                 <div className="font-light text-xs flex items-center gap-2">
                   <LiaCommentSolid

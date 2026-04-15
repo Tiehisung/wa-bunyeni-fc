@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { LogoutBtn } from "./auth/Auth";
 import { ISession } from "@/types/user";
-import LoginController from "./auth/Login";
+import LoginModal from "./auth/Login";
 import Loader from "./loaders/Loader";
 
 export default function UserLogButtons() {
@@ -34,5 +34,5 @@ export default function UserLogButtons() {
       </div>
     );
   }
-  return <LoginController trigger="Sign In" />;
+  return <LoginModal trigger="Sign In" />;
 }
