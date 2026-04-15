@@ -1,7 +1,7 @@
 import { LoginBtn } from "@/components/auth/Auth";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
-import { ISession, IUser } from "@/types/user";
+import { ISession,   } from "@/types/user";
 import { IPageProps } from "@/types";
 import TextDivider from "@/components/Divider";
 import { CredentialsLoginForm } from "./Credentials";
@@ -22,15 +22,13 @@ const LoginPage = async ({ searchParams }: IPageProps) => {
 
   if (session?.user) {
     const user = session.user as ISession["user"];
-    const path =
-      (user as IUser).role == "player" ? "/players/dashboard" : "/admin";
+    const path = user.role == "player" ? "/players/dashboard" : "/admin";
     return (
       <div className="min-h-screen flex flex-col gap-2.5 justify-center items-center">
         <h1 className="text-2xl font-bold mb-4">You are already logged in</h1>
         <AVATAR
           src={user?.image as string}
-          fallbackText={getInitials(user?.name as string)}
-          
+          alt={getInitials(user?.name as string)}
         />
         <p className="text-center">
           Go to{" "}

@@ -69,7 +69,7 @@ export const CredentialsLoginForm = () => {
        
       toast.success(result.message);
       const safeUser: ISession["user"] = result.data;
-      const res = await signIn("credentials", {
+      await signIn("credentials", {
         // redirect: false,
         redirectTo:callbackUrl,
         user: JSON.stringify(safeUser),
