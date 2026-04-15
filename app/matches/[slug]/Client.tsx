@@ -1,9 +1,11 @@
 "use client";
 
+import MatchFliers from "@/app/admin/matches/[matchSlug]/Fliers";
 import HEADER from "@/components/Element";
 import DataErrorAlert from "@/components/error/DataError";
 import PageLoader from "@/components/loaders/Page";
 import { TEAM } from "@/data/team";
+import { checkMatchMetrics } from "@/lib/compute/match";
 import { ENV } from "@/lib/env";
 import { getErrorMessage } from "@/lib/error";
 import { formatDate } from "@/lib/timeAndDate";
@@ -20,19 +22,17 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
   const isFinished = match?.status === "FT";
   const isLive = match?.status === "LIVE";
   const isUpcoming = match?.status === "UPCOMING";
+  const matchMetrics = checkMatchMetrics(match);
 
-  const homeTeam = match?.isHome ? ENV.TEAM_NAME : match?.opponent?.name;
-  const awayTeam = match?.isHome ? match?.opponent?.name : ENV.TEAM_NAME;
+  const homeTeam = matchMetrics.teams.home;
+  const awayTeam = matchMetrics.teams.away;
+
   const homeScore = match?.computed?.teamScore || 0;
   const awayScore = match?.computed?.opponentScore || 0;
-  const homeLogo = match?.isHome ? TEAM.logo : match?.opponent?.logo;
-  const awayLogo = match?.isHome ? match?.opponent?.logo : TEAM.logo;
 
-  // Split goals into team and opponent based on teamId
-  const teamGoals =
-    match?.goals?.filter((goal) => goal.teamId === TEAM._id) || [];
-  const opponentGoals =
-    match?.goals?.filter((goal) => goal.teamId !== TEAM._id) || [];
+  const teamGoals = matchMetrics.goals.teamGoals;
+
+  const opponentGoals = matchMetrics.goals.opponentGoals || [];
 
   const getStatusBadge = () => {
     if (isLive) return { text: "LIVE", className: "bg-red-500 animate-pulse" };
@@ -73,13 +73,13 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
             <div className="flex-1 text-center">
               <div className="relative w-24 h-24 mx-auto mb-4">
                 <Image
-                  src={(homeLogo || ENV.LOGO_URL) as string}
-                  alt={homeTeam || "Home Team"}
+                  src={(homeTeam?.logo) as string}
+                  alt={homeTeam?.name || "Home Team"}
                   fill
                   className="object-contain"
                 />
               </div>
-              <h2 className="text-xl font-semibold">{homeTeam}</h2>
+              <h2 className="text-xl font-semibold">{homeTeam?.name}</h2>
             </div>
 
             {/* Score */}
@@ -102,13 +102,13 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
             <div className="flex-1 text-center">
               <div className="relative w-24 h-24 mx-auto mb-4">
                 <Image
-                  src={(awayLogo || ENV.LOGO_URL) as string}
-                  alt={awayTeam || "Away Team"}
+                  src={(awayTeam.logo  ) as string}
+                  alt={awayTeam?.name || "Away Team"}
                   fill
                   className="object-contain"
                 />
               </div>
-              <h2 className="text-xl font-semibold">{awayTeam}</h2>
+              <h2 className="text-xl font-semibold">{awayTeam?.name}</h2>
             </div>
           </div>
         </div>
@@ -141,7 +141,7 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
       </div>
 
       {/* Goalscorers Section */}
-      {(teamGoals.length > 0 || opponentGoals.length > 0) && (
+      {((teamGoals?.length||0) > 0 || opponentGoals?.length > 0) && (
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -157,7 +157,7 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
                   </h4>
                 </div>
                 <div className="divide-y">
-                  {teamGoals.map((goal, idx) => (
+                  {teamGoals?.map((goal, idx) => (
                     <div
                       key={goal._id || idx}
                       className="px-4 py-2 flex justify-between items-center"
@@ -173,7 +173,7 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
                           />
                         )}
                         <span className="font-medium">
-                          {goal.scorer?.name || "Unknown"}
+                          {goal.scorer?.name || "Team player"}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -188,7 +188,7 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
                       </div>
                     </div>
                   ))}
-                  {teamGoals.length === 0 && (
+                  {teamGoals?.length === 0 && (
                     <div className="px-4 py-3 text-center text-muted-foreground text-sm">
                       No goals scored
                     </div>
@@ -237,7 +237,7 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
                   ))}
                   {opponentGoals.length === 0 && (
                     <div className="px-4 py-3 text-center text-muted-foreground text-sm">
-                      No goals conceded
+                      No goals scored
                     </div>
                   )}
                 </div>
@@ -285,7 +285,8 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
         </div>
       )}
 
-      {/* Back Button */}
+      <MatchFliers match={match} />
+
       <div className="container mx-auto px-4 py-8 text-center">
         <Link
           href="/matches"

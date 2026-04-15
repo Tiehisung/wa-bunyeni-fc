@@ -2,8 +2,6 @@
 
 import { usePathname, useRouter } from "next/navigation";
 
- 
-
 /**
  * Adds a searchparams and returns new pathname containing the searchParams with it's value
  * Use router to replace the new pathname
@@ -59,8 +57,8 @@ export const useSearchParams = () => {
       searchParams.delete(key);
     }
 
-    const newPathname = `${ pathname}?${searchParams.toString()}`;
-    router.replace(newPathname,  );
+    const newPathname = `${pathname}?${searchParams.toString()}`;
+    router.replace(newPathname);
   };
 
   const getSearchParam = (key: string) => {
@@ -83,8 +81,6 @@ export function removeEmptyKeys(obj: AnyObject): AnyObject {
     return acc;
   }, {});
 }
-
- 
 
 /**
  * Builds a query string using the current URL search params by default.
@@ -187,3 +183,18 @@ export const sParamsToObject = (
 
   return result;
 };
+
+export function buildQueryStringServer(
+  searchParams: Record<string, string | string[] | boolean | undefined>,
+) {
+  if (!searchParams) return "";
+
+  const query = new URLSearchParams(
+    Object.entries(searchParams).filter(([_, v]) => v !== undefined) as [
+      string,
+      string,
+    ][],
+  ).toString();
+
+  return query ? `?${query}` : "";
+}

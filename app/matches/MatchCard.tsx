@@ -2,7 +2,7 @@
 
 import { AVATAR } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { checkTeams } from "@/lib/compute/match";
+import { checkMatchMetrics, checkTeams } from "@/lib/compute/match";
 import {
   formatDate,
   formatTimeToAmPm,
@@ -20,12 +20,10 @@ import { useRouter } from "next/navigation";
 export function MatchFixtureCard({ match }: { match?: IMatch }) {
   const router = useRouter();
   const { away, home } = checkTeams(match);
+   const metrics = checkMatchMetrics(match);
   const status = match?.status;
 
-  const score = {
-    home: match?.computed?.scoreline?.split("-")?.[0],
-    away: match?.computed?.scoreline?.split("-")?.[1],
-  };
+ 
   return (
     <div className="bg-card border p-4 space-y-2.5">
       <div className="flex justify-between gap-5">
@@ -68,8 +66,8 @@ export function MatchFixtureCard({ match }: { match?: IMatch }) {
         <div className="font-semibold">
           {status == "FT" ? (
             <div className="grid">
-              <span className="px-3 text-lg">{score?.home}</span>
-              <span className="px-3 text-lg">{score?.away}</span>
+              <span className="px-3 text-lg">{metrics?.goals?.home}</span>
+              <span className="px-3 text-lg">{metrics?.goals?.away}</span>
             </div>
           ) : status == "LIVE" ? (
             <span className="text-destructive "> Live</span>

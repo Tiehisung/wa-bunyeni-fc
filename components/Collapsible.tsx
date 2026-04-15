@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { TButtonSize, TButtonVariant } from "./ui/button";
 import { Button } from "./buttons/Button";
@@ -22,7 +22,7 @@ interface ICollapsible {
   onChange?: (arg: boolean) => void;
   variant?: TButtonVariant;
   size?: TButtonSize;
-  loading?: boolean;
+  isLoading?: boolean;
   defaultOpen?: boolean;
 }
 
@@ -33,14 +33,22 @@ export function PrimaryCollapsible({
   onChange,
   variant = "ghost",
   size,
-  loading,
+  isLoading,
   defaultOpen,
 }: ICollapsible) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const isActiveLink = (path: string) => pathname === path;
   const router = useRouter();
-  if (loading) return <Loader />;
+
+  //Delay default open a bit for UX
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (defaultOpen) setIsOpen(true);
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [defaultOpen]);
+
   return (
     <div className="space-y-1 w-full ">
       <Button
@@ -108,7 +116,7 @@ export function PrimaryCollapsible({
             className="overflow-hidden"
           >
             <div className=" space-y-1 border-l border-border/50 pl-4 pt-4 mb-3">
-              {children}
+              {isLoading ? <Loader /> : children}
             </div>
           </motion.div>
         )}
