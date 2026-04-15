@@ -55,7 +55,7 @@ const LandingPage = async () => {
   console.log(session);
 
   return (
-    <div className=" relative" id="home">
+    <div className="space-y-8 relative" id="home">
       <NEWSSECTION />
 
       <LandingPlayers />

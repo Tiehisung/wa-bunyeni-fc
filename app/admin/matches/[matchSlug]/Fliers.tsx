@@ -3,6 +3,8 @@
 import { ImageUploader } from "@/components/files/image-uploader";
 import { useUpdateMatchMutation } from "@/services/match.endpoints";
 import { IMatch } from "@/types/match.interface";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 interface IProps {
   match?: IMatch;
@@ -10,6 +12,45 @@ interface IProps {
 
 const MatchFliers = ({ match }: IProps) => {
   const [updateMatch] = useUpdateMatchMutation();
+
+  const pathname = usePathname();
+
+  if (!pathname.startsWith("/admin"))
+    return (
+      <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <section>
+          <h1 className="text-center">FIXTURE FLIER</h1>
+
+          <div className="h-72 w-80">
+            <Image
+              width={400}
+              height={400}
+              src={match?.fixtureFlier as string}
+              alt="fix flier"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </section>
+
+        <section>
+          <h1 className="text-center">RESULT FLIER</h1>
+
+          <div className="h-72 w-80">
+            {match?.resultFlier ? (
+              <Image
+                width={400}
+                height={400}
+                src={match?.resultFlier as string}
+                alt="result flier"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <p className="p-5 text-center">Not available</p>
+            )}
+          </div>
+        </section>
+      </div>
+    );
 
   return (
     <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">

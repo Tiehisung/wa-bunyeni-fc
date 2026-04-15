@@ -7,6 +7,7 @@ import { IMatch } from '@/types/match.interface';
 import { EPlayerStatus } from '@/types/player.interface';
 import { LoggerService } from '../../../../shared/log.service';
 import { getApiErrorMessage } from '../../../../lib/error-api';
+import '@/shared/models.imports'
 
 connectDB();
 

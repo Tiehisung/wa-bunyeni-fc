@@ -4,6 +4,7 @@ import { ENV } from "@/lib/env";
 import { formatDate } from "@/lib/timeAndDate";
 import { getMatch } from "../page";
 import MatchDetailsClient from "./Client";
+import { checkMatchMetrics } from "@/lib/compute/match";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -22,7 +23,7 @@ export  async function generateMetadata({
       description: "The requested match could not be found.",
     };
   }
-
+  const matchMetrics = checkMatchMetrics(match);
   const homeTeam = match.isHome ? ENV.TEAM_NAME : match.opponent?.name;
   const awayTeam = match.isHome ? match.opponent?.name : ENV.TEAM_NAME;
   const scoreText =

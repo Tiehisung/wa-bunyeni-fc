@@ -148,18 +148,18 @@ export const sidebarLinks: ILinkItem[] = [
       },
       {
         title: "Gallery",
-        path: "/admin/galleries",
+        path: "/admin/media/galleries",
         icon: <Image className="w-4 h-4" />,
       },
 
       {
         title: "Highlights",
-        path: "/admin/highlights",
+        path: "/admin/media/highlights",
         icon: <ActivityIcon className="w-4 h-4" />,
       },
       {
         title: "Uploader",
-        path: "/admin/upload",
+        path: "/admin/media/upload",
         icon: <Image className="w-4 h-4" />,
       },
     ],

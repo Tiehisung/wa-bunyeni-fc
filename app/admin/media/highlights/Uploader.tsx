@@ -185,7 +185,7 @@ export function HighlightUpload({
             {(playersData?.data?.length || 0) > 0 && (
               <PrimaryCollapsible
                 header={{ icon: "#", label: "Tag Players" }}
-                loading={playersLoading}
+                isLoading={playersLoading}
               >
                 <Controller
                   control={control}
