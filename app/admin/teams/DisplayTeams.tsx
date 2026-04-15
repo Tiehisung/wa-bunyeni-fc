@@ -7,16 +7,16 @@ import { LVOutPutTable } from "@/components/tables/VerticalTable";
 import { Edit, Plus, Trash } from "lucide-react";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { StackModal } from "@/components/modals/StackModal";
-
 import { useDeleteTeamMutation } from "@/services/team.endpoints";
 import { ITeam } from "@/types/match.interface";
 import { TeamForm } from "./TeamForm";
 import { Pagination } from "@/components/pagination/Pagination";
 import { Button } from "@/components/buttons/Button";
- 
 import { smartToast } from "@/utils/toast";
 import { getErrorMessage } from "@/lib/error";
 import { useRouter } from "next/navigation";
+import { H } from "@/components/Element";
+import Image from "next/image";
 
 const DisplayTeams = ({ teams }: { teams?: IQueryResponse<ITeam[]> }) => {
   const router = useRouter();
@@ -27,7 +27,6 @@ const DisplayTeams = ({ teams }: { teams?: IQueryResponse<ITeam[]> }) => {
   const handleDelete = async (teamId: string) => {
     try {
       const result = await deleteTeam(teamId).unwrap();
-
       smartToast(result);
     } catch (error) {
       smartToast({ error: getErrorMessage(error, "Failed to delete team") });
@@ -57,10 +56,12 @@ const DisplayTeams = ({ teams }: { teams?: IQueryResponse<ITeam[]> }) => {
       <ul className="divide-y-8 divide-border space-y-14">
         {teams?.data?.map((team) => (
           <li key={team?._id} className="relative pb-6 px-4">
-            <p className="_heading">{team?.name}</p>
+            <H>{team?.name}</H>
             <div className="flex flex-wrap gap-3.5">
-              <img
+              <Image
                 src={team?.logo}
+                width={240}
+                height={240}
                 alt={team?.name ?? "logo"}
                 className="object-cover h-60 w-60 aspect-4/3 rounded-xl"
               />
@@ -71,7 +72,7 @@ const DisplayTeams = ({ teams }: { teams?: IQueryResponse<ITeam[]> }) => {
                     { label: "Alias", value: team?.alias },
                     {
                       label: "Last Match",
-                      value: formatDate(team?.updatedAt, "March 2, 2025"),
+                      value: formatDate(team?.updatedAt),
                     },
                     { label: "Encounters", value: "0" },
                     { label: "Wins", value: "0" },
