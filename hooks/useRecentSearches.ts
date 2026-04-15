@@ -8,9 +8,10 @@ import {
     clearAllRecentSearches,
     updateMaxItems,
 } from "@/store/slices/recentSearch.slice";
-import { useAuth } from "@/store/hooks/useAuth";
+ 
 import { useAppSelector } from "@/store/hooks/store";
 import { useSyncRecentSearchesMutation } from "@/services/recent-search.endpoints";
+import { useSession } from "next-auth/react";
  
 
 export interface RecentSearchInput {
@@ -21,7 +22,8 @@ export interface RecentSearchInput {
 
 export function useRecentSearches() {
     const dispatch = useDispatch();
-    const { user } = useAuth();
+const { data: session,   } = useSession();
+   const user=session?.user
     const [syncSearches] = useSyncRecentSearchesMutation();
 
     const recentSearches = useAppSelector((state) => state.recentSearches.searches);

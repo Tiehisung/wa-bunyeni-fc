@@ -22,7 +22,7 @@ import {
 } from "@/services/match.endpoints";
 import { smartToast } from "@/utils/toast";
 import { TEAM } from "@/data/team";
-import { useAuth } from "@/store/hooks/useAuth";
+ 
 import { getDeadlineInfo } from "@/lib/timeAndDate";
 import { ImageUploader } from "@/components/files/image-uploader";
 import { z } from "zod";
@@ -30,6 +30,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { useGetTeamsQuery } from "@/services/team.endpoints";
 import { COMBOBOX } from "@/components/ComboBox";
+import { useSession } from "next-auth/react";
 
 // Zod schema for form validation
 
@@ -53,7 +54,8 @@ interface MatchFormProps {
 }
 
 export const MatchForm = ({ fixture }: MatchFormProps) => {
-  const { user } = useAuth();
+   const { data: session,   } = useSession();
+   const user=session?.user
   const [waiting, setWaiting] = useState(false);
   const [createMatch] = useCreateMatchMutation();
   const [updateMatch] = useUpdateMatchMutation();

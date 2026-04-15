@@ -13,15 +13,17 @@ import { MVPForm } from "../mvps/MvpForm";
 import { Separator } from "@/components/ui/separator";
 import { smartToast } from "@/utils/toast";
 import { useUpdateMatchMutation } from "@/services/match.endpoints";
-import { useAuth } from "@/store/hooks/useAuth";
+ 
 import { getDeadlineInfo } from "@/lib/timeAndDate";
+import { useSession } from "next-auth/react";
 
 interface IProps {
   opponent?: ITeam;
   match: IMatch;
 }
 export function MatchEventsAdmin({ opponent, match }: IProps) {
-  const { user } = useAuth();
+const { data: session,   } = useSession();
+   const user=session?.user
   const sortedEvents = match?.events
     ? [...match.events].sort(
         (a, b) => Number(b.minute ?? 0) - Number(a.minute ?? 0),

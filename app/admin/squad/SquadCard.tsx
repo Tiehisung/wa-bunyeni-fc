@@ -28,20 +28,22 @@ import {
   useDeleteSquadMutation,
   useGetSquadByMatchQuery,
 } from "@/services/squad.endpoints";
-import { useAuth } from "@/store/hooks/useAuth";
+ 
 import { smartToast } from "@/utils/toast";
 import { fireEscape } from "@/hooks/Esc";
 import PageLoader from "@/components/loaders/Page";
 import { Button } from "@/components/buttons/Button";
 import { useSearchParams } from "@/lib/searchParams";
 import SquadForm from "./SquadForm";
+import { useSession } from "next-auth/react";
 
 interface SquadDisplayProps {
   match?: IMatch;
 }
 
 const SquadCard = ({ match }: SquadDisplayProps) => {
-  const { user } = useAuth();
+ const { data: session,   } = useSession();
+    const user=session?.user
 
   const { getSearchParam, setSearchParams } = useSearchParams();
 

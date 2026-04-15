@@ -1,10 +1,11 @@
-import connectDB from "@/config/db.config";
+ 
 import UserModel from "@/models/user";
 import { NextRequest, NextResponse } from "next/server";
 import { logAction } from "../../logs/helper";
 import bcrypt from "bcryptjs";
 import { IUser } from "@/types/user";
 import { isValidEmail } from "@/lib/validate";
+import connectDB from "@/config/db.config";
 
 connectDB();
 

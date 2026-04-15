@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/buttons/Button";
 import { IconInputWithLabel } from "@/components/input/Inputs";
-import { getErrorMessage } from "@/lib";
+import { getErrorMessage } from "@/lib/error";
 import { AlertCircle, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";

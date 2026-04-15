@@ -3,8 +3,9 @@ import QuillEditor from "@/components/editor/Quill";
 import { fireEscape } from "@/hooks/Esc";
 import { markupToPlainText } from "@/lib/dom";
 import { useUpdateNewsCommentsMutation } from "@/services/news.endpoints";
-import { useAuth } from "@/store/hooks/useAuth";
+ 
 import { SendHorizontal } from "lucide-react";
+import { useSession } from "next-auth/react";
 import {  useState } from "react";
 
 interface Props {
@@ -12,7 +13,8 @@ interface Props {
 }
 
 const CommentForm = ({ newsId }: Props) => {
-  const { user } = useAuth();
+const { data: session,   } = useSession();
+   const user=session?.user
   const [comment, setComment] = useState("");
 
   const [updateComments, { isLoading: isCommenting }] =
@@ -26,7 +28,7 @@ const CommentForm = ({ newsId }: Props) => {
     const result = await updateComments({
       newsId: newsId as string,
       comment,
-      userId: user?._id,
+      userId: user?.id,
     }).unwrap();
 
     if (result.success) {
