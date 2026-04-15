@@ -7,12 +7,12 @@ import { INewsProps } from "@/types/news.interface";
 import { Metadata } from "next";
 import { ENV } from "@/lib/env";
 import { IPageProps, IQueryResponse } from "@/types";
-import { apiConfig } from "@/lib/configs";
+import {   baseApiUrl } from "@/lib/configs";
 
 
 export const getNewsItem = async (slug: string) => {
   try {
-    const response = await fetch(`${apiConfig.news}/${slug}`, {
+    const response = await fetch(`${baseApiUrl}/news/${slug}`, {
       cache: "no-store",
     });
     const news = await response.json();

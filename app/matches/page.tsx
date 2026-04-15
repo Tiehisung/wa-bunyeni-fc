@@ -2,7 +2,7 @@ import FixturesSection from "./Fixtures";
 import HEADER from "@/components/Element";
 import { Metadata } from "next";
 import { ENV } from "@/lib/env";
-import { apiConfig } from "@/lib/configs";
+import {   baseApiUrl } from "@/lib/configs";
 
 export const metadata: Metadata = {
   title: `Matches & Fixtures | ${ENV.TEAM_NAME}`,
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
 export const getMatches = async (query?: string): Promise<any> => {
   try {
     const cleaned = query?.startsWith("?") ? query : "?" + query;
-    const response = await fetch(`${apiConfig.matches}${cleaned ?? ""}`, {
+    const response = await fetch(`${baseApiUrl}/matches${cleaned ?? ""}`, {
       cache: "no-store",
     });
     const fixtures = await response.json();
@@ -56,7 +56,7 @@ export const getMatches = async (query?: string): Promise<any> => {
 
 export const getMatch = async (idOrSlug: string): Promise<any> => {
   try {
-    const response = await fetch(`${apiConfig.matches}/${idOrSlug}`, {
+    const response = await fetch(`${baseApiUrl}/matches/${idOrSlug}`, {
       cache: "no-store",
     });
     const match = await response.json();

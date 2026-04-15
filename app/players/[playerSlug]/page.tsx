@@ -1,6 +1,6 @@
 import PlayerProfile from "./Profile";
 import { PlayerHeadList } from "./PlayerHeadList";
-import { apiConfig } from "@/lib/configs";
+import {   baseApiUrl } from "@/lib/configs";
 import { IPlayer } from "@/types/player.interface";
 import { IPageProps, IQueryResponse } from "@/types";
 import { Metadata } from "next";
@@ -9,7 +9,7 @@ import { TEAM } from "@/data/team";
 
 export const getPlayerById = async (slugOrId: string) => {
   try {
-    const response = await fetch(`${apiConfig.players}/${slugOrId}`, {
+    const response = await fetch(`${baseApiUrl}/players/${slugOrId}`, {
       cache: "no-store",
     });
 

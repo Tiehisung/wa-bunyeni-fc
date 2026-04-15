@@ -4,11 +4,11 @@ import { Metadata } from "next";
 import { ENV } from "@/lib/env";
 import { IQueryResponse } from "@/types";
 import { INewsProps } from "@/types/news.interface";
-import { apiConfig } from "@/lib/configs";
+import {   baseApiUrl } from "@/lib/configs";
 
 export const getNews = async (query?: string) => {
   try {
-    const uri = query ? `${apiConfig.news}${query}` : apiConfig.news;
+    const uri = query ? `${`${baseApiUrl}/news`}${query}` : `${baseApiUrl}/news`;
 
     const response = await fetch(uri, { cache: "no-cache" });
     return await response.json();
@@ -16,6 +16,7 @@ export const getNews = async (query?: string) => {
     return null;
   }
 };
+
 export async function generateMetadata(): Promise<Metadata> {
   const articleData: IQueryResponse<INewsProps[]> = await getNews("?limit=1");
 

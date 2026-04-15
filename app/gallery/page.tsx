@@ -7,8 +7,6 @@ import { staticImages } from "@/assets/images";
 import { GrGallery } from "react-icons/gr";
 
 import Loader from "@/components/loaders/Loader";
-import { AlertCircle } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useGetGalleriesQuery } from "@/services/gallery.endpoints";
 import { useSearchParams } from "next/navigation";
 import DataErrorAlert from "@/components/error/DataError";
