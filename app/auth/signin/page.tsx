@@ -45,7 +45,7 @@ const LoginPage = async ({ searchParams }: IPageProps) => {
   }
   return (
     <div className="min-h-screen flex flex-col pt-20 items-center">
-      <h1 className="text-2xl font-bold mb-4">Login</h1>
+      <h1 className="text-2xl font-bold my-4">Sign In</h1>
       <div className="px-4 flex flex-col gap-5 rounded-2xl min-w-2xs md:min-w-xl max-w-md mx-auto border py-6">
         {error && (
           <Alert variant="destructive">

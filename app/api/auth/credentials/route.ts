@@ -1,4 +1,4 @@
- 
+
 import UserModel from "@/models/user";
 import { NextRequest, NextResponse } from "next/server";
 import { logAction } from "../../logs/helper";
@@ -24,11 +24,11 @@ export async function POST(req: NextRequest,) {
 
     if (!matched) return NextResponse.json({ success: false, message: 'Incorrect password' });
 
-    const { _id, name, image, role } = user; //Eliminate pass
+    const { _id, name, image, avatar, role } = user; //Eliminate pass
 
     const safeUser = {
         name,
-        image,
+        image: image || avatar,
         role,
         email,
         id: _id,
