@@ -1,18 +1,15 @@
 'use client'
 
 import { useDispatch, } from "react-redux";
-
 import {
     addRecentSearch,
     removeRecentSearch,
     clearAllRecentSearches,
     updateMaxItems,
 } from "@/store/slices/recentSearch.slice";
-
 import { useAppSelector } from "@/store/hooks/store";
 import { useSyncRecentSearchesMutation } from "@/services/recent-search.endpoints";
 import { useSession } from "next-auth/react";
-
 
 export interface RecentSearchInput {
     query: string;

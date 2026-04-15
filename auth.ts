@@ -89,7 +89,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             },
         }),
     ],
-
+    secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
         async jwt({ token, user }) {
             // First sign-in

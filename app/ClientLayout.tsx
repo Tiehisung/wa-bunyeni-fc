@@ -11,8 +11,11 @@ import MainNavbar from "@/components/MainNavbar";
 
 import Footer from "./Footer";
 import AuthProvider from "@/providers/AuthProvider";
+import { usePathname } from "next/navigation";
 
 export default function ClientLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+
   return (
     <AuthProvider>
       <StoreProvider>
@@ -23,7 +26,9 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
           disableTransitionOnChange
         >
           <MainNavbar />
-          <div className={`min-h-screen overflow-x-hidden _page`}>
+          <div
+            className={`min-h-screen overflow-x-hidden ${pathname?.startsWith("/admin") ? "" : "_page"}`}
+          >
             {children}
             <Swinger className="fixed bottom-6 right-6 z-30">
               <BackToTopButton />
