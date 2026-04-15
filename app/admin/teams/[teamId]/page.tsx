@@ -23,11 +23,7 @@ const TeamPage = () => {
   }
 
   if (error) {
-    return (
-      <div className="space-y-12 p-4 md:px-10 bg-card">
-        <DataErrorAlert message={getErrorMessage(error)} />
-      </div>
-    );
+    return <DataErrorAlert message={getErrorMessage(error)} />;
   }
   return (
     <div className="pb-12 pt-5">
