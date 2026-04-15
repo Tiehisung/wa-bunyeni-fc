@@ -1,5 +1,9 @@
- export const baseUrl = process.env.NEXT_PUBLIC_API_URL
+import { ENV } from "./env";
 
+
+export const baseApiUrl = (ENV?.APP_URL ?? "") + (ENV?.API_URL ?? "") // includes app url
+
+const baseUrl = process.env.NEXT_PUBLIC_API_URL // just ==> /api
 export const apiConfig = {
   base: `${baseUrl}`,
   features: `${baseUrl}/features`,

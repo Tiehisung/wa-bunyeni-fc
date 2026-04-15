@@ -5,6 +5,7 @@ import { formatDate } from "@/lib/timeAndDate";
 import { getMatch } from "../page";
 import MatchDetailsClient from "./Client";
 import { checkMatchMetrics } from "@/lib/compute/match";
+import { IMatch } from "@/types/match.interface";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -15,15 +16,17 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const match = await getMatch(slug);
+  const matchData = await getMatch(slug);
+  const match = matchData?.data as IMatch;
 
+  console.log({ slug, match });
   if (!match) {
     return {
       title: `Match Not Found | ${ENV.TEAM_NAME}`,
       description: "The requested match could not be found.",
     };
   }
-  const { teams,  winStatus } = checkMatchMetrics(match);
+  const { teams, winStatus } = checkMatchMetrics(match);
   const homeTeam = teams.home;
   const awayTeam = teams.away;
   const scoreText =
@@ -48,7 +51,7 @@ export async function generateMetadata({
       publishedTime: match.date,
       images: [
         {
-          url: match.opponent?.logo || ENV.LOGO_URL,
+          url: (match.opponent?.logo || ENV.LOGO_URL) as string,
           width: 1200,
           height: 630,
           alt: `${homeTeam} vs ${awayTeam}`,
@@ -59,7 +62,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: [match.opponent?.logo || ENV.LOGO_URL],
+      images: [(match.opponent?.logo || ENV.LOGO_URL) as string],
     },
   };
 }

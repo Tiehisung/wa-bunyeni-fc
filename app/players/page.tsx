@@ -2,12 +2,12 @@ import { H } from "@/components/Element";
 import OurPlayers from "./Display";
 import { Metadata } from "next";
 import { ENV } from "@/lib/env";
-import { apiConfig } from "@/lib/configs";
+import {  baseApiUrl } from "@/lib/configs";
 
 export const getPlayers = async (query?: string) => {
   try {
     const formatted = query ? (query?.includes("?") ? query : "?" + query) : "";
-    const response = await fetch(apiConfig.players + (formatted || ""), {
+    const response = await fetch(`${baseApiUrl}/players${formatted || ""}`, {
       cache: "no-cache",
     });
 

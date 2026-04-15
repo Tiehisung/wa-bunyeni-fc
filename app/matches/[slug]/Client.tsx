@@ -4,7 +4,6 @@ import MatchFliers from "@/app/admin/matches/[matchSlug]/Fliers";
 import HEADER from "@/components/Element";
 import DataErrorAlert from "@/components/error/DataError";
 import PageLoader from "@/components/loaders/Page";
-import { TEAM } from "@/data/team";
 import { checkMatchMetrics } from "@/lib/compute/match";
 import { ENV } from "@/lib/env";
 import { getErrorMessage } from "@/lib/error";
@@ -27,8 +26,8 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
   const homeTeam = matchMetrics.teams.home;
   const awayTeam = matchMetrics.teams.away;
 
-  const homeScore = match?.computed?.teamScore || 0;
-  const awayScore = match?.computed?.opponentScore || 0;
+  const homeScore = matchMetrics.goals.home || 0;
+  const awayScore = matchMetrics.goals?.away || 0;
 
   const teamGoals = matchMetrics.goals.teamGoals;
 
