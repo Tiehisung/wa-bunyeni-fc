@@ -5,16 +5,15 @@ import SingleImageUploadWidget from "@/components/cloudinary/SingleImageUploadWi
 import { PrimaryDropdown } from "@/components/Dropdown";
 import { H } from "@/components/Element";
 import { OverlayLoader } from "@/components/loaders/OverlayLoader";
+import { fireEscape } from "@/hooks/Esc";
 import { getSafeName } from "@/lib/sanitizer.utils";
 import { useUpdateTeamMutation } from "@/services/team.endpoints";
 import { ITeam } from "@/types/match.interface";
 import { smartToast } from "@/utils/toast";
 import { Trash } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 export function TeamImages({ team }: { team?: ITeam }) {
-  const router = useRouter();
   const [updateTeam, { isLoading: updating }] = useUpdateTeamMutation();
 
   const handleSave = async (url: string) => {
@@ -36,6 +35,7 @@ export function TeamImages({ team }: { team?: ITeam }) {
         _id: team?._id as string,
         images: team?.images?.filter((img) => img !== url),
       }).unwrap();
+      fireEscape()
     } catch (error) {
       smartToast({ error: error });
     }
@@ -59,6 +59,7 @@ export function TeamImages({ team }: { team?: ITeam }) {
               className="py-4 px-2"
             >
               <Button
+           
                 onClick={() => handleDelete(img)}
                 className="shadow w-full justify-start"
                 size="sm"

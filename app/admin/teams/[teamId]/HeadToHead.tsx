@@ -34,6 +34,8 @@ export function HeadToHead({ className }: HeadToHeadProps) {
     teamId as string,
   );
 
+  console.log({headToHeadData})
+
   const data = headToHeadData?.data;
 
   const getResultColor = (result: string) => {
