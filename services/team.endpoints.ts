@@ -28,19 +28,13 @@ const teamApi = api.injectEndpoints({
                     status: params?.status,
                 },
             }),
-            providesTags: (result) =>
-                result?.data
-                    ? [
-                        ...result.data.map(({ _id }) => ({ type: 'Teams' as const, id: _id })),
-                        { type: 'Teams', id: 'LIST' },
-                    ]
-                    : [{ type: 'Teams', id: 'LIST' }],
+            providesTags: ['Teams']
         }),
 
         // GET team by ID
         getTeamById: builder.query<IQueryResponse<ITeam>, string>({
             query: (id) => `/teams/${id}`,
-            providesTags: (_result, _error, id) => [{ type: 'Teams', id }],
+            providesTags: ['Teams']
         }),
 
         // GET teams by season
@@ -54,27 +48,7 @@ const teamApi = api.injectEndpoints({
                 url: `/teams/season/${season}`,
                 params: { page, limit, club },
             }),
-            providesTags: (result, _error, data) => {
-                const tags = [];
-
-                // Add individual match tags
-                if (result?.data) {
-                    tags.push(
-                        ...result.data.map(({ _id }) => ({
-                            type: 'Teams' as const,
-                            id: _id
-                        }))
-                    );
-                }
-
-                // Add team-specific tag
-                tags.push({
-                    type: 'Teams' as const,
-                    id: `TEAM_${data.season}`
-                });
-
-                return tags;
-            },
+            providesTags: ['Teams']
         }),
 
         // GET team statistics
@@ -91,9 +65,7 @@ const teamApi = api.injectEndpoints({
             upcomingMatches: Array<{ matchId: string; opponent: string; date: string }>;
         }>, string>({
             query: (teamId) => `/teams/${teamId}/stats`,
-            providesTags: (_result, _error, teamId) => [
-                { type: 'Teams', id: `STATS_${teamId}` },
-            ],
+            providesTags: ['Teams']
         }),
 
         // GET team players
@@ -119,11 +91,7 @@ const teamApi = api.injectEndpoints({
                 method: "POST",
                 body,
             }),
-            invalidatesTags: [
-                { type: 'Teams', id: 'LIST' },
-                { type: 'Teams', id: 'CLUB_' }, // Invalidate club-specific lists
-                { type: 'Teams', id: 'SEASON_' }, // Invalidate season-specific lists
-            ],
+            invalidatesTags: ['Teams']
         }),
 
         // UPDATE team (full update - PUT)
@@ -133,14 +101,7 @@ const teamApi = api.injectEndpoints({
                 method: "PUT",
                 body,
             }),
-            invalidatesTags: (_result, _error, { _id: id }) => [
-                { type: 'Teams', id: 'LIST' },
-                { type: 'Teams', id },
-                { type: 'Teams', id: 'CLUB_' },
-                { type: 'Teams', id: 'SEASON_' },
-                { type: 'Teams', id: `STATS_${id}` },
-                { type: 'Teams', id: `PLAYERS_${id}` },
-            ],
+            invalidatesTags: ['Teams']
         }),
 
         // PATCH team (partial update)
@@ -150,15 +111,7 @@ const teamApi = api.injectEndpoints({
                 method: "PATCH",
                 body,
             }),
-            invalidatesTags: (_result, _error, { id }) => [
-                { type: 'Teams', id: 'LIST' },
-                { type: 'Teams', id },
-                { type: 'Teams', id: 'CLUB_' },
-                { type: 'Teams', id: 'SEASON_' },
-                { type: 'Teams', id: `STATS_${id}` },
-                { type: 'Teams', id: `PLAYERS_${id}` },
-                'Teams'
-            ],
+            invalidatesTags: ['Teams']
         }),
 
         // DELETE team
@@ -167,9 +120,9 @@ const teamApi = api.injectEndpoints({
                 url: `/teams/${teamId}`,
                 method: "DELETE",
             }),
-            invalidatesTags: (_result,) => ['Teams' ],
-                
-           
+            invalidatesTags: (_result,) => ['Teams'],
+
+
         }),
 
         // ADD player to team
@@ -188,13 +141,7 @@ const teamApi = api.injectEndpoints({
                 method: "POST",
                 body: { playerId, contract },
             }),
-            invalidatesTags: (_result, _error, { teamId, playerId }) => [
-                { type: 'Teams', id: teamId },
-                { type: 'Teams', id: `PLAYERS_${teamId}` },
-                { type: 'Teams', id: `STATS_${teamId}` },
-                { type: 'Players', id: playerId },
-                { type: 'Players', id: 'LIST' },
-            ],
+            invalidatesTags: ['Teams']
         }),
 
         // REMOVE player from team
@@ -208,13 +155,7 @@ const teamApi = api.injectEndpoints({
                 method: "DELETE",
                 params: { releaseDate },
             }),
-            invalidatesTags: (_result, _error, { teamId, playerId }) => [
-                { type: 'Teams', id: teamId },
-                { type: 'Teams', id: `PLAYERS_${teamId}` },
-                { type: 'Teams', id: `STATS_${teamId}` },
-                { type: 'Players', id: playerId },
-                { type: 'Players', id: 'LIST' },
-            ],
+            invalidatesTags: ['Teams']
         }),
 
         // BULK add players to team
@@ -227,13 +168,7 @@ const teamApi = api.injectEndpoints({
                 method: "POST",
                 body: { playerIds },
             }),
-            invalidatesTags: (_result, _error, { teamId, playerIds }) => [
-                { type: 'Teams', id: teamId },
-                { type: 'Teams', id: `PLAYERS_${teamId}` },
-                { type: 'Teams', id: `STATS_${teamId}` },
-                ...playerIds.map(id => ({ type: 'Players' as const, id })),
-                { type: 'Players', id: 'LIST' },
-            ],
+            invalidatesTags: ['Teams']
         }),
 
         // UPDATE team captain
@@ -246,10 +181,7 @@ const teamApi = api.injectEndpoints({
                 method: "PATCH",
                 body: { captainId: playerId },
             }),
-            invalidatesTags: (_result, _error, { teamId }) => [
-                { type: 'Teams', id: teamId },
-                { type: 'Teams', id: `PLAYERS_${teamId}` },
-            ],
+            invalidatesTags: ['Teams']
         }),
 
         // GET team matches
@@ -263,9 +195,7 @@ const teamApi = api.injectEndpoints({
                 url: `/teams/${teamId}/matches`,
                 params: { season, status, limit },
             }),
-            providesTags: (_result, _error, { teamId, season }) => [
-                { type: 'Teams', id: `MATCHES_${teamId}${season ? `_${season}` : ''}` },
-            ],
+            providesTags: ['Teams']
         }),
 
         // GET team formation/lineup
@@ -278,9 +208,7 @@ const teamApi = api.injectEndpoints({
                 url: `/teams/${teamId}/formation`,
                 params: { matchId },
             }),
-            providesTags: (_result, _error, { teamId }) => [
-                { type: 'Teams', id: `FORMATION_${teamId}` },
-            ],
+            providesTags: ['Teams']
         }),
     }),
 });
