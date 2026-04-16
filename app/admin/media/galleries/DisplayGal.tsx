@@ -42,13 +42,16 @@ export function GalleryDisplay({
 
   return (
     <>
+     
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
         {galleries.map((gallery) => (
           <PrimaryGalleryCard gallery={gallery} key={gallery._id} />
         ))}
       </div>
+
+
     </>
   );
 }
 
-// Updated GalleryCard component to accept handlers
+ 

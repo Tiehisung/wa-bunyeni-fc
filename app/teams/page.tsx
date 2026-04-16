@@ -70,7 +70,7 @@ export default async function TeamsPage({ searchParams }: TeamsPageProps) {
   return (
     <main className="min-h-screen bg-linear-to-b from-background to-muted/20">
       {/* Header Section */}
-      <div className="bg-primary/5 border-b">
+      <div className="bg-primary/5 border-b -mx-4">
         <div className="container mx-auto px-4 py-12 text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-3">
             Teams & Opponents

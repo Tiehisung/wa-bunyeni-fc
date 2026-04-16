@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, User, Trophy, ImageIcon } from "lucide-react";
+import { ArrowLeft, User, ImageIcon } from "lucide-react";
 import { ENV } from "@/lib/env";
 import { baseApiUrl } from "@/lib/configs";
 import { formatDate } from "@/lib/timeAndDate";

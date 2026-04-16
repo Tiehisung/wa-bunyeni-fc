@@ -1,6 +1,6 @@
 "use client";
 
-import GalleryClient from "./Client";
+import GalleryClient from "./GalClient";
 import InfiniteLimitScroller from "@/components/InfiniteScroll";
 import { IntroSection } from "@/components/IntroSection";
 import { staticImages } from "@/assets/images";
@@ -18,8 +18,8 @@ const GalleryPage = () => {
   const {
     data: galleries,
     isLoading: galleriesLoading,
-    error: galleriesError,
-  } = useGetGalleriesQuery(paramsString);
+    error: galleriesError,refetch
+  } = useGetGalleriesQuery(paramsString,{});
 
   const isLoading = galleriesLoading;
 
@@ -27,6 +27,8 @@ const GalleryPage = () => {
     galleries?.data?.[0]?.files?.find((f) => f.resource_type === "image")
       ?.secure_url ?? staticImages.ballOnGrass;
 
+
+  
   if (isLoading) {
     return <Loader message="Loading gallery..." />;
   }

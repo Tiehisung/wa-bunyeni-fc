@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoutBtn } from "@/components/auth/Auth";
 import { ThemeModeToggle } from "@/components/ThemeToggle";
 import { AVATAR } from "@/components/ui/avatar";
 import { TEAM } from "@/data/team";
@@ -25,7 +26,10 @@ const Footer: React.FC = () => {
               Building champions, uniting communities since 2024.
             </p>
 
-            <ThemeModeToggle />
+            <div className="flex items-center gap-3 ">
+              <LogoutBtn />
+              <ThemeModeToggle />
+            </div>
           </div>
           <div>
             <h4 className="font-semibold mb-3 text-sm text-muted-foreground">
