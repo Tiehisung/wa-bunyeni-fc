@@ -8,7 +8,7 @@ import ContentShowcaseWrapper from "@/components/ShowcaseWrapper";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useCreateSponsorMutation } from "@/services/sponsor.endpoints";
-import { ImageUploadWidget } from "@/components/cloudinary/ImageUploadWidget";
+import   ImageUploadWidget   from "@/components/cloudinary/ImageUploadWidget";
 import { smartToast } from "@/utils/toast";
 import { ISponsorProps } from "@/app/sponsorship/page";
 

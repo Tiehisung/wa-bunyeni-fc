@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
         }
 
         const formData = await request.formData();
-        const file = formData.get('file') as File;
+        const file = formData.get('video') as File;
 
         if (!file) {
             return NextResponse.json({

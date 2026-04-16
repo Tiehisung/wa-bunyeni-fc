@@ -20,7 +20,7 @@ interface IProps {
   aspectRatio?: "square" | "video" | "portrait" | "auto";
 }
 
-export function ImageUploader({
+export default function ImageUploadComponent({
   onUpload,
   folder = "/media/images",
   initialImage,

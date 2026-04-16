@@ -20,7 +20,7 @@ import {
 import { clearNews, setNews } from "@/store/slices/news.slice";
 import { CloudinaryWidget } from "@/components/cloudinary/Cloudinary";
 import { useEffect } from "react";
-import { ImageUploadWidget } from "@/components/cloudinary/ImageUploadWidget";
+import   ImageUploadWidget   from "@/components/cloudinary/ImageUploadWidget";
 import { useRouter } from "next/navigation";
 
 export interface IPostNews {

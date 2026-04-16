@@ -11,7 +11,7 @@ import {
   useCreateTeamMutation,
   useUpdateTeamMutation,
 } from "@/services/team.endpoints";
-import { ImageUploadWidget } from "@/components/cloudinary/ImageUploadWidget";
+import   ImageUploadWidget   from "@/components/cloudinary/ImageUploadWidget";
 import { smartToast } from "@/utils/toast";
 import { ENV } from "@/lib/env";
 

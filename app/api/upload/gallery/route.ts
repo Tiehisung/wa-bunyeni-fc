@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
             return new Promise((resolve, reject) => {
                 const uploadStream = cloudinary.uploader.upload_stream(
                     {
-                        folder: 'bunyeni-fc/gallery',
+                        folder: 'gallery',
                         resource_type: 'image',
                     },
                     (error, result) => {

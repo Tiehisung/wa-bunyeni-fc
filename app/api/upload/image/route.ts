@@ -5,7 +5,6 @@ import { LoggerService } from '../../../../shared/log.service';
 import { cloudinary, formatCloudinaryResponse } from '../../../../lib/cloudinary';
 import { getApiErrorMessage } from '../../../../lib/error-api';
 
-
 // POST /api/upload/image - Upload single image
 export async function POST(request: NextRequest) {
     try {
@@ -19,7 +18,7 @@ export async function POST(request: NextRequest) {
         }
 
         const formData = await request.formData();
-        const file = formData.get('file') as File;
+        const file = formData.get('image') as File;
 
         if (!file) {
             return NextResponse.json({
@@ -36,7 +35,7 @@ export async function POST(request: NextRequest) {
         const uploadPromise = new Promise((resolve, reject) => {
             const uploadStream = cloudinary.uploader.upload_stream(
                 {
-                    folder: 'bunyeni-fc/images',
+                    folder: 'images',
                     resource_type: 'image',
                 },
                 (error, result) => {

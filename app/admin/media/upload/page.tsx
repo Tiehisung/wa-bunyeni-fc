@@ -6,8 +6,8 @@ import { CopyButton } from "@/components/buttons/CopyBtn";
 import { Button } from "@/components/buttons/Button";
 import { ICloudinaryFile } from "@/types/file.interface";
 import HEADER from "../../../../components/Element";
-import { ImageUploader } from "@/components/files/image-uploader";
-import { GalleryUploader } from "@/components/files/gallery-uploader";
+import ImageUploader from "@/components/files/ImageUploadComponent";
+import { GalleryUploader } from "@/components/files/GalleryUploader";
 import { VideoUploader } from "@/components/files/video/uploader";
 import { CloudinaryWidget } from "@/components/cloudinary/Cloudinary";
 

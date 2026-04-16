@@ -7,7 +7,7 @@ import { Edit } from "lucide-react";
 import { useState, useEffect } from "react";
 import BottomSheetLite from "@/components/modals/BottomSheetLite";
 import { useUpdateSponsorMutation } from "@/services/sponsor.endpoints";
-import { ImageUploadWidget } from "@/components/cloudinary/ImageUploadWidget";
+import   ImageUploadWidget   from "@/components/cloudinary/ImageUploadWidget";
 import { smartToast } from "@/utils/toast";
 import { ISponsorProps } from "@/app/sponsorship/page";
 

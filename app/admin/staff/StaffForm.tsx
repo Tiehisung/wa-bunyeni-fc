@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { DateTimeInput, IconInputWithLabel } from "@/components/input/Inputs";
 import { Button } from "@/components/buttons/Button";
-import { ImageUploadWidget } from "@/components/cloudinary/ImageUploadWidget";
+import   ImageUploadWidget   from "@/components/cloudinary/ImageUploadWidget";
 import { smartToast } from "@/utils/toast";
 import { IStaff } from "@/types/staff.interface";
 import {
