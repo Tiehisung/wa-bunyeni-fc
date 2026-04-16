@@ -22,9 +22,9 @@ import {
 } from "@/services/match.endpoints";
 import { smartToast } from "@/utils/toast";
 import { TEAM } from "@/data/team";
- 
+
 import { getDeadlineInfo } from "@/lib/timeAndDate";
-import { ImageUploader } from "@/components/files/image-uploader";
+import ImageUploader from "@/components/files/ImageUploadComponent";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
@@ -54,8 +54,8 @@ interface MatchFormProps {
 }
 
 export const MatchForm = ({ fixture }: MatchFormProps) => {
-   const { data: session,   } = useSession();
-   const user=session?.user
+  const { data: session } = useSession();
+  const user = session?.user;
   const [waiting, setWaiting] = useState(false);
   const [createMatch] = useCreateMatchMutation();
   const [updateMatch] = useUpdateMatchMutation();

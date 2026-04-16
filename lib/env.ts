@@ -27,6 +27,9 @@ export const ENV = {
     CLOUDINARY: {
         CLOUD_NAME: e.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
         UPLOAD_PRESET: e.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
+        //private
+        API_KEY: e.CLOUDINARY_API_KEY,
+        API_SECRET: e.CLOUDINARY_API_SECRET,
     },
 
     // Contact

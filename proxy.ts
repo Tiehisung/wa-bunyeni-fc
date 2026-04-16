@@ -7,8 +7,6 @@ export async function proxy(request: NextRequest) {
     const session = (await auth()) as ISession | null;
     const role = session?.user?.role;
 
-    console.log('proxy', session)
-
     // const resolvedPathname = pathname.startsWith('/auth/login') ? (role == 'player' ? '/players/dashboard' : role?.includes('admin') ? '/admin' : '/') : pathname
 
     // Define protected paths

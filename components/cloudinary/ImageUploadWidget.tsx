@@ -5,6 +5,8 @@ import { Camera, X } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ENV } from "@/lib/env";
+import Image from "next/image";
+import { Button } from "../buttons/Button";
 
 interface UploadResult {
   secure_url: string;
@@ -27,9 +29,10 @@ interface AvatarUploadWidgetProps {
   uploadButtonText?: string;
   previewFileStyles?: string;
   triggerId?: string;
+  triggerStyles?: string;
 }
 
-export const ImageUploadWidget = ({
+const ImageUploadWidget = ({
   onUpload,
   onRemove,
   folder = "avatars",
@@ -41,7 +44,7 @@ export const ImageUploadWidget = ({
   showUploadButton = true,
   uploadButtonText = "Upload Photo",
   previewFileStyles,
-  triggerId,
+  triggerId,triggerStyles
 }: AvatarUploadWidgetProps) => {
   const [loaded, setLoaded] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | undefined>(
@@ -148,7 +151,9 @@ export const ImageUploadWidget = ({
           )}
         >
           {previewImage ? (
-            <img
+            <Image
+              width={400}
+              height={400}
               src={previewImage}
               alt="Avatar preview"
               className="w-full h-full object-cover"
@@ -194,14 +199,14 @@ export const ImageUploadWidget = ({
 
       {/* Upload Button */}
       {showUploadButton && (
-        <button
+        <Button
           id={triggerId}
-          type="button"
+          variant={"outline"}
           onClick={handleUpload}
           disabled={isUploading || !loaded}
           className={cn(
-            "text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors",
-            (isUploading || !loaded) && "opacity-50 cursor-not-allowed",
+            "text-sm font-medium transition-colors",
+            (isUploading || !loaded) && "opacity-50 cursor-not-allowed",triggerStyles
           )}
         >
           {isUploading
@@ -211,8 +216,9 @@ export const ImageUploadWidget = ({
               : previewImage
                 ? "Change Photo"
                 : uploadButtonText}
-        </button>
+        </Button>
       )}
     </div>
   );
 };
+export default ImageUploadWidget;
