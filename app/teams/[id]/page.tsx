@@ -11,7 +11,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { ENV } from "@/lib/env";
-import { apiConfig } from "@/lib/configs";
+import { baseApiUrl } from "@/lib/configs";
 import { formatDate } from "@/lib/timeAndDate";
 import { ITeam } from "@/types/match.interface";
 
@@ -47,7 +47,7 @@ export async function generateMetadata({
 // Fetch single team
 async function getTeamById(id: string): Promise<ITeam | null> {
   try {
-    const response = await fetch(`${apiConfig.teams}/${id}`, {
+    const response = await fetch(`${`${baseApiUrl}/teams`}/${id}`, {
       cache: "no-store",
     });
 
