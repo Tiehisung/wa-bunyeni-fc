@@ -37,6 +37,7 @@ export default function MainNavbar() {
     { label: "Players", id: "players", href: "/players" },
     { label: "Fixtures", id: "fixtures", href: "/matches" },
     { label: "News", href: "/news" },
+    { label: "Teams", href: "/teams" },
     { label: "Highlights", href: "/highlights" },
     { label: "Gallery", href: "/gallery" },
     { label: "Contact", href: "/contact" },
