@@ -264,7 +264,7 @@ export function IconInputWithLabel({
           {label}
         </label>
         <span
-          className={`text-2xl p-1 _slowTrans h-10 flex items-center justify-center bg-accent/40 text-muted-foreground`}
+          className={`text-2xl p-1 h-10 flex items-center justify-center bg-accent/40 text-muted-foreground`}
           hidden={!inputIcons.find((item) => item.type === type)}
         >
           {inputIcons.find((item) => item.type === type)?.icon}
@@ -282,7 +282,7 @@ export function IconInputWithLabel({
               ? placeholder.substring(0, 27) + "..."
               : placeholder
           }
-          className={`bg-transparent outline-none grow h-10 min-w-10 max-w-full p-2 placeholder:line-clamp-1 _slowTrans rounded ${className}`}
+          className={`bg-transparent outline-none grow h-10 min-w-10 max-w-full p-2 placeholder:line-clamp-1 rounded ${className}`}
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(value ? true : false)}
           {...others}

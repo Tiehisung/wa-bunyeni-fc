@@ -105,14 +105,14 @@ export const TeamForm = ({ team, onSuccess }: IProps) => {
   };
 
   return (
-    <Card className="w-fit p-3 mx-auto grow">
+    <div className="w-full p-3 mx-auto grow">
       <h1 className="font-bold text-lg mb-2 text-primary text-center uppercase">
         {team ? `Update ${team?.name}` : "Register New Opponent Team"}
       </h1>
 
       <form
         onSubmit={handleSubmit}
-        className="p-4 pt-10 max-w-md flex flex-col gap-4 gap-y-8 items-center justify-center mx-center w-full grow md:min-w-sm"
+        className="p-4 pt-10 max-w-sm flex flex-col gap-4 gap-y-8 items-center justify-center mx-center w-full grow md:min-w-sm"
       >
         <div className="flex flex-col items-center justify-center gap-2 mx-auto">
           <ImageUploadWidget
@@ -173,9 +173,9 @@ export const TeamForm = ({ team, onSuccess }: IProps) => {
           disabled={waiting}
           waitingText="Saving..."
           primaryText="SAVE"
-          className="_primaryBtn px-3 py-2 w-full mt-2 justify-center"
+          className="px-3 py-2 w-full mt-2 justify-center"
         />
       </form>
-    </Card>
+    </div>
   );
 };
