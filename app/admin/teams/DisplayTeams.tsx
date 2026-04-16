@@ -17,7 +17,6 @@ import { getErrorMessage } from "@/lib/error";
 import { useRouter } from "next/navigation";
 import { H } from "@/components/Element";
 import Image from "next/image";
-import Link from "next/link";
 
 const DisplayTeams = ({ teams }: { teams?: IQueryResponse<ITeam[]> }) => {
   const router = useRouter();
@@ -90,13 +89,14 @@ const DisplayTeams = ({ teams }: { teams?: IQueryResponse<ITeam[]> }) => {
               triggerStyles="absolute right-4 top-1 bg-accent/40 rounded-full h-10 w-10 _hover flex items-center justify-center"
               className="py-4 px-2"
             >
-              <Link
-                href={`/admin/teams/${team._id}`}
+              <Button
+                variant={"ghost"}
                 className="w-full flex justify-start"
+                onClick={() => router.push(`/admin/teams/${team._id}`)}
               >
                 <Edit />
                 Go to team
-              </Link>
+              </Button>
               <ConfirmDialog
                 onConfirm={() => handleDelete(team._id)}
                 trigger={
