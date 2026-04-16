@@ -101,7 +101,7 @@ const teamApi = api.injectEndpoints({
                 method: "PUT",
                 body,
             }),
-            invalidatesTags: ['Teams']
+            invalidatesTags: () => ['Teams']
         }),
 
         // PATCH team (partial update)

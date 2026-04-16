@@ -1,10 +1,9 @@
 "use client";
 
-import { CloudinaryWidget } from "@/components/cloudinary/Cloudinary";
-import ImageUploadWidget from "@/components/cloudinary/ImageUploadWidget";
+import SingleImageUploadWidget from "@/components/cloudinary/SingleImageUploadWidget";
 import { H } from "@/components/Element";
-import ImageUploader from "@/components/files/ImageUploadComponent";
 import { OverlayLoader } from "@/components/loaders/OverlayLoader";
+import { getSafeName } from "@/lib/sanitizer.utils";
 import { useUpdateTeamMutation } from "@/services/team.endpoints";
 import { ITeam } from "@/types/match.interface";
 import { smartToast } from "@/utils/toast";
@@ -20,8 +19,7 @@ export function TeamImages({ team }: { team?: ITeam }) {
         images: [url, ...(team?.images || [])],
       }).unwrap();
       smartToast(result);
-
-      console.log(result);
+ 
     } catch (error) {
       smartToast({ error: error });
     }
@@ -30,24 +28,22 @@ export function TeamImages({ team }: { team?: ITeam }) {
   return (
     <div>
       <H>Team Featured Images</H>
-       
-      <ImageUploadWidget
+
+      <SingleImageUploadWidget
         onUpload={(file) => handleSave(file?.secure_url as string)}
-        folder={team?.name.replaceAll(" ", "-")}
+        folder={getSafeName(team?.name as string)}
         cropping
-        shape="square"
-        className="max-h-20 shadow-none "
       />
 
-      <div className="grid md:grid-cols-2 2xl:grid-cols-3">
+      <div className="grid gap-2 md:grid-cols-2 2xl:grid-cols-3 mt-4">
         {team?.images?.map((img, i) => (
-          <div key={i} className="h-96 w-full">
+          <div key={i} className="h-96 w-full rounded overflow-hidden">
             <Image
               src={img}
               alt="team img"
               width={400}
               height={400}
-              className="w-full h-full aspect-auto"
+              className="w-full h-full aspect-auto object-cover"
             />
           </div>
         ))}
