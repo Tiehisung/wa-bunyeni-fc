@@ -1,12 +1,14 @@
-// app/teams/page.tsx
+ 
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { MapPin, Phone, User, Users } from "lucide-react";
 import { ENV } from "@/lib/env";
-import { apiConfig } from "@/lib/configs";
+import { baseApiUrl } from "@/lib/configs";
 import { formatDate } from "@/lib/timeAndDate";
 import { ITeam } from "@/types/match.interface";
+import { IQueryResponse } from "@/types";
+import { GlassmorphicGradient } from "@/components/Glasmorphic/Gradient";
 
 interface TeamsPageProps {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -39,32 +41,20 @@ export const metadata: Metadata = {
 };
 
 // Fetch teams from API
-async function getTeams(): Promise<ITeam[]> {
-  try {
-    const response = await fetch(`${apiConfig.teams}`, {
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      console.error("Failed to fetch teams:", response.status);
-      return [];
-    }
-
-    const data = await response.json();
-    return data.data || [];
-  } catch (error) {
-    console.error("Error fetching teams:", error);
-    return [];
-  }
+async function getTeams(): Promise<IQueryResponse<ITeam[]>> {
+  const response = await fetch(`${baseApiUrl}/teams`);
+  const data = await response.json();
+  return data;
 }
 
 export default async function TeamsPage({ searchParams }: TeamsPageProps) {
-  const teams = await getTeams();
+  const teamsData: IQueryResponse<ITeam[]> = await getTeams();
+  const teams = teamsData?.data;
 
   // Filter out the main team if needed (optional)
-  const opponentTeams = teams.filter((team) => team.name !== ENV.TEAM_NAME);
+  const opponentTeams = teams?.filter((team) => team.name !== ENV.TEAM_NAME);
 
-  if (!teams.length) {
+  if (!teams?.length) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -94,9 +84,9 @@ export default async function TeamsPage({ searchParams }: TeamsPageProps) {
 
       {/* Teams Grid */}
       <div className="container mx-auto px-4 py-12">
-        {opponentTeams.length > 0 ? (
+        {(opponentTeams?.length || 0) > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {opponentTeams.map((team) => (
+            {opponentTeams?.map((team) => (
               <TeamCard key={team._id} team={team} />
             ))}
           </div>
@@ -118,7 +108,7 @@ export default async function TeamsPage({ searchParams }: TeamsPageProps) {
 function TeamCard({ team }: { team: ITeam }) {
   return (
     <Link href={`/teams/${team._id}`}>
-      <div className="group bg-card rounded-xl border hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer">
+      <GlassmorphicGradient className="group bg-card rounded-xl border hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer">
         {/* Team Logo/Image */}
         <div className="relative h-48 bg-linear-to-br from-primary/10 to-primary/5 overflow-hidden">
           {team.logo ? (
@@ -172,13 +162,13 @@ function TeamCard({ team }: { team: ITeam }) {
 
           {/* Footer with created date */}
           <div className="mt-4 pt-3 border-t text-xs text-muted-foreground flex justify-between items-center">
-            <span>Added {formatDate(team.createdAt,  )}</span>
+            <span>Added {formatDate(team.createdAt)}</span>
             <span className="group-hover:translate-x-1 transition-transform">
               →
             </span>
           </div>
         </div>
-      </div>
+      </GlassmorphicGradient>
     </Link>
   );
 }
