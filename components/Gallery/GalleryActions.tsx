@@ -24,6 +24,7 @@ export const GalleryActions = ({
   const handleDelete = async (galleryId: string) => {
     try {
       const result = await deleteGallery(galleryId).unwrap();
+      
       smartToast(result);
     } catch (error) {
       smartToast({ error });
@@ -59,11 +60,12 @@ export const GalleryActions = ({
           title={`Delete Document`}
           description={`Are you sure you want to delete <b>"${gallery?.title}"</b>?`}
           isLoading={isDeleting}
+
         />
       )}
 
       <SocialShare
-        url={`${ENV.APP_URL}/gallery/${gallery?._id}`}
+        url={`${ENV.APP_URL}/gallery?stackModal=${gallery?._id}`}
         label="Share with others"
         className="justify-start"
       />

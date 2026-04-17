@@ -11,6 +11,9 @@ import { getThumbnail } from "@/lib/file";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { GalleryActions } from "@/components/Gallery/GalleryActions";
+import { StackModal } from "@/components/modals/StackModal";
+import { ImagesIcon } from "lucide-react";
+import { toggleClick } from "@/lib/dom";
 
 type Props = {
   galleries?: IQueryResponse<IGallery[]>;
@@ -86,7 +89,7 @@ export function GalleryThumbnail({ gallery, className = "" }: GalleryProps) {
 
   return (
     <>
-      <button
+      <div
         onClick={() => {
           setOpen(true);
         }}
@@ -95,7 +98,6 @@ export function GalleryThumbnail({ gallery, className = "" }: GalleryProps) {
           className,
         )}
         aria-label={thumbnailFile?.original_filename ?? `Open image`}
-        type="button"
       >
         <div className="relative w-full h-full min-h-80 aspect-4/5 bg-gray-100 flex items-start">
           <Image
@@ -128,9 +130,9 @@ export function GalleryThumbnail({ gallery, className = "" }: GalleryProps) {
           className="absolute top-2 right-2 transition-opacity z-20"
           onClick={(e) => e.stopPropagation()}
         >
-          <GalleryActions gallery={gallery} onView={() => setOpen(true)} />
+          <GalleryActions gallery={gallery} onView={() => toggleClick(gallery?._id as string)} />
         </div>
-      </button>
+      </div>
 
       {/* Lightbox */}
       <LightboxViewer
@@ -139,6 +141,30 @@ export function GalleryThumbnail({ gallery, className = "" }: GalleryProps) {
         files={files ?? []}
         index={0}
       />
+
+      <StackModal id={gallery?._id as string}>
+        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+          <ImagesIcon className="w-5 h-5" />
+          Gallery ({gallery?.files?.length})
+        </h2>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {gallery?.files?.map((gf, index) => (
+            <div
+              key={index}
+              className="relative aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer hover:opacity-90 transition"
+            >
+              <Image
+                src={gf?.secure_url}
+                alt={`${gf?.original_filename}`}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+              />
+            </ div>
+          ))}
+        </div>
+      </StackModal>
     </>
   );
 }
