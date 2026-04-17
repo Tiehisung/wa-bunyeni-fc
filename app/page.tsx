@@ -9,7 +9,7 @@ import Newsletter from "./(landing)/Newsletter";
 import Contact from "./contact/Contact";
 import { Metadata } from "next";
 import { ENV } from "@/lib/env";
-import { auth } from "@/auth";
+ 
 
 export const metadata: Metadata = {
   title: `${ENV.TEAM_NAME} - Official Website`,
@@ -50,9 +50,8 @@ export const metadata: Metadata = {
 };
 
 const LandingPage = async () => {
-  const session = await auth();
-
-  console.log(session);
+ 
+ 
 
   return (
     <div className="space-y-8 relative" id="home">

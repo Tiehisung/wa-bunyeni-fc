@@ -59,7 +59,6 @@ async function getTeamById(id: string): Promise<ITeam | null> {
     const data = await response.json();
     return data.data;
   } catch (error) {
-    console.error("Error fetching team:", error);
     return null;
   }
 }

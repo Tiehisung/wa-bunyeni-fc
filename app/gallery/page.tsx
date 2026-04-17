@@ -18,8 +18,8 @@ const GalleryPage = () => {
   const {
     data: galleries,
     isLoading: galleriesLoading,
-    error: galleriesError,refetch
-  } = useGetGalleriesQuery(paramsString,{});
+    error: galleriesError,
+  } = useGetGalleriesQuery(paramsString, {});
 
   const isLoading = galleriesLoading;
 
@@ -27,8 +27,6 @@ const GalleryPage = () => {
     galleries?.data?.[0]?.files?.find((f) => f.resource_type === "image")
       ?.secure_url ?? staticImages.ballOnGrass;
 
-
-  
   if (isLoading) {
     return <Loader message="Loading gallery..." />;
   }
