@@ -11,7 +11,7 @@ export const ClearFiltersBtn = ({
   className = " rounded px-2 ",
   label,
   size,
-  variant='destructive',
+  variant='ghost',
 }: {
   className?: string;
   label?: string;

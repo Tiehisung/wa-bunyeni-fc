@@ -1,7 +1,7 @@
 "use client";
 
 import { GalleryUpload } from "@/components/Gallery/GalleryUpload";
-import { GalleryDisplay } from "./Display";
+import { GalleryDisplay } from "./DisplayGal";
 import { SearchGallery } from "./Search";
 import InfiniteLimitScroller from "@/components/InfiniteScroll";
  

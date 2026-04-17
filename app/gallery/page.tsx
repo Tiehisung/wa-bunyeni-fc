@@ -1,6 +1,6 @@
 "use client";
 
-import GalleryClient from "./Client";
+import GalleryClient from "./GalClient";
 import InfiniteLimitScroller from "@/components/InfiniteScroll";
 import { IntroSection } from "@/components/IntroSection";
 import { staticImages } from "@/assets/images";
@@ -19,7 +19,7 @@ const GalleryPage = () => {
     data: galleries,
     isLoading: galleriesLoading,
     error: galleriesError,
-  } = useGetGalleriesQuery(paramsString);
+  } = useGetGalleriesQuery(paramsString, {});
 
   const isLoading = galleriesLoading;
 

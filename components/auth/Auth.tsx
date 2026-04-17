@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn, signOut } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { Button } from "../buttons/Button";
 import { LogIn, LogOut } from "lucide-react";
 import { useState } from "react";
@@ -69,6 +69,9 @@ export const LogoutBtn = ({
       setLoading(false);
     }, 4000);
   };
+
+  const {data:session} =useSession()
+  if(!session?.user)return null
   return (
     <Button
       className={className}

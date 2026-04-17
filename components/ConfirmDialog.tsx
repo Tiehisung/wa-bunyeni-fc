@@ -15,6 +15,7 @@ import {
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
 import { Button } from "./buttons/Button";
+import { fireEscape } from "@/hooks/Esc";
 
 interface ConfirmDialogProps {
   title?: string;
@@ -22,6 +23,7 @@ interface ConfirmDialogProps {
   confirmText?: string;
   cancelText?: string;
   disabled?: boolean;
+  escapeOnEnd?: boolean;
   variant?: TButtonVariant;
   size?: TButtonSize;
   trigger?: React.ReactNode;
@@ -44,6 +46,7 @@ export function ConfirmDialog({
   triggerStyles,
   onConfirm,
   isLoading: externalLoading,
+  escapeOnEnd=true,
 }: ConfirmDialogProps) {
   const [internalLoading, setInternalLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
@@ -58,6 +61,7 @@ export function ConfirmDialog({
       setInternalLoading(true);
       await onConfirm();
       setOpen(false); // Close dialog only on success
+      if (escapeOnEnd) fireEscape();
     } catch (error) {
       // Keep dialog open on error
       console.error("Confirm action failed:", error);

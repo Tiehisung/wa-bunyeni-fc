@@ -163,7 +163,6 @@ export async function shareToSocial(
     options: ShareOptions = {}
 ): Promise<ShareResult> {
     const {
-         
         text = '',
         url = typeof window !== 'undefined' ? window.location.href : '',
     } = options;

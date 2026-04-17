@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, User, Trophy, ImageIcon } from "lucide-react";
+import { ArrowLeft, User, ImageIcon } from "lucide-react";
 import { ENV } from "@/lib/env";
 import { baseApiUrl } from "@/lib/configs";
 import { formatDate } from "@/lib/timeAndDate";
@@ -59,7 +59,6 @@ async function getTeamById(id: string): Promise<ITeam | null> {
     const data = await response.json();
     return data.data;
   } catch (error) {
-    console.error("Error fetching team:", error);
     return null;
   }
 }

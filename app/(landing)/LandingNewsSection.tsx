@@ -77,12 +77,12 @@ const Desktop: React.FC<Props> = ({ newsItems }) => {
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 leading-tight">
               {main?.headline?.text}
             </h2>
-            <div
+            {/* <div
               className="text-white text-sm line-clamp-2 "
               dangerouslySetInnerHTML={{
                 __html: main?.details?.[0]?.text as string,
               }}
-            />
+            /> */}
           </div>
         </div>
       </Link>
@@ -170,12 +170,12 @@ const Mobile: React.FC<Props> = ({ newsItems }) => {
               {main?.headline?.text}
             </h2>
 
-            <div
+            {/* <div
               className="text-white/80 text-xs line-clamp-2 "
               dangerouslySetInnerHTML={{
                 __html: main?.details?.[0]?.text as string,
               }}
-            />
+            /> */}
           </div>
         </div>
       </Link>
@@ -246,7 +246,7 @@ interface TrendingProps {
 const NEWSSECTION: React.FC<TrendingProps> = ({ className = "" }) => {
   const { data: newsData, isLoading } = useGetNewsQuery("");
 
-  console.log(newsData, isLoading)
+ 
 
   if (isLoading) {
     return (
