@@ -70,7 +70,7 @@ export const LogoutBtn = ({
     }, 4000);
   };
 
-  const session =useSession()
+  const {data:session} =useSession()
   if(!session?.user)return null
   return (
     <Button
