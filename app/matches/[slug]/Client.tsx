@@ -284,7 +284,7 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
         </div>
       )}
 
-      <div className="container mx-auto">
+      <div className="container mx-auto ">
         <MatchFliers match={match} />
       </div>
 
