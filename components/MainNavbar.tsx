@@ -186,10 +186,10 @@ export default function MainNavbar() {
                   }
                   fireEscape();
                 }}
-                className="flex gap-2 px-6 transition-colors font-medium justify-start py-3"
+                className="flex gap-2 px-3 transition-colors font-medium justify-start py-3 rounded-none"
                 variant={"link"}
               >
-                <div className="p-3 bg-accent">{item.icon}</div> {item.label}
+                <div className="p-3 bg-accent rounded-md ">{item.icon}</div> {item.label}
               </Button>
             );
           })}
@@ -211,26 +211,27 @@ export default function MainNavbar() {
         title="Search"
       >
         <div className="p-4">
-          {/* <PrimarySearch placeholder="Search players, articles, and more..." />
-
-          <div className="mt-6">
-            <h3 className="text-sm font-medium text-gray-500">
-              Recent Searches
-            </h3>
-            <div className="mt-2 space-y-2">
-              {["player", "match", "article"].map((search) => (
-                <Button
-                  key={search}
-                  className="block w-full text-left px-2 py-1 text-sm rounded"
-                >
-                  {search}
-                </Button>
-              ))}
-            </div>
-          </div> */}
+         
           <GlobalSearch />
         </div>
       </Drawer>
     </>
   );
 }
+//  {/* <PrimarySearch placeholder="Search players, articles, and more..." />
+
+//           <div className="mt-6">
+//             <h3 className="text-sm font-medium text-gray-500">
+//               Recent Searches
+//             </h3>
+//             <div className="mt-2 space-y-2">
+//               {["player", "match", "article"].map((search) => (
+//                 <Button
+//                   key={search}
+//                   className="block w-full text-left px-2 py-1 text-sm rounded"
+//                 >
+//                   {search}
+//                 </Button>
+//               ))}
+//             </div>
+//           </div> */}
