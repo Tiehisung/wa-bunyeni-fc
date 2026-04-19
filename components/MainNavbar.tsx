@@ -183,7 +183,7 @@ export default function MainNavbar() {
         }
         className=" max-h-[75vh]"
       >
-        <nav className="flex flex-col gap-3 p-4 divide-y divide-border">
+        <nav className="flex flex-col p-4 divide-y divide-border">
           {navLinks.map((item) => {
             if (item.href == pathname) return;
             return (
@@ -197,7 +197,7 @@ export default function MainNavbar() {
                   }
                   fireEscape();
                 }}
-                className="flex gap-2 px-3 transition-colors font-medium justify-start py-3 rounded-none"
+                className="flex items-center gap-2 px-3 my-2 transition-colors font-medium justify-start py-3 rounded-none"
                 variant={"link"}
               >
                 <div className="p-3 bg-accent rounded-md ">{item.icon}</div>{" "}
