@@ -2,7 +2,6 @@
 
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { LogoutBtn } from "./auth/Auth";
 import { ISession } from "@/types/user";
 import LoginModal from "./auth/Login";
 import Loader from "./loaders/Loader";

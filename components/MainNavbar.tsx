@@ -1,7 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, Search } from "lucide-react";
+import {
+  Menu,
+  Search,
+  Home,
+  Users,
+  User,
+  CalendarDays,
+  Megaphone,
+  ShieldCheck,
+  Clapperboard,
+  Images,
+  Mail,
+  Info,
+  Trophy,
+  Heart,
+  Star,
+} from "lucide-react";
 import { Drawer } from "@/components/headlessUI/Drawer";
 import { AVATAR } from "@/components/ui/avatar";
 import { logos } from "@/assets/images";
@@ -9,7 +25,7 @@ import { scrollToSection } from "@/lib/dom";
 import { Button } from "@/components/buttons/Button";
 import { fireEscape } from "@/hooks/Esc";
 import UserLogButtons from "./UserLogger";
- 
+
 import { ThemeModeToggle } from "./ThemeToggle";
 import { GlobalSearch } from "./searcher/Global";
 import { usePathname, useRouter } from "next/navigation";
@@ -20,6 +36,7 @@ interface ILink {
   label: string;
   href?: string;
   id?: string;
+  icon: React.ReactNode;
 }
 
 export default function MainNavbar() {
@@ -32,16 +49,30 @@ export default function MainNavbar() {
   const mainpage = pathname.split("/")[1] || "Home";
 
   const navLinks: ILink[] = [
-    { label: "Home", href: "/" },
-    { label: "Squad", id: "squad", href: "/squad" },
-    { label: "Players", id: "players", href: "/players" },
-    { label: "Fixtures", id: "fixtures", href: "/matches" },
-    { label: "News", href: "/news" },
-    { label: "Teams", href: "/teams" },
-    { label: "Highlights", href: "/highlights" },
-    { label: "Gallery", href: "/gallery" },
-    { label: "Contact", href: "/contact" },
-    { label: "About", id: "about" },
+    { label: "Home", href: "/", icon: <Home size={18} /> },
+    { label: "Squad", id: "squad", href: "/squad", icon: <Users size={18} /> },
+    {
+      label: "Players",
+      id: "players",
+      href: "/players",
+      icon: <User size={18} />,
+    },
+    {
+      label: "Fixtures",
+      id: "fixtures",
+      href: "/matches",
+      icon: <CalendarDays size={18} />,
+    },
+    { label: "News", href: "/news", icon: <Megaphone size={18} /> },
+    { label: "Teams", href: "/teams", icon: <ShieldCheck size={18} /> },
+    {
+      label: "Highlights",
+      href: "/highlights",
+      icon: <Clapperboard size={18} />,
+    },
+    { label: "Gallery", href: "/gallery", icon: <Images size={18} /> },
+    { label: "Contact", href: "/contact", icon: <Mail size={18} /> },
+    { label: "About", id: "about", href: "/about", icon: <Info size={18} /> },
   ];
 
   if (pathname.startsWith("/admin")) return;
@@ -142,7 +173,7 @@ export default function MainNavbar() {
         }
         className=" max-h-[75vh]"
       >
-        <nav className="flex flex-col p-4 ">
+        <nav className="flex flex-col p-4 divide-y divide-gray-200">
           {navLinks.map((item) => {
             return (
               <Button
@@ -155,10 +186,10 @@ export default function MainNavbar() {
                   }
                   fireEscape();
                 }}
-                className=" px-6 transition-colors font-medium justify-start py-3"
+                className="flex gap-2 px-6 transition-colors font-medium justify-start py-3"
                 variant={"link"}
               >
-                {item.label}
+                <div className="p-3 bg-accent">{item.icon}</div> {item.label}
               </Button>
             );
           })}
