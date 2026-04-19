@@ -22,7 +22,7 @@ export default function UserLogButtons() {
         {!(session?.user as ISession["user"])?.role?.includes("guest") ? (
           <Link
             href={path}
-            className="hidden md:block border _borderColor hover:ring rounded px-2 py-1 h-full"
+            className=" border _borderColor hover:ring rounded px-2 py-1 h-full"
           >
             {session?.user?.name?.split(" ")?.[0] ?? "Dashboard"}
           </Link>
@@ -30,7 +30,7 @@ export default function UserLogButtons() {
           <span> Guest</span>
         )}
 
-        <LogoutBtn variant={"destructive"} size={"sm"} />
+      
       </div>
     );
   }
