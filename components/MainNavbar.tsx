@@ -50,16 +50,21 @@ export default function MainNavbar() {
 
   const navLinks: ILink[] = [
     { label: "Home", href: "/", icon: <Home size={18} /> },
-    { label: "Squad", id: "squad", href: "/squad", icon: <Users size={18} /> },
+    {
+      label: "Squad",
+      //  id: "squad",
+      href: "/squad",
+      icon: <Users size={18} />,
+    },
     {
       label: "Players",
-      id: "players",
+      // id: "players",
       href: "/players",
       icon: <User size={18} />,
     },
     {
       label: "Fixtures",
-      id: "fixtures",
+      // id: "fixtures",
       href: "/matches",
       icon: <CalendarDays size={18} />,
     },
@@ -72,7 +77,12 @@ export default function MainNavbar() {
     },
     { label: "Gallery", href: "/gallery", icon: <Images size={18} /> },
     { label: "Contact", href: "/contact", icon: <Mail size={18} /> },
-    { label: "About", id: "about", href: "/about", icon: <Info size={18} /> },
+    {
+      label: "About",
+      //  id: "about",
+      href: "/about",
+      icon: <Info size={18} />,
+    },
   ];
 
   if (pathname.startsWith("/admin")) return;
@@ -173,8 +183,9 @@ export default function MainNavbar() {
         }
         className=" max-h-[75vh]"
       >
-        <nav className="flex flex-col p-4 divide-y divide-gray-200">
+        <nav className="flex flex-col gap-3 p-4 divide-y divide-border">
           {navLinks.map((item) => {
+            if (item.href == pathname) return;
             return (
               <Button
                 key={item.label}
@@ -189,7 +200,8 @@ export default function MainNavbar() {
                 className="flex gap-2 px-3 transition-colors font-medium justify-start py-3 rounded-none"
                 variant={"link"}
               >
-                <div className="p-3 bg-accent rounded-md ">{item.icon}</div> {item.label}
+                <div className="p-3 bg-accent rounded-md ">{item.icon}</div>{" "}
+                {item.label}
               </Button>
             );
           })}
@@ -211,7 +223,6 @@ export default function MainNavbar() {
         title="Search"
       >
         <div className="p-4">
-         
           <GlobalSearch />
         </div>
       </Drawer>
