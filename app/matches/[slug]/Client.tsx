@@ -72,7 +72,7 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
             <div className="flex-1 text-center">
               <div className="relative w-24 h-24 mx-auto mb-4">
                 <Image
-                  src={(homeTeam?.logo) as string}
+                  src={homeTeam?.logo as string}
                   alt={homeTeam?.name || "Home Team"}
                   fill
                   className="object-contain"
@@ -101,7 +101,7 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
             <div className="flex-1 text-center">
               <div className="relative w-24 h-24 mx-auto mb-4">
                 <Image
-                  src={(awayTeam.logo  ) as string}
+                  src={awayTeam.logo as string}
                   alt={awayTeam?.name || "Away Team"}
                   fill
                   className="object-contain"
@@ -140,7 +140,7 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
       </div>
 
       {/* Goalscorers Section */}
-      {((teamGoals?.length||0) > 0 || opponentGoals?.length > 0) && (
+      {((teamGoals?.length || 0) > 0 || opponentGoals?.length > 0) && (
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -284,7 +284,9 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
         </div>
       )}
 
-      <MatchFliers match={match} />
+      <div className="container mx-auto">
+        <MatchFliers match={match} />
+      </div>
 
       <div className="container mx-auto px-4 py-8 text-center">
         <Link
