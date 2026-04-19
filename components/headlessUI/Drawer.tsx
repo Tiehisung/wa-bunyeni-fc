@@ -4,6 +4,7 @@ import { Fragment, type ReactNode } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { X } from "lucide-react";
 import { Button } from "../buttons/Button";
+import { TButtonVariant } from "../ui/button";
 
 export type DrawerSize = "sm" | "md" | "lg" | "xl" | "full";
 export type DrawerPosition = "right" | "left" | "top" | "bottom";
@@ -19,6 +20,7 @@ interface DrawerProps {
   closeOnClickOutside?: boolean;
   footer?: ReactNode;
   className?: string;
+  closeBtnVariant?: TButtonVariant;
 }
 
 const sizeClasses = {
@@ -83,7 +85,7 @@ export function Drawer({
   showCloseButton = true,
   closeOnClickOutside = true,
   footer,
-  className = "",
+  className = "",closeBtnVariant='ghost'
 }: DrawerProps) {
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -135,7 +137,7 @@ export function Drawer({
                         {showCloseButton && (
                           <div className="ml-3 flex h-7 items-center">
                             <Button
-                               variant={'outline'}
+                              variant={closeBtnVariant}
                               className="relative -m-2 p-2 rounded-md transition-colors"
                               onClick={onClose}
                             >
@@ -149,7 +151,9 @@ export function Drawer({
                     )}
 
                     {/* Content */}
-                    <div className={`flex-1 overflow-y-auto ${className}` }>{children}</div>
+                    <div className={`flex-1 overflow-y-auto ${className}`}>
+                      {children}
+                    </div>
 
                     {/* Footer */}
                     {footer && (

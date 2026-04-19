@@ -28,6 +28,7 @@ import { PrimaryCollapsible } from "@/components/Collapsible";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { fireEscape } from "@/hooks/Esc";
 
 export function PrimaryAdminSidebar() {
   return (
@@ -52,13 +53,14 @@ export function SidebarLink({
 
   if (!hasChildren)
     return (
-      <div className="flex rounded ">
+      <div className="flex rounded " >
         <Link
           href={item.path}
           className={cn(
             "flex items-center gap-2 relative _hoverBefore flex-1 pl-1.5 py-1.5 mt-1 _hover text-sm transition-colors ",
             isActiveLink(item.path) ? "text-primary " : "",
           )}
+          onClick={()=>fireEscape()}
         >
           {item.icon && (
             <span className="text-xl bg-white/30 rounded-full p-1.5">
