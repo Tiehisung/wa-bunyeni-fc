@@ -137,7 +137,7 @@ export const CredentialsLoginForm = () => {
           waitingText="Signing in..."
           type="submit"
           className=" p-2 grow w-full justify-center"
-          variant="secondary"
+          
         >
           <LogIn className="w-4 h-4" />
         </Button>
