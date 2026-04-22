@@ -27,7 +27,7 @@ const LoginPage = async ({ searchParams }: IPageProps) => {
       <div className="min-h-screen flex flex-col gap-2.5 justify-center items-center">
         <h1 className="text-2xl font-bold mb-4">You are already logged in</h1>
         <AVATAR
-          src={user?.image as string}
+          src={user?.avatar as string}
           alt={getInitials(user?.name as string)}
         />
         <p className="text-center">
