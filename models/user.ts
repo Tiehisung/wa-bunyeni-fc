@@ -1,9 +1,9 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import { EUserRole } from "@/types/user";
- 
 
- 
+
+
 
 const UserSchema = new Schema({
     name: { type: String, required: true },
@@ -18,6 +18,7 @@ const UserSchema = new Schema({
     },
     password: { type: String, required: true, minlength: 6 },
     role: { type: String, enum: Object.values(EUserRole), default: EUserRole.FAN },
+    signupMode: { type: String, enum: ['google', 'credentials'], default: 'credentials' },
     emailVerified: { type: Boolean, default: true },
     isActive: {
         type: Boolean,
@@ -68,4 +69,3 @@ const UserModel = mongoose.models.User || mongoose.model("User", UserSchema);
 
 export default UserModel;
 
- 

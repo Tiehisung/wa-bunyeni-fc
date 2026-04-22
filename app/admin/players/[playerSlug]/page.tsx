@@ -2,7 +2,6 @@
 
 import { FaEdit } from "react-icons/fa";
 import { ScrollToPointBtn } from "@/components/scroll/ScrollToPoint";
-import { FcGallery } from "react-icons/fc";
 import UpdatePlayerIssuesAndFitness from "./IssuesUpdate";
 import { GiHealthNormal, GiPresent } from "react-icons/gi";
 import { RiDeleteBin2Line } from "react-icons/ri";
@@ -27,6 +26,7 @@ import { buildQueryString } from "@/lib/searchParams";
 import { IPlayer } from "@/types/player.interface";
 import { useParams, useRouter } from "next/navigation";
 import { H } from "@/components/Element";
+import {Images}from 'lucide-react'
 
 export default function PlayerProfilePage() {
   const router = useRouter();
@@ -92,7 +92,7 @@ export default function PlayerProfilePage() {
       <div className="bg-modalOverlay text-white w-full px-1 flex gap-2 overflow-x-auto sticky z-10 top-0 hidden__scrollbar">
         <ScrollToPointBtn
           sectionId="edit-player"
-          className="flex gap-1 items-center shadow p-1 hover:text-blue-400 transition-transform"
+          className="flex gap-1 items-center shadow p-1 hover:text-primary transition-transform"
           label="Edit"
         >
           <FaEdit />
@@ -100,7 +100,7 @@ export default function PlayerProfilePage() {
 
         <ScrollToPointBtn
           sectionId="fitness-update"
-          className="flex gap-1 items-center shadow p-1 hover:text-blue-400 transition-transform"
+          className="flex gap-1 items-center shadow p-1 hover:text-primary transition-transform"
           label="Fitness"
         >
           <GiHealthNormal />
@@ -108,15 +108,15 @@ export default function PlayerProfilePage() {
 
         <ScrollToPointBtn
           sectionId="gallery"
-          className="flex gap-1 items-center shadow p-1 hover:text-blue-400 transition-transform"
+          className="flex gap-1 items-center shadow p-1 hover:text-primary transition-transform"
           label="Gallery"
         >
-          <FcGallery />
+          <Images />
         </ScrollToPointBtn>
 
         <ScrollToPointBtn
           sectionId="danger-zone"
-          className="flex gap-1 items-center shadow p-1 hover:text-blue-400 transition-transform"
+          className="flex gap-1 items-center shadow p-1 hover:text-primary transition-transform"
           label={player?.status ? "Active" : "Inactive"}
         >
           <GiPresent />
@@ -124,7 +124,7 @@ export default function PlayerProfilePage() {
 
         <ScrollToPointBtn
           sectionId="danger-zone"
-          className="flex gap-1 items-center shadow p-1 hover:text-blue-400 transition-transform"
+          className="flex gap-1 items-center shadow p-1 hover:text-primary transition-transform"
           label="Delete"
         >
           <RiDeleteBin2Line />
