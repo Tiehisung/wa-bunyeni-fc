@@ -7,6 +7,7 @@ import { TButtonVariant } from "../ui/button";
 import { ICloudinaryFile } from "@/types/file.interface";
 import { smartToast } from "@/utils/toast";
 import { useDeleteFileMutation } from "@/services/upload.endpoints";
+import { ENV } from "@/lib/env";
 
 declare global {
   interface Window {
@@ -25,8 +26,6 @@ interface CloudinaryWidgetProps {
   variant?: TButtonVariant;
   className?: string;
 
-  cloudName?: string;
-  uploadPreset?: string;
   folder?: string;
   cropping?: boolean;
   multiple?: boolean;
@@ -69,9 +68,6 @@ export function CloudinaryWidget({
   mediaDisplayStyles,
 
   initialFiles = [],
-
-  cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
 }: CloudinaryWidgetProps) {
   const widgetRef = useRef<any>(null);
   const [uploadedFiles, setUploadedFiles] =
@@ -118,8 +114,8 @@ export function CloudinaryWidget({
     try {
       widgetRef.current = window.cloudinary.createUploadWidget(
         {
-          cloudName,
-          uploadPreset,
+          cloudName: ENV.CLOUDINARY.CLOUD_NAME,
+          uploadPreset: ENV.CLOUDINARY.UPLOAD_PRESET,
           folder,
           sources: ["local", "camera", "dropbox", "google_drive"],
           multiple,
