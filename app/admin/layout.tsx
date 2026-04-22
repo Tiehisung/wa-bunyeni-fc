@@ -8,6 +8,7 @@ import Loader from "@/components/loaders/Loader";
 
 import { useAppSelector } from "@/store/hooks/store";
 import { ReactNode } from "react";
+import { AVATAR } from "@/components/ui/avatar";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
@@ -57,11 +58,11 @@ const Header = () => {
       </div>
       <div className="flex items-center gap-3 text-sm ml-auto divide-x">
         <div className="_label">
-          <p className="text-xs italic font-light">Admin</p>
+          <p className="text-xs italic font-light">ADMIN</p>
           <p>{alias}</p>
         </div>
-        <img
-          src={user?.avatar}
+        <AVATAR
+          src={user?.avatar as string}
           alt="avatar"
           className="h-10 w-10 min-h-10 rounded-full object-cover"
         />

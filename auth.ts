@@ -2,10 +2,11 @@ import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { EUserRole, ISession, } from './types/user';
-
 import UserModel from "./models/user";
 import { logAction } from "./app/api/logs/helper";
 import connectDB from "./config/db.config";
+
+connectDB();
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     providers: [
@@ -14,29 +15,14 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
 
             async profile(profile) {
-                connectDB();
+                console.log(profile)
                 let user = await UserModel.findOne({ email: profile.email });
-
-                if (!user) {
-                    user = await UserModel.create({
-                        email: profile.email,
-                        name: profile.name,
-                        image: profile.picture,
-                        lastLoginAccount: 'google',
-                        signupMode: 'google',
-                    });
-
-                    // Log
-                    logAction({
-                        title: ` Signup - [${profile?.name}].`,
-                        description: `User with email ${profile.email} signed up.`,
-                    })
-                }
-                else {
-                    if (user?.image !== profile.picture || user?.name !== profile.name) {
+                console.log('user', user)
+                if (user) {
+                    if (user?.avatar !== profile.picture || user?.name !== profile.name) {
                         // Update user info
                         user.name = profile.name;
-                        user.image = profile.picture;
+                        user.avatar = profile.picture;
                         user.lastLoginAccount = 'google';
                         await user.save();
                     }
@@ -45,13 +31,31 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                         title: ` Login - ${profile?.name}.`,
                         description: `User with email ${profile.email} logged in.`,
                     })
+
+                }
+                else {
+                    console.log('creating google user')
+                    user = await UserModel.create({
+                        email: profile.email,
+                        name: profile.name,
+                        avatar: profile.picture,
+                        lastLoginAccount: 'google',
+                        signupMode: 'google',
+                        password: 'google',
+                    });
+                    console.log('google user', user)
+                    // Log
+                    logAction({
+                        title: ` Signup - [${profile?.name}].`,
+                        description: `User with email ${profile.email} signed up.`,
+                    })
                 }
 
                 return {
                     id: user._id?.toString(),
                     email: user.email,
                     name: user.name,
-                    image: user.image,
+                    image: user.avatar,
                     role: user?.role,
                 };
             },
@@ -80,7 +84,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                         id: user?.id,
                         email: user?.email,
                         name: user?.name,
-                        image: user?.image,
+                        avatar: user?.avatar,
                         role: user?.role ?? EUserRole.FAN,
                     }
                 }

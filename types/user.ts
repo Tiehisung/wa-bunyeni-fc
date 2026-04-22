@@ -58,7 +58,7 @@ export interface ISession {
   user: {
     id: string
     name: string;
-    image: string;
+    avatar: string;
     role?: EUserRole
     email: string;
   };
