@@ -136,7 +136,7 @@ export const HighlightMediaActions = ({
   return (
     <div
       onClick={(e) => e.stopPropagation()}
-      className="absolute top-2 right-2 md:opacity-0 group-hover:opacity-100 transition"
+      className="absolute top-2 right-2 "
     >
       <POPOVER
         variant="secondary"
