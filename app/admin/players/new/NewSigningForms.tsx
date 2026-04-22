@@ -9,8 +9,7 @@ import DiveUpwards from "@/components/Animate";
 import { EPlayerPosition, IPlayer } from "@/types/player.interface";
 import { staticImages } from "@/assets/images";
 import ContentShowcaseWrapper from "@/components/ShowcaseWrapper";
-import { PrimarySelect } from "@/components/select/Select";
-import { Label } from "@/components/ui/label";
+import SELECT from "@/components/select/Select";
 import { enumToOptions } from "@/lib/select";
 import QuillEditor from "@/components/editor/Quill";
 import {
@@ -19,6 +18,7 @@ import {
 } from "@/services/player.endpoints";
 import { smartToast } from "@/utils/toast";
 import { AvatarUploader } from "@/components/cloudinary/Avatar";
+
 
 // Zod Schemas
 const playerManagerSchema = z.object({
@@ -113,18 +113,13 @@ export default function PlayerProfileForm({
   const images = Object.values(staticImages);
 
   return (
-    <section className="bg-card _card pt-6 rounded-2xl flex items-start">
+    <section className="bg-card pt-6 rounded-2xl flex items-start">
       <ContentShowcaseWrapper images={images as string[]}>
         <div className="w-full">
-          <h1 className="mb-2 text-teal-600 text-center _title">
-            {player ? "Edit Player Profile" : "New Player Signup"}
-          </h1>
-
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="py-6 sm:px-6 flex items-center justify-center gap-y-6 w-full"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className=" w-full">
             <div className="flex flex-col gap-10 mx-auto grow w-full">
+              {" "}
+              <p>{player ? "Edit Player Profile" : "New Player Signup"}</p>
               {/* Avatar Section */}
               <DiveUpwards layoutId="lid1" y={6}>
                 <div className="flex flex-col gap-1 items-center w-full sm:min-w-72">
@@ -136,7 +131,7 @@ export default function PlayerProfileForm({
                       <div className="flex flex-col items-center gap-2">
                         <AvatarUploader
                           onUpload={(file) => onChange(file?.secure_url ?? "")}
-                          folder="/players/"
+                          folder="players/avatar"
                           initialImage={value || staticImages.avatar.src}
                           shape="rounded"
                           name="avatar"
@@ -152,181 +147,173 @@ export default function PlayerProfileForm({
                   />
                 </div>
               </DiveUpwards>
-
               {/* Personal Information */}
-              <DiveUpwards layoutId="lid2">
-                <div className="p-3 grid gap-8 md:min-w-md lg:min-w-lg">
-                  <h2 className="_label text-center">PERSONAL INFORMATION</h2>
-                  <Controller
-                    control={control}
-                    name="firstName"
-                    render={({ field, fieldState }) => (
-                      <IconInputWithLabel
-                        label="First Name"
-                        {...field}
-                        error={fieldState.error?.message}
-                      />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="lastName"
-                    render={({ field, fieldState }) => (
-                      <IconInputWithLabel
-                        label="Last Name"
-                        {...field}
-                        error={fieldState.error?.message}
-                      />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="number"
-                    render={({ field, fieldState }) => (
-                      <IconInputWithLabel
-                        type="number"
-                        label="Jersey Number"
-                        {...field}
-                        error={fieldState.error?.message}
-                      />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="position"
-                    render={({ field, fieldState }) => (
-                      <div>
-                        <Label className="mb-2 _label">Player Position</Label>
-                        <PrimarySelect
-                          options={enumToOptions(EPlayerPosition)}
-                          value={field.value}
-                          onChange={field.onChange}
-                          error={fieldState.error?.message}
-                          triggerStyles="w-full capitalize"
-                          className="capitalize"
-                        />
-                      </div>
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="height"
-                    render={({ field, fieldState }) => (
-                      <IconInputWithLabel
-                        type="number"
-                        others={{ step: "0.1" }}
-                        label="Height (ft)"
-                        {...field}
-                        error={fieldState.error?.message}
-                      />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="phone"
-                    render={({ field, fieldState }) => (
-                      <IconInputWithLabel
-                        label="Phone"
-                        type="tel"
-                        {...field}
-                        error={fieldState.error?.message}
-                      />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="email"
-                    render={({ field, fieldState }) => (
-                      <IconInputWithLabel
-                        label="Email"
-                        type="email"
-                        {...field}
-                        error={fieldState.error?.message}
-                      />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="dob"
-                    render={({ field, fieldState }) => (
-                      <DateTimeInput
-                        type="date"
-                        label="Date of Birth"
-                        {...field}
-                        error={fieldState.error?.message}
-                        value={field.value?.split("T")[0] || ""}
-                      />
-                    )}
-                  />
+              <div className="p-3 grid gap-8 md:min-w-md lg:min-w-lg">
+                <h2 className="_label text-center">PERSONAL INFORMATION</h2>
+                <Controller
+                  control={control}
+                  name="firstName"
+                  render={({ field, fieldState }) => (
+                    <IconInputWithLabel
+                      label="First Name"
+                      {...field}
+                      error={fieldState.error?.message}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="lastName"
+                  render={({ field, fieldState }) => (
+                    <IconInputWithLabel
+                      label="Last Name"
+                      {...field}
+                      error={fieldState.error?.message}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="number"
+                  render={({ field, fieldState }) => (
+                    <IconInputWithLabel
+                      type="number"
+                      label="Jersey Number"
+                      {...field}
+                      error={fieldState.error?.message}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="position"
+                  render={({ field, fieldState }) => (
+                    <SELECT
+                      label="Player Position"
+                      options={enumToOptions(EPlayerPosition)}
+                      value={field.value}
+                      onChange={field.onChange}
+                      error={fieldState.error?.message}
+                      selectStyles="w-full capitalize"
+                      className="capitalize block space-y-2"
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="height"
+                  render={({ field, fieldState }) => (
+                    <IconInputWithLabel
+                      type="number"
+                      others={{ step: "0.1" }}
+                      label="Height (ft)"
+                      {...field}
+                      error={fieldState.error?.message}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="phone"
+                  render={({ field, fieldState }) => (
+                    <IconInputWithLabel
+                      label="Phone"
+                      type="tel"
+                      {...field}
+                      error={fieldState.error?.message}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="email"
+                  render={({ field, fieldState }) => (
+                    <IconInputWithLabel
+                      label="Email"
+                      type="email"
+                      {...field}
+                      error={fieldState.error?.message}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="dob"
+                  render={({ field, fieldState }) => (
+                    <DateTimeInput
+                      type="date"
+                      label="Date of Birth"
+                      {...field}
+                      error={fieldState.error?.message}
+                      value={field.value?.split("T")[0] || ""}
+                    />
+                  )}
+                />
 
-                  <Controller
-                    control={control}
-                    name="dateSigned"
-                    render={({ field, fieldState }) => (
-                      <DateTimeInput
-                        type="date"
-                        label="Date Signed"
-                        {...field}
-                        error={fieldState.error?.message}
-                        value={field.value?.split("T")[0] || ""}
-                      />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="about"
-                    render={({ field, fieldState }) => (
-                      <QuillEditor
-                        label="About this Player"
-                        value={field.value || ""}
-                        onChange={field.onChange}
-                        error={fieldState.error?.message}
-                      />
-                    )}
-                  />
-                </div>
-              </DiveUpwards>
-
+                <Controller
+                  control={control}
+                  name="dateSigned"
+                  render={({ field, fieldState }) => (
+                    <DateTimeInput
+                      type="date"
+                      label="Date Signed"
+                      {...field}
+                      error={fieldState.error?.message}
+                      value={field.value?.split("T")[0] || ""}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="about"
+                  render={({ field, fieldState }) => (
+                    <QuillEditor
+                      label="About this Player"
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      error={fieldState.error?.message}
+                    />
+                  )}
+                />
+              </div>
               {/* Manager Section */}
-              <DiveUpwards layoutId="lid3">
-                <div className="p-3 grid gap-8 md:min-w-md lg:min-w-lg">
-                  <h2 className="_label mb-5 border-b">MANAGER</h2>
+              <div className="p-3 grid gap-8 md:min-w-md lg:min-w-lg">
+                <h2 className="_label mb-5 border-b">MANAGER</h2>
 
-                  <Controller
-                    control={control}
-                    name="manager.fullname"
-                    render={({ field, fieldState }) => (
-                      <IconInputWithLabel
-                        label="Full Name"
-                        {...field}
-                        error={fieldState.error?.message}
-                      />
-                    )}
-                  />
+                <Controller
+                  control={control}
+                  name="manager.fullname"
+                  render={({ field, fieldState }) => (
+                    <IconInputWithLabel
+                      label="Full Name"
+                      {...field}
+                      error={fieldState.error?.message}
+                    />
+                  )}
+                />
 
-                  <Controller
-                    control={control}
-                    name="manager.phone"
-                    render={({ field, fieldState }) => (
-                      <IconInputWithLabel
-                        label="Phone"
-                        type="tel"
-                        {...field}
-                        error={fieldState.error?.message}
-                      />
-                    )}
-                  />
+                <Controller
+                  control={control}
+                  name="manager.phone"
+                  render={({ field, fieldState }) => (
+                    <IconInputWithLabel
+                      label="Phone"
+                      type="tel"
+                      {...field}
+                      error={fieldState.error?.message}
+                    />
+                  )}
+                />
 
-                  <Button
-                    type="submit"
-                    waiting={player ? updating : creating}
-                    waitingText="Please wait..."
-                    primaryText={player ? "Update Player" : "Create Player"}
-                    className="justify-center px-12 h-10 py-1 w-full flex-wrap-reverse"
-                    variant={"default"}
-                  />
-                </div>
-              </DiveUpwards>
+                <Button
+                  type="submit"
+                  waiting={player ? updating : creating}
+                  waitingText="Please wait..."
+                  primaryText={player ? "Update Player" : "Create Player"}
+                  className="justify-center px-12 h-10 py-1 w-full flex-wrap-reverse"
+                  variant={"default"}
+                />
+              </div>
             </div>
           </form>
         </div>

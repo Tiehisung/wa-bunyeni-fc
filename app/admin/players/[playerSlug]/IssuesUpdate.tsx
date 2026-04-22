@@ -72,15 +72,15 @@ export default function UpdatePlayerIssuesAndFitness({
       <header className="flex items-center justify-between gap-3">
         <TITLE icon={<TbRibbonHealth size={36} />} text="ISSUES UPDATES" />
 
-        <DIALOG variant="outline" trigger={<icons.new size={32} />}>
-          <h1 className="text-left mr-auto mb-2.5 _label">Add Issue</h1>
-
+        <DIALOG
+          title="Add Issue"
+          variant="outline"
+          trigger={<icons.new size={32} />}
+        >
           <form
             onSubmit={handleSubmit}
-            className="grid gap-3 p-2 border rounded-md shadow-md bg-card"
+            className="grid gap-3 p-2  rounded-md  "
           >
-            <div className="mb-4" />
-
             <Input
               name="title"
               label="Issue Title"
@@ -104,7 +104,7 @@ export default function UpdatePlayerIssuesAndFitness({
               waiting={isLoading}
               waitingText="Updating, wait..."
               disabled={!title}
-              className="_primaryBtn grow px-5 rounded shadow md:w-64 justify-center"
+              className=" grow px-5 rounded shadow justify-center"
             />
           </form>
         </DIALOG>
@@ -115,7 +115,7 @@ export default function UpdatePlayerIssuesAndFitness({
       <PrimaryCollapsible header={{ label: "View Issues" }}>
         <PrimaryAccordion
           data={accordionData}
-          className="_card backdrop-blur-[1px] overflow-x-hidden mx-2"
+          className=" backdrop-blur-[1px] overflow-x-hidden mx-2"
         />
       </PrimaryCollapsible>
     </div>

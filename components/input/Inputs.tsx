@@ -282,7 +282,7 @@ export function IconInputWithLabel({
               ? placeholder.substring(0, 27) + "..."
               : placeholder
           }
-          className={`bg-transparent outline-none grow h-10 min-w-10 max-w-full p-2 placeholder:line-clamp-1 rounded ${className}`}
+          className={`bg-input outline-none grow h-10 min-w-10 max-w-full p-2 placeholder:line-clamp-1 rounded ${className}`}
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(value ? true : false)}
           {...others}
