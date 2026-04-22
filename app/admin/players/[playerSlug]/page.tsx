@@ -15,8 +15,6 @@ import { PrimaryCollapsible } from "@/components/Collapsible";
 import { icons } from "@/assets/icons/icons";
 import NotifierWrapper from "@/components/Notifier";
 import PageLoader from "@/components/loaders/Page";
- 
- 
 import { toast } from "sonner";
 import { useGetGalleriesQuery } from "@/services/gallery.endpoints";
 import {
@@ -28,6 +26,7 @@ import {
 import { buildQueryString } from "@/lib/searchParams";
 import { IPlayer } from "@/types/player.interface";
 import { useParams, useRouter } from "next/navigation";
+import { H } from "@/components/Element";
 
 export default function PlayerProfilePage() {
   const router = useRouter();
@@ -80,7 +79,7 @@ export default function PlayerProfilePage() {
   const fullname = `${player?.lastName} ${player?.firstName}`;
 
   return (
-    <main className="relative bg-cover py-8 _page">
+    <main className="relative bg-cover py-8 ">
       <div
         className="h-screen w-full z-[-1] absolute inset-0 bottom-0 bg-no-repeat bg-cover"
         style={{
@@ -132,8 +131,8 @@ export default function PlayerProfilePage() {
         </ScrollToPointBtn>
       </div>
 
-      <main className="space-y-36 px-[2vw] pb-24 pt-7">
-        {!player?.status && (
+      <main className="space-y-10 px-[2vw] pb-24 pt-7">
+        {player?.status !== "current" && (
           <NotifierWrapper
             message="Unconfirmed player"
             className="text-Red"
@@ -167,17 +166,14 @@ export default function PlayerProfilePage() {
         </section>
 
         <section id="galleries">
-          <h1 className="my-6 _title _gradient p-4 flex items-center justify-between gap-6">
-            GALLERIES
-          </h1>
-          <GalleryGrid galleries={galleries?.data as IGallery[]} />
-
-          <br />
-
+          <H>GALLERIES</H>
           <GalleryUpload
             tags={[fullname, player?._id].filter(Boolean) as string[]}
             players={players?.data}
           />
+          <GalleryGrid galleries={galleries?.data as IGallery[]} />
+
+          <br />
         </section>
 
         <section id="danger-zone">

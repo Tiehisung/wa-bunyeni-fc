@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
       .populate('mvp')
       .limit(limit)
       .skip(skip)
-      .sort({ date: 'desc' });
+      .sort({ date: 'asc' });
 
     const total = await MatchModel.countDocuments(cleanedFilters);
 

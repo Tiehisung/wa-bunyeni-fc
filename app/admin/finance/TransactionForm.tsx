@@ -5,10 +5,9 @@ import { useForm, Controller, Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Card } from "@/components/ui/card";
-import { INPUT } from "@/components/input/input";
 import { PrimarySelect } from "@/components/select/Select";
 import { Label } from "@/components/ui/label";
-import { DateTimeInput } from "@/components/input/Inputs";
+import { DateTimeInput, Input } from "@/components/input/Inputs";
 import { Button } from "@/components/buttons/Button";
 import { toast } from "sonner";
 import { shortText } from "@/lib";
@@ -167,7 +166,7 @@ export default function TransactionForm({ transaction }: TransactionFormProps) {
           name="amount"
           control={control}
           render={({ field }) => (
-            <INPUT
+            <Input
               {...field}
               label="Amount"
               error={errors.amount?.message}
@@ -200,7 +199,7 @@ export default function TransactionForm({ transaction }: TransactionFormProps) {
           name="description"
           control={control}
           render={({ field }) => (
-            <INPUT
+            <Input
               {...field}
               label="Description"
               error={errors.description?.message}
