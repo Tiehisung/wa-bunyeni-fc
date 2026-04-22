@@ -24,7 +24,7 @@ import { smartToast } from "@/utils/toast";
 import { TEAM } from "@/data/team";
 
 import { getDeadlineInfo } from "@/lib/timeAndDate";
-import ImageUploader from "@/components/files/ImageUploadComponent";
+import ImageUploader from "@/components/files/ImageUploader";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";

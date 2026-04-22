@@ -1,6 +1,6 @@
 "use client";
 
-import ImageUploader from "@/components/files/ImageUploadComponent";
+import ImageUploader from "@/components/files/ImageUploader";
 import { useUpdateMatchMutation } from "@/services/match.endpoints";
 import { IMatch } from "@/types/match.interface";
 import Image from "next/image";
