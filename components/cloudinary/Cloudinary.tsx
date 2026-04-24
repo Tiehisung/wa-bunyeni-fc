@@ -73,8 +73,6 @@ export function CloudinaryWidget({
   const [uploadedFiles, setUploadedFiles] =
     useState<ICloudinaryFile[]>(initialFiles);
 
-    console.log(ENV.CLOUDINARY.CLOUD_NAME, ENV.CLOUDINARY.UPLOAD_PRESET);
-
   // Use ref to always have the latest files without stale closures
   const uploadedFilesRef = useRef<ICloudinaryFile[]>(initialFiles);
 
@@ -116,7 +114,7 @@ export function CloudinaryWidget({
     try {
       widgetRef.current = window.cloudinary.createUploadWidget(
         {
-          cloudName: ENV.CLOUDINARY.CLOUD_NAME,
+          cloudName: ENV.CLOUDINARY.CLOUD_NAME as string ||'dcjeydowa',
           uploadPreset: ENV.CLOUDINARY.UPLOAD_PRESET,
           folder,
           sources: ["local", "camera", "dropbox", "google_drive"],
@@ -261,7 +259,6 @@ export function CloudinaryWidget({
       )}
 
       <Button
-        type="button"
         onClick={openWidget}
         className={`flex items-center gap-2 ${className}`}
         variant={variant}
