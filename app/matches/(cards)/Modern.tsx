@@ -10,7 +10,7 @@ interface Props {
   match?: IMatch;
 }
 const ModernFixtureCard = ({ match }: Props) => {
-  const { home, away } = checkTeams(match);
+  const { home, away, } = checkTeams(match);
   return (
     <div className="bg-card rounded-xl p-5 flex flex-wrap items-center justify-between gap-4 hover:shadow-lg transition-shadow border border-muted">
       <div className="flex items-center gap-4 w-full md:w-auto ">
@@ -34,7 +34,12 @@ const ModernFixtureCard = ({ match }: Props) => {
             variant={"secondary"}
             className=" px-4 py-1 rounded-full text-sm font-bold"
           >
-            {match?.computed.scoreline}
+            {match?.computed.teamScore} - {match?.computed.opponentScore}{" "}
+            {match?.computed?.result === "win"
+              ? "🏆"
+              : match?.computed?.result === "loss"
+                ? "😞"
+                : "🤝"}
           </Badge>
         ) : (
           <Badge

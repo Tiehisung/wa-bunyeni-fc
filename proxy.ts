@@ -32,7 +32,6 @@ export async function proxy(request: NextRequest) {
     // **FIXED LOGIC:**
     // Check admin access
     if (isAdminPath) {
-
         // Allow only admins
         if (role?.includes(EUserRole.ADMIN)) {
             return NextResponse.next(); // ✅ Admin can access admin routes
@@ -46,7 +45,6 @@ export async function proxy(request: NextRequest) {
 
     // Check player dashboard access
     if (isPlayerDashboardPath) {
-
         // Allow only players
         if (role === EUserRole.PLAYER) {
             return NextResponse.next(); // ✅ Player can access player dashboard

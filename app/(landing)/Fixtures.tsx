@@ -3,7 +3,7 @@
 import Loader from "@/components/loaders/Loader";
 import { useGetMatchesQuery } from "@/services/match.endpoints";
 import React from "react";
-import ModernFixtureCard from "../matches/(fixturesAndResults)/cards/Modern";
+import ModernFixtureCard from "../matches/(cards)/Modern";
 import Link from "next/link";
 
 const LandingFixtures: React.FC = () => {
