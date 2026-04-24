@@ -16,6 +16,9 @@ import { useSession } from "next-auth/react";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { PrimaryDropdown } from "@/components/Dropdown";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { ResourceShare } from "@/components/SocialShare";
+import { Separator } from "@/components/ui/separator";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Props {
   highlights?: IQueryResponse<IMatchHighlight[]>;
@@ -35,6 +38,8 @@ export const MatchHighlights = ({
   );
 
   const highlights = propHighlights || fetchedHighlights;
+
+  const isMobile = useIsMobile();
 
   if (isLoading) {
     return (
@@ -62,14 +67,26 @@ export const MatchHighlights = ({
             "/upload/w_400,h_400,c_fill,pg_1/",
           );
 
-          console.log(thumbnailUrl)
+          console.log(thumbnailUrl);
           return (
             <div
               key={video?._id}
               onClick={() => setActiveVideo(video)}
               className="group relative cursor-pointer rounded-xl overflow-hidden shadow-lg transition"
             >
-              <video
+              {isMobile ? (
+                <img src={thumbnailUrl} className="w-full h-60 object-cover" />
+              ) : (
+                <video
+                  src={video?.secure_url}
+                  poster={thumbnailUrl}
+                  muted
+                  playsInline
+                  preload="metadata"
+                  className="w-full h-60 object-cover"
+                />
+              )}
+              {/* <video
                 src={video?.secure_url as string}
                 // controls={false}
                 className="w-full h-60 object-cover bg-modalOverlay/10 group-hover:scale-[1.01] group-hover:ring-2 ring-primary transition"
@@ -77,7 +94,7 @@ export const MatchHighlights = ({
                 preload="metadata"
                 muted
                 // poster={ thumbnailUrl} // Add thumbnail if available
-              />
+              /> */}
 
               {/* Play button */}
               <div className="absolute inset-0 flex items-center justify-center">
@@ -132,8 +149,6 @@ export const HighlightMediaActions = ({
   const { data: session } = useSession();
   const isAdmin = session?.user?.role?.includes("admin");
 
-  if (!isAdmin) return null;
-
   const handleDelete = async () => {
     if (!highlight?._id) return;
     try {
@@ -162,24 +177,29 @@ export const HighlightMediaActions = ({
           Download
         </DropdownMenuItem>
 
-        <ConfirmDialog
-          title={`Delete - ${highlight?.title}`}
-          description="Do you want to delete this highlight?"
-          onConfirm={handleDelete}
-          className="h-fit w-full"
-          variant="ghost"
-          isLoading={isLoading}
-          trigger={
-            <DropdownMenuItem
-              onSelect={(e) => e.preventDefault()}
-              className="grow "
-            >
-              <Trash className="w-4 h-4 mr-2" /> Delete
-            </DropdownMenuItem>
-          }
-          triggerStyles="justify-start w-full p-0 font-normal"
-          escapeOnEnd
-        />
+        {isAdmin && (
+          <ConfirmDialog
+            title={`Delete - ${highlight?.title}`}
+            description="Do you want to delete this highlight?"
+            onConfirm={handleDelete}
+            className="h-fit w-full"
+            variant="ghost"
+            isLoading={isLoading}
+            trigger={
+              <DropdownMenuItem
+                onSelect={(e) => e.preventDefault()}
+                className="grow "
+              >
+                <Trash className="w-4 h-4 mr-2" /> Delete
+              </DropdownMenuItem>
+            }
+            triggerStyles="justify-start w-full p-0 font-normal"
+            escapeOnEnd
+          />
+        )}
+        <Separator className="my-2" />
+        <span>Share highlight</span>
+        <ResourceShare url={highlight?.secure_url} />
       </PrimaryDropdown>
     </div>
   );

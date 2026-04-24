@@ -1,7 +1,7 @@
 "use client";
 
 import PageLoader from "@/components/loaders/Page";
-import { SharePage } from "@/components/SocialShare";
+import { ResourceShare } from "@/components/SocialShare";
 import { getInitials } from "@/lib";
 import { ENV } from "@/lib/env";
 import { useGetSquadsQuery } from "@/services/squad.endpoints";
@@ -55,7 +55,7 @@ export default function LatestMatchSquadPage() {
             </div>
           ))}
         </div>
-        <SharePage
+        <ResourceShare
           label={"Share this squad"}
           className="rounded-full bg-primary/90"
           text={`Meet the talented players representing ${ENV.TEAM_NAME} with pride and passion in this fixture - ${squad?.title}`}

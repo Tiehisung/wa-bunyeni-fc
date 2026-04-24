@@ -4,7 +4,7 @@ import { Button } from "@/components/buttons/Button";
 import { IComment, INewsProps } from "@/types/news.interface";
 import { ThumbsDown, Trash } from "lucide-react";
 import { POPOVER } from "@/components/ui/popover";
-import SocialShare, { SharePage } from "@/components/SocialShare";
+import SocialShare, { ResourceShare } from "@/components/SocialShare";
 import { useEffect, useState } from "react";
 import { LiaCommentSolid } from "react-icons/lia";
 import { IoShareSocial } from "react-icons/io5";
@@ -177,7 +177,7 @@ const { data: session,   } = useSession();
 
       <div>
         <p className="text-primary text-sm">Share this article</p>
-        <SharePage
+        <ResourceShare
           className="rounded-full bg-primary/90"
           text={newsItem?.headline.text}
         />

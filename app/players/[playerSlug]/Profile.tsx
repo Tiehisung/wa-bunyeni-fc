@@ -19,7 +19,7 @@ import { IPlayerStats } from "@/types/stats";
 import { TEAM } from "@/data/team";
 import Link from "next/link";
 import useGetParam from "@/hooks/params";
-import { SharePage } from "@/components/SocialShare";
+import { ResourceShare } from "@/components/SocialShare";
 import Image from "next/image";
 import {
   useGetPlayerQuery,
@@ -250,7 +250,7 @@ export default function PlayerProfile({   stats }: PageProps) {
             </div>
           </div>
 
-          <SharePage
+          <ResourceShare
             title={`${player?.firstName} ${player?.lastName}`}
             text={`Check out ${player?.firstName} ${player?.lastName} from Bunyeni FC!`}
           />
