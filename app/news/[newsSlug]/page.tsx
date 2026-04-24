@@ -27,7 +27,7 @@ export const getNewsItem = async (slug: string) => {
 export async function generateMetadata({
   params,
 }: IPageProps): Promise<Metadata> {
-  const { newsId: slug } = await params;
+  const { newsSlug: slug } = await params;
   const articleData: IQueryResponse<INewsProps> = await getNewsItem(slug as string);
 
   const article = articleData?.data;
@@ -83,6 +83,58 @@ export async function generateMetadata({
     },
   };
 }
+// export async function generateMetadata({
+//   params,
+// }: IPageProps): Promise<Metadata> {
+//   const slug = (await params).newsId as string;
+//   const article: INewsProps = await getNewsItem(slug);
+
+//   if (!article) {
+//     return {
+//       title: "News | Konjiehi FC",
+//       description: "Latest updates from Konjiehi FC",
+//     };
+//   }
+
+//   const title = `Konjiehi FC - ${article?.headline?.text} | Konjiehi FC`;
+//   const description =
+//     article?.details?.find((d) => d.text)?.text ||
+//     "Read the latest news and updates from Konjiehi FC.";
+
+//   const image = article?.headline?.image || kfc.logo;
+//   const url = `${kfc.url}/news/${slug}`;
+
+//   const ogImage = image.replace(
+//     "/upload/",
+//     "/upload/c_fill,w_1200,h_630,f_auto,q_auto/"
+//   );
+
+//   return {
+//     title,
+//     description,
+//     openGraph: {
+//       title,
+//       description,
+//       url,
+//       siteName: kfc.name,
+//       images: [
+//         {
+//           url: ogImage,
+//           width: 1200,
+//           height: 630,
+//           alt: article?.headline?.text,
+//         },
+//       ],
+//       type: "article",
+//     },
+//     twitter: {
+//       card: "summary_large_image",
+//       title,
+//       description,
+//       images: [image],
+//     },
+//   };
+// }
 
 export default function NewsItemPage() {
   return (
