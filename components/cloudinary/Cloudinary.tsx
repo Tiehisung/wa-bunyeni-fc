@@ -146,7 +146,7 @@ export function CloudinaryWidget({
           cropping: multiple || maxFiles > 1 ? false : cropping,
           croppingAspectRatio: 1,
           clientAllowedFormats:
-            resourceType === "image" ? ["image"] : undefined,
+           allowedFormats,
                   maxFileSize: (maxFileSize || smartMaxSize) * 1024 * 1024, // 20MB
         
          
