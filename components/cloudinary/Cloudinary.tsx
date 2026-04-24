@@ -73,6 +73,8 @@ export function CloudinaryWidget({
   const [uploadedFiles, setUploadedFiles] =
     useState<ICloudinaryFile[]>(initialFiles);
 
+    console.log(ENV.CLOUDINARY.CLOUD_NAME, ENV.CLOUDINARY.UPLOAD_PRESET);
+
   // Use ref to always have the latest files without stale closures
   const uploadedFilesRef = useRef<ICloudinaryFile[]>(initialFiles);
 

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 const Divider = ({
   content = "OR",
-  className = " mt-4 mb-6",
+  className = " my-4",
   borderClassName = "border-border",
 }: {
   content?: ReactNode;
