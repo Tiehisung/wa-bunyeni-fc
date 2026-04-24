@@ -11,7 +11,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../buttons/Button";
 import { TButtonVariant } from "../ui/button";
-import { ENV } from "@/lib/env";
+
 
 interface ICloudinaryUploaderProps {
   uploadPreset?: string;
@@ -64,7 +64,7 @@ export default function CloudinaryUploader({
 }: ICloudinaryUploaderProps) {
   const [files, setFiles] = useState<ICloudinaryFile[]>([]);
   const [deleteFile] = useDeleteFileMutation();
-  console.log(ENV.CLOUDINARY.CLOUD_NAME, ENV.CLOUDINARY.UPLOAD_PRESET);
+  // console.log(ENV.CLOUDINARY.CLOUD_NAME, ENV.CLOUDINARY.UPLOAD_PRESET);
 
   useEffect(() => {
     setFiles([]);
@@ -131,9 +131,9 @@ export default function CloudinaryUploader({
     <div className={`flex flex-col items-center gap-4 ${wrapperStyles}`}>
       <CldUploadWidget
       
-        uploadPreset={ENV.CLOUDINARY.UPLOAD_PRESET as string}
+        uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string}
         options={{
-          cloudName: 'dcjeydowa',
+          cloudName:process.env.NEXT_PUBLIC_CLOUDINARY_NAME|| 'dcjeydowa',
           sources: ["local", "camera", "url", "google_drive", "image_search"],
           multiple,
           maxFiles,
