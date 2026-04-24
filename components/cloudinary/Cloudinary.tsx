@@ -31,16 +31,8 @@ interface CloudinaryWidgetProps {
   multiple?: boolean;
   maxFiles?: number;
 
-  resourceType?: "image" | "video" | "auto";
-  maxFileSize?:
-    | "2_000_000"
-    | "5_000_000"
-    | "10_000_000"
-    | "20_000_000"
-    | "40_000_000"
-    | "60_000_000"
-    | "80_000_000"
-    | "100_000_000";
+  resourceType?: "image" | "video" | "raw"|'document';
+  maxFileSize?:number;
 
   deletable?: boolean;
   hidePreview?: boolean;
@@ -61,7 +53,7 @@ export function CloudinaryWidget({
   multiple = true,
   maxFiles = 1,
   resourceType = "image",
-  maxFileSize = "10_000_000",
+  maxFileSize ,
 
   deletable = true,
   hidePreview = false,
@@ -107,10 +99,41 @@ export function CloudinaryWidget({
     document.body.appendChild(script);
   }, []);
 
+  const imageFormats = ["jpg", "png", "jpeg", "webp"];
+  const videoFormats = [
+    "mp4",
+    "mov",
+    "avi",
+    "webm",
+    "mkv",
+    "flv",
+    "wmv",
+    "m4v",
+    "mp3",
+    "wav",
+    "ogg",
+    "m4a",
+  ];
+  const docFormats = ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx"];
+  const allowedFormats =
+    resourceType === "image"
+      ? imageFormats
+      : resourceType === "video"
+        ? videoFormats
+        : resourceType === "document"
+          ? docFormats
+          : [imageFormats, videoFormats, docFormats].flat();
   // Initialize widget
   useEffect(() => {
     if (!isScriptLoaded || !window.cloudinary) return;
-
+ const smartMaxSize =
+    resourceType === "image"
+      ? 10
+      : resourceType === "video"
+        ? 100
+        : resourceType === "document"
+          ? 10
+          : 60;
     try {
       widgetRef.current = window.cloudinary.createUploadWidget(
         {
@@ -124,8 +147,9 @@ export function CloudinaryWidget({
           croppingAspectRatio: 1,
           clientAllowedFormats:
             resourceType === "image" ? ["image"] : undefined,
-          maxImageFileSize: 5000000,
-          maxVideoFileSize: Number(maxFileSize.replace(/_/g, "")),
+                  maxFileSize: (maxFileSize || smartMaxSize) * 1024 * 1024, // 20MB
+        
+         
         },
         (error: any, result: any) => {
           if (error) {

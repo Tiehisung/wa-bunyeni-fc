@@ -21,7 +21,7 @@ import { useGetPlayersQuery } from "@/services/player.endpoints";
 import { useCreateHighlightMutation } from "@/services/highlights.endpoints";
 import { smartToast } from "@/utils/toast";
 import { useGetMatchesQuery } from "@/services/match.endpoints";
-import CloudinaryUploader from "@/components/cloudinary/Uploader";
+import { CloudinaryWidget } from "../../../../components/cloudinary/Cloudinary";
 
 interface GalleryUploadProps {
   trigger?: ReactNode;
@@ -123,7 +123,7 @@ export function HighlightUpload({
 
   return (
     <div className="w-full rounded-xl space-y-8 p-4 mb-4">
-      <CloudinaryUploader
+      <CloudinaryWidget
         onUploadSuccess={(f) => setFile(f?.[0])}
         maxFiles={1}
         trigger={trigger}

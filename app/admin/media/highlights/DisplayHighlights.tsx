@@ -1,5 +1,4 @@
- "use client";
-
+"use client";
 
 import { Button } from "@/components/buttons/Button";
 import { ConfirmActionButton } from "@/components/buttons/ConfirmAction";
@@ -16,7 +15,10 @@ import {
   useDeleteHighlightMutation,
 } from "@/services/highlights.endpoints";
 import { smartToast } from "@/utils/toast";
-import { useAppSelector } from "@/store/hooks/store";
+import { useSession } from "next-auth/react";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { PrimaryDropdown } from "@/components/Dropdown";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 interface Props {
   highlights?: IQueryResponse<IMatchHighlight[]>;
@@ -71,8 +73,8 @@ export const MatchHighlights = ({
 
             {/* Play button */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-Orange/20 p-4 rounded-full">
-                <Play className="w-8 h-8 text-Red" />
+              <div className="bg-modalOverlay/50 p-4 rounded-full">
+                <Play className="w-8 h-8 text-primary" />
               </div>
             </div>
 
@@ -102,7 +104,7 @@ export const MatchHighlights = ({
             src: v.secure_url,
             width: v.width,
             height: v.height,
-            alt:  v.original_filename,
+            alt: v.original_filename,
           }))}
           index={0}
         />
@@ -118,8 +120,8 @@ export const HighlightMediaActions = ({
 }) => {
   const [deleteHighlight, { isLoading }] = useDeleteHighlightMutation();
 
-  const { user } = useAppSelector((s) => s.auth);
-  const isAdmin = user?.role?.includes("admin");
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role?.includes("admin");
 
   if (!isAdmin) return null;
 
@@ -138,44 +140,38 @@ export const HighlightMediaActions = ({
       onClick={(e) => e.stopPropagation()}
       className="absolute top-2 right-2 "
     >
-      <POPOVER
-        variant="secondary"
-        className="h-fit"
-        triggerClassNames="rounded-full w-7 h-7"
-      >
-        <Button
+      <PrimaryDropdown variant="secondary" className="h-fit">
+        <DropdownMenuItem
           onClick={() =>
             downloadFile(
               highlight?.secure_url || "",
               highlight?.original_filename as string,
             )
           }
-          className="flex items-center gap-1 _hover p-1.5 px-3.5 w-full justify-start"
-          variant="ghost"
         >
           <Download className="w-4 h-4 mr-2" />
           Download
-        </Button>
+        </DropdownMenuItem>
 
-        <ConfirmActionButton
+        <ConfirmDialog
           title={`Delete - ${highlight?.title}`}
-          primaryText="Delete"
-          confirmText="Do you want to delete this highlight?"
+          description="Do you want to delete this highlight?"
           onConfirm={handleDelete}
           className="h-fit w-full"
           variant="ghost"
-          confirmVariant="delete"
-          loadingText="Deleting..."
           isLoading={isLoading}
           trigger={
-            <>
-              <Trash /> Delete
-            </>
+            <DropdownMenuItem
+              onSelect={(e) => e.preventDefault()}
+              className="grow "
+            >
+              <Trash className="w-4 h-4 mr-2" /> Delete
+            </DropdownMenuItem>
           }
-          triggerStyles="px-6 w-full justify-start"
+          triggerStyles="justify-start w-full p-0 font-normal"
           escapeOnEnd
         />
-      </POPOVER>
+      </PrimaryDropdown>
     </div>
   );
 };
