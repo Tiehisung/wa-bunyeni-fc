@@ -72,7 +72,7 @@ export const socialMediaIcons = {
   // instagram: { icon: Instagram, alias: "ig" },
 };
 
-export const SharePage = ({
+export const ResourceShare = ({
   text,
   title,
   url,
