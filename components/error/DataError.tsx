@@ -29,7 +29,7 @@ const DataErrorAlert = ({
   };
   return (
     <Glassmorphic className="container mx-auto my-5" shadow={false}>
-      <Alert variant="destructive">
+      <Alert variant="default" className="text-muted-foreground">
         <AlertTitle>{getErrorMessage(message)}</AlertTitle>
         <AlertDescription className="flex items-center justify-start">
           {allowBack && (
