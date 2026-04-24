@@ -51,7 +51,6 @@ export function DocumentUploader({
       }
       className={cn("justify-start w-full", className)}
       onUploadSuccess={handleUpload}
-      maxFileSize={"10_000_000"}
       resourceType="auto"
       maxFiles={5}
       multiple
