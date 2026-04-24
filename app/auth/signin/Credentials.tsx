@@ -95,7 +95,7 @@ export const CredentialsLoginForm = () => {
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className={`  flex flex-col gap-8 pb-8 p-5 pt-0 min-w-2xs grow`}
+        className={`  flex flex-col gap-8 pb-8 pt-0 min-w-2xs grow`}
       >
         {/* Username */}
         <Controller
@@ -105,7 +105,7 @@ export const CredentialsLoginForm = () => {
             <IconInputWithLabel
               {...field}
               label="Username"
-              wrapperStyles="mt-6"
+              wrapperStyles=""
               error={fieldState.error?.message}
             />
           )}
