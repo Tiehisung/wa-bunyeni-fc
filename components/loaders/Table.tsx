@@ -39,7 +39,7 @@ const TableLoader = ({
               <th key={cIndex}>
                 <div
                   className={cn(
-                    `my-2 mx-auto w-[95%] h-4 bg-accent rounded animate-pulse border `,
+                    `my-2 mx-auto w-[95%] h-4 bg-accent rounded animate-pulse  `,
                     sizes[size],
                     className,
                   )}
@@ -54,7 +54,7 @@ const TableLoader = ({
                 <td key={cIndex}>
                   <div
                     className={cn(
-                      `my-2 mx-auto w-[95%] h-4 bg-accent/90 rounded animate-pulse border `,
+                      `my-2 mx-auto w-[95%] h-4 bg-accent/90 rounded animate-pulse  `,
                       sizes[size],
                       className,
                     )}

@@ -4,7 +4,8 @@ import { LogsClient } from "./Client";
 import { IQueryResponse } from "@/types";
 import BackToTopButton from "@/components/scroll/ToTopBtn";
 import { ILog } from "@/types/log.interface";
-import { buildQueryStringServer } from "@/lib/searchParams";
+import { buildQueryStringServer } from "@/lib/params-server";
+ 
 
 export const getLogs = async (queryString?: string) => {
   try {

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/buttons/Button";
 import { IconInputWithLabel } from "@/components/input/Inputs";
- 
+
 import { LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { signIn } from "next-auth/react";
@@ -36,7 +36,7 @@ export const CredentialsLoginForm = () => {
   const {
     control,
     handleSubmit,
-    formState: {   isSubmitting },
+    formState: { isSubmitting },
     watch,
   } = useForm<CredentialsLoginFormData>({
     resolver: zodResolver(credentialsLoginSchema),
@@ -66,17 +66,17 @@ export const CredentialsLoginForm = () => {
         setError(result.message);
         return;
       }
-       
+
       toast.success(result.message);
       const safeUser: ISession["user"] = result.data;
       await signIn("credentials", {
         // redirect: false,
-        redirectTo:callbackUrl,
+        redirectTo: callbackUrl,
         user: JSON.stringify(safeUser),
       });
 
       setTimeout(() => {
-        fireEscape()
+        fireEscape();
       }, 3000);
 
       // router.push(res.url || callbackUrl);
@@ -137,7 +137,6 @@ export const CredentialsLoginForm = () => {
           waitingText="Signing in..."
           type="submit"
           className=" p-2 grow w-full justify-center"
-          
         >
           <LogIn className="w-4 h-4" />
         </Button>
