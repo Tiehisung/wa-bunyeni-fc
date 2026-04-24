@@ -1,8 +1,5 @@
 "use client";
 
-import { Button } from "@/components/buttons/Button";
-import { ConfirmActionButton } from "@/components/buttons/ConfirmAction";
-import { POPOVER } from "@/components/ui/popover";
 import LightboxViewer from "@/components/viewer/LightBox";
 import { downloadFile } from "@/lib/file";
 import { IQueryResponse } from "@/types";
@@ -59,35 +56,47 @@ export const MatchHighlights = ({
     <>
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-6">
-        {highlights?.data?.map((video) => (
-          <div
-            key={video?._id}
-            onClick={() => setActiveVideo(video)}
-            className="group relative cursor-pointer rounded-xl overflow-hidden bg-modalOverlay shadow-lg transition"
-          >
-            <video
-              src={video?.secure_url as string}
-              controls={false}
-              className="w-full h-60 object-cover opacity-80 group-hover:scale-[1.01] group-hover:ring-2 ring-primary transition"
-            />
+        {highlights?.data?.map((video) => {
+          const thumbnailUrl = video?.secure_url?.replace(
+            "/upload/",
+            "/upload/w_400,h_400,c_fill,pg_1/",
+          );
 
-            {/* Play button */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-modalOverlay/50 p-4 rounded-full">
-                <Play className="w-8 h-8 text-primary" />
+          console.log(thumbnailUrl)
+          return (
+            <div
+              key={video?._id}
+              onClick={() => setActiveVideo(video)}
+              className="group relative cursor-pointer rounded-xl overflow-hidden shadow-lg transition"
+            >
+              <video
+                src={video?.secure_url as string}
+                // controls={false}
+                className="w-full h-60 object-cover bg-modalOverlay/10 group-hover:scale-[1.01] group-hover:ring-2 ring-primary transition"
+                playsInline // Critical for mobile
+                preload="metadata"
+                muted
+                // poster={ thumbnailUrl} // Add thumbnail if available
+              />
+
+              {/* Play button */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="bg-modalOverlay/50 p-4 rounded-full">
+                  <Play className="w-8 h-8 text-white" />
+                </div>
               </div>
-            </div>
 
-            {/* Title */}
-            <div className="absolute bottom-0 w-full p-3 bg-linear-to-t from-black/80 to-transparent">
-              <p className="text-white font-normal text-sm truncate">
-                {video?.title}
-              </p>
-            </div>
+              {/* Title */}
+              <div className="absolute bottom-0 w-full p-3 bg-linear-to-t from-black/80 to-transparent">
+                <p className="text-white font-normal text-sm truncate">
+                  {video?.title}
+                </p>
+              </div>
 
-            <HighlightMediaActions highlight={video} />
-          </div>
-        ))}
+              <HighlightMediaActions highlight={video} />
+            </div>
+          );
+        })}
       </div>
 
       {/* Video Modal */}

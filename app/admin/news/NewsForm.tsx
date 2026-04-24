@@ -198,7 +198,8 @@ export const NewsForm = ({ newsItem = null }: INewsForm) => {
         waiting={isLoading}
         disabled={isLoading}
         waitingText={newsItem ? "Saving..." : "Posting..."}
-        className="_primaryBtn p-3 ml-auto w-full justify-center h-12 uppercase"
+        className=" p-3 ml-auto w-full justify-center uppercase"
+        size='lg'
       />
     </form>
   );

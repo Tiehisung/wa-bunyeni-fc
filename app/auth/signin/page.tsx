@@ -44,9 +44,9 @@ const LoginPage = async ({ searchParams }: IPageProps) => {
     );
   }
   return (
-    <div className="min-h-screen flex flex-col pt-20 items-center">
+    <div className="min-h-screen flex flex-col pt-12 items-center">
       <h1 className="text-2xl font-bold my-4">Sign In</h1>
-      <div className="px-4 pt-5 flex flex-col gap-5 rounded-2xl min-w-2xs md:min-w-xl max-w-md mx-auto border py-6">
+      <div className="px-5 pt-8 flex flex-col gap-5 rounded-2xl min-w-2xs md:min-w-xl max-w-md mx-auto border py-6">
         {error && (
           <Alert variant="destructive">
             <AlertCircle />
@@ -59,7 +59,7 @@ const LoginPage = async ({ searchParams }: IPageProps) => {
           text="Sign In with Google"
           variant={"outline"}
           redirectTo={callbackUrl}
-          
+          size={'lg'}
         >
           <FcGoogle size={30} />
         </LoginBtn>
