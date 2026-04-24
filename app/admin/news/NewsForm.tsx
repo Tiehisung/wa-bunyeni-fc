@@ -159,7 +159,6 @@ export const NewsForm = ({ newsItem = null }: INewsForm) => {
                         </>
                       }
                       folder={`news/media-${new Date().getFullYear()}`}
-                      resourceType="auto"
                       initialFiles={field.value}
                     />
                   )}
