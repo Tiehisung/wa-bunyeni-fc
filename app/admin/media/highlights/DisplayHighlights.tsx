@@ -68,7 +68,7 @@ export const MatchHighlights = ({
             <video
               src={video?.secure_url as string}
               controls={false}
-              className="w-full h-60 object-cover opacity-80 group-hover:scale-[1.01] group-hover:opacity-60 transition"
+              className="w-full h-60 object-cover opacity-80 group-hover:scale-[1.01] group-hover:ring-2 ring-primary transition"
             />
 
             {/* Play button */}

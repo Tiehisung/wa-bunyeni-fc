@@ -46,7 +46,7 @@ type HighlightForm = z.infer<typeof highlightSchema>;
 ----------------------------------- */
 
 export function HighlightUpload({
-  trigger = "Upload Highlight",
+  trigger = "+ Upload Highlight",
   matches,
 }: GalleryUploadProps) {
   const [file, setFile] = useState<ICloudinaryFile | null>(null);
@@ -205,17 +205,18 @@ export function HighlightUpload({
               </PrimaryCollapsible>
             )}
 
+            <video
+              src={file.secure_url}
+              controls
+              className="rounded-lg mt-6 max-h-80 w-full"
+            />
+
             <Button
               type="submit"
               waiting={isSubmitting || isCreating}
               primaryText="SAVE HIGHLIGHT"
             />
 
-            <video
-              src={file.secure_url}
-              controls
-              className="rounded-lg mt-6 max-h-80 w-full"
-            />
           </form>
         </DIALOG>
       )}
