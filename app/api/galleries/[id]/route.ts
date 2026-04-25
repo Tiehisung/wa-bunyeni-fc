@@ -50,7 +50,7 @@ export async function PUT(
 ) {
   try {
     const id =(await params).id
-    const session = await auth();
+    const session = await auth(); 
 
     if (!session) {
       return NextResponse.json({
@@ -68,18 +68,13 @@ export async function PUT(
         message: 'Gallery not found',
       }, { status: 404 });
     }
-
-    let fileIds = existingGallery.files;
-    if (files && Array.isArray(files) && files.length > 0) {
-      const savedFiles = await FileModel.insertMany(files);
-      fileIds = savedFiles.map(file => file._id);
-    }
+ 
 
     const updatedGallery = await GalleryModel.findByIdAndUpdate(
       id,
       {
         $set: {
-          files: fileIds,
+          files: files?.map((f: { _id: string; })=>f?._id),
           tags: tags || existingGallery.tags,
           title: title || existingGallery.title,
           description: description !== undefined ? description : existingGallery.description,

@@ -251,7 +251,7 @@ export function DocumentFileCard({
           triggerStyles="w-full justify-start font-normal"
           variant={"ghost"}
           id={`r-${file._id}`}
-          header={<h2 className="text-lg font-semibold">Rename</h2>}
+          title={'Rename'}
           className="cursor-auto"
         >
           <form className=" flex flex-col gap-4 items-center md:max-w-[70%] mx-auto mt-28">
@@ -304,7 +304,8 @@ export function DocumentFileCard({
         triggerStyles="w-full justify-start font-normal"
         variant={"ghost"}
         id={`r-${file._id}`}
-        header={<h2 className="text-lg font-semibold">Rename</h2>}
+        title={"Rename"}
+        
       >
         <form className=" flex flex-col gap-4 items-center md:max-w-[70%] mx-auto mt-28">
           <Input

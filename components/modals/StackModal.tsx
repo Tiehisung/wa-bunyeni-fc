@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
 import { ReactNode, useState } from "react";
 import { useActionOnEsc } from "@/hooks/Esc";
- 
+
 import { useUpdateSearchParams } from "@/hooks/params";
 import { Button } from "../buttons/Button";
 import { cn } from "@/lib/utils";
@@ -17,12 +17,14 @@ export const StackModal = ({
   overlayClassName,
   closeOnEsc,
   trigger,
-  header = "",
+
   size,
   variant,
   triggerStyles,
   hideCloseButton,
   rounded = true,
+  description,
+  title,
 }: {
   children: ReactNode;
   className?: string;
@@ -31,14 +33,15 @@ export const StackModal = ({
   closeOnEsc?: boolean;
   hideCloseButton?: boolean;
   triggerStyles?: string;
+  title?: ReactNode;
+  description?: string;
   trigger?: ReactNode;
-  header?: ReactNode;
+
   variant?: TButtonVariant;
   size?: TButtonSize;
   rounded?: boolean;
 }) => {
- 
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
   const modalId = searchParams.get("stackModal");
 
   const { clearParams, setParam } = useUpdateSearchParams();
@@ -95,7 +98,7 @@ export const StackModal = ({
       {isOpen && (
         <div
           onClick={() => clearParams("stackModal")}
-          className={`z-50 fixed inset-0 bg-linear-to-b from-modalOverlay to-accent flex justify-start items-center h-screen ${overlayClassName}`}
+          className={`z-50 fixed inset-0 bg-modalOverlay flex justify-start items-center h-screen ${overlayClassName}`}
         >
           <div
             onClick={(e) => e.stopPropagation()}
@@ -104,21 +107,32 @@ export const StackModal = ({
               rounded ? "rounded-t-3xl overflow-hidden" : "",
             )}
           >
-            {header && !hideCloseButton && (
-              <header className="flex items-center gap-3 justify-between border-b border-border">
-                {header && <header className="px-5">{header}</header>}
-                {!hideCloseButton && (
-                  <Button
-                    size="icon-sm"
-                    onClick={() => clearParams("stackModal")}
-                    className="ml-auto mr-1.5"
-                    variant="ghost"
-                  >
-                    <X />
-                  </Button>
-                )}
-              </header>
-            )}
+            <header
+              className={cn(
+                "flex items-center gap-3 text-center justify-between border-border pl-4",
+                title || description ? " border-b" : "",
+              )}
+            >
+              <div  className="flex flex-col justify-center items-center grow ">
+                <div className="text-sm font-semibold text-center">{title}</div>
+                <div
+                  hidden={!description}
+                  className="text-sm font-normal text-muted-foreground"
+                >
+                  {description}
+                </div>
+              </div>
+              {!hideCloseButton && (
+                <Button
+                  size="icon-sm"
+                  onClick={() => clearParams("stackModal")}
+                  className="ml-auto mr-1.5"
+                  variant="ghost"
+                >
+                  <X />
+                </Button>
+              )}
+            </header>
 
             <main
               className={cn(

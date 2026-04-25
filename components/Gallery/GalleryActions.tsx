@@ -3,7 +3,7 @@
 import { ENV } from "@/lib/env";
 import { IGallery } from "@/types/file.interface";
 import { downloadGalleryAsZip } from "@/utils/download.utils";
-import { View, Download, Trash } from "lucide-react";
+import { View, Download, Trash, Edit } from "lucide-react";
 import { ConfirmDialog } from "../ConfirmDialog";
 import { PrimaryDropdown } from "../Dropdown";
 import SocialShare from "../SocialShare";
@@ -11,6 +11,8 @@ import { DropdownMenuItem } from "../ui/dropdown-menu";
 import { useDeleteGalleryMutation } from "@/services/gallery.endpoints";
 import { useSession } from "next-auth/react";
 import { smartToast } from "@/utils/toast";
+import { EditGalleryUpload } from "./EditGallery";
+import { toggleClick } from "@/lib/dom";
 
 export const GalleryActions = ({
   gallery,
@@ -24,7 +26,7 @@ export const GalleryActions = ({
   const handleDelete = async (galleryId: string) => {
     try {
       const result = await deleteGallery(galleryId).unwrap();
-      
+
       smartToast(result);
     } catch (error) {
       smartToast({ error });
@@ -34,16 +36,21 @@ export const GalleryActions = ({
   const isAdmin = session?.user?.role?.includes("admin");
 
   return (
-    <PrimaryDropdown variant={"outline"}>
+    <PrimaryDropdown variant={"secondary"}>
       <DropdownMenuItem onClick={onView}>
         <View className="w-4 h-4 mr-2" /> View
       </DropdownMenuItem>
+
       <DropdownMenuItem
         onClick={() => downloadGalleryAsZip(gallery as IGallery)}
       >
         <Download className="w-4 h-4 mr-2" /> Download
       </DropdownMenuItem>
-
+      {isAdmin && (
+        <DropdownMenuItem onClick={() => toggleClick(gallery?._id as string)}>
+          <Edit className="w-4 h-4 mr-2" /> Edit
+        </DropdownMenuItem>
+      )}
       {isAdmin && (
         <ConfirmDialog
           trigger={
@@ -60,7 +67,6 @@ export const GalleryActions = ({
           title={`Delete Document`}
           description={`Are you sure you want to delete <b>"${gallery?.title}"</b>?`}
           isLoading={isDeleting}
-
         />
       )}
 

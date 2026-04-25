@@ -11,6 +11,8 @@ import { ICloudinaryFile } from "@/types/file.interface";
 import { smartToast } from "@/utils/toast";
 import { useCreateGalleryMutation } from "@/services/gallery.endpoints";
 import { CloudinaryWidget } from "../cloudinary/Cloudinary";
+import Image from "next/image";
+import { X } from "lucide-react";
 
 interface GalleryUploadProps {
   tags?: string[];
@@ -36,7 +38,6 @@ export function GalleryUpload({
     setTitle("");
     setFiles([]);
     setTaggedPlayers([]);
-    // setClearTrigger((n) => n + 1);
   }, []);
 
   /** Handle gallery save */
@@ -88,6 +89,32 @@ export function GalleryUpload({
             onSubmit={handleSave}
             className="flex flex-col gap-6 md:gap-8 max-w-2xl mx-auto"
           >
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {files?.map((gf, i) => (
+                <div
+                  key={i}
+                  className="relative aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer hover:opacity-90 transition"
+                >
+                  <Image
+                    src={gf?.secure_url}
+                    alt={`${gf?.original_filename}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                  />
+                  <Button
+                    className="absolute right-2 top-2 rounded-full"
+                    variant="destructive"
+                    size='icon'
+                    onClick={()=>setFiles((p) =>
+                      p.filter((f) => f.public_id !== gf?.public_id),
+                    )}
+                  >
+                    <X />
+                  </Button>
+                </div>
+              ))}
+            </div>
             <p className="text-sm text-muted-foreground text-center">
               {files.length} file{files.length !== 1 ? "s" : ""} selected
             </p>
@@ -96,12 +123,14 @@ export function GalleryUpload({
               <Input
                 onChange={(e) => setTitle(e.target.value)}
                 name="title"
+                label="Title"
                 value={title}
                 placeholder="Gallery title"
               />
               <Input
                 onChange={(e) => setDescription(e.target.value)}
                 name="description"
+                label="Comment"
                 value={description}
                 placeholder="Description"
               />
@@ -129,7 +158,8 @@ export function GalleryUpload({
                 waiting={isLoading}
                 waitingText="Saving..."
                 primaryText="Save Gallery"
-                className="_primaryBtn w-48 h-10 justify-center"
+                className=" w-48 justify-center"
+                size="lg"
               />
             </div>
           </form>
@@ -138,3 +168,5 @@ export function GalleryUpload({
     </>
   );
 }
+
+ 

@@ -39,9 +39,9 @@ export async function generateMetadata({
   }
 
   const title = `${ENV.TEAM_NAME} - ${article?.headline?.text}`;
-  const description =
-    article?.details?.find((d) => d.text)?.text?.substring(0, 200) ||
-    `Read the latest news and updates from ${ENV.TEAM_NAME}.`;
+  // const description =
+  //   article?.details?.find((d) => d.text)?.text?.substring(0, 200) ||
+  //   `Read the latest news and updates from ${ENV.TEAM_NAME}.`;
 
   const image = article?.headline?.image || ENV.LOGO_URL;
   const url = `${ENV.APP_URL}/news/${slug}`;
@@ -49,10 +49,10 @@ export async function generateMetadata({
 
   return {
     title,
-    description,
+    // description,
     openGraph: {
       title,
-      description,
+      // description,
       url,
       siteName: ENV.TEAM_NAME,
       type: "article",
@@ -73,7 +73,7 @@ export async function generateMetadata({
     twitter: {
       card: "summary_large_image",
       title,
-      description,
+      // description,
       images: [image as string],
     },
     keywords: article?.tags || [`${ENV.TEAM_NAME}`, "news", "football"],
