@@ -137,7 +137,7 @@ export function CloudinaryWidget({
     try {
       widgetRef.current = window.cloudinary.createUploadWidget(
         {
-          cloudName: ENV.CLOUDINARY.CLOUD_NAME as string ||'dcjeydowa',
+          cloudName: (ENV.CLOUDINARY.CLOUD_NAME as string) || "dcjeydowa",
           uploadPreset: ENV.CLOUDINARY.UPLOAD_PRESET,
           folder,
           sources: ["local", "camera", "dropbox", "google_drive"],
@@ -145,11 +145,8 @@ export function CloudinaryWidget({
           maxFiles,
           cropping: multiple || maxFiles > 1 ? false : cropping,
           croppingAspectRatio: 1,
-          clientAllowedFormats:
-           allowedFormats,
-                  maxFileSize: (maxFileSize || smartMaxSize) * 1024 * 1024, // 20MB
-        
-         
+          clientAllowedFormats: allowedFormats,
+          maxFileSize: (maxFileSize || smartMaxSize) * 1024 * 1024, // 20MB
         },
         (error: any, result: any) => {
           if (error) {

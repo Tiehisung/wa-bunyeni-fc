@@ -197,7 +197,7 @@ export function ScoreEventsTab({ match }: ScoreEventsTabProps) {
           <PrimaryCollapsible
             header={{
               label: `Goal Type(${form.modeOfScore})`,
-              className: "_label",
+              className: "_label border",
             }}
           >
             <RadioButtons

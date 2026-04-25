@@ -8,6 +8,7 @@ import { Pagination, Autoplay } from "swiper/modules";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
+import Image from "next/image";
 
 interface ShowcaseWrapperProps {
   children: ReactNode;
@@ -66,7 +67,7 @@ export default function ContentShowcaseWrapper({
             {images?.map((src, i) => (
               <SwiperSlide key={`img-${i}`}>
                 <div className="flex justify-center">
-                  <img
+                  <Image
                     src={src}
                     alt={`Slide ${i + 1}`}
                     width={500}

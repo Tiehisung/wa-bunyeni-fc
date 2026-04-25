@@ -1,9 +1,8 @@
-'use client'
+"use client";
 
 import {
   ChangeEvent,
   HTMLInputTypeAttribute,
-  ReactNode,
   useEffect,
   useState,
 } from "react";
@@ -116,6 +115,7 @@ interface IInputProps extends IInput {
   type?: HTMLInputTypeAttribute;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;
+  modern?: boolean;
 }
 
 export function Input({
@@ -132,9 +132,45 @@ export function Input({
   others,
   required = false,
   error,
+  modern = true,
 }: IInputProps) {
+  if (modern)
+    return (
+      <div className={cn("flex flex-col justify-start items-center group relative focus-within:ring-2 ring-primary border border-gray-300 rounded-lg h-13 ", wrapperStyles)} data-tip={dataTip}>
+        <label
+          hidden={!label}
+          htmlFor={name}
+          className={cn(
+            `absolute top-6 left-4 text-muted-foreground group-focus-within:top-2 group-focus-within:text-sm group-focus-within:text-primary transition-all duration-300 ease-out -translate-y-1/2 text-sm font-medium `,
+            value ? "top-2" : "",
+          )}
+        >
+          {label}
+        </label>
+        <input
+          name={name}
+          id={name}
+          value={value}
+          type={type}
+          onChange={(e) => {
+            onChange(e);
+          }}
+          {...others}
+          required={required}
+          className={cn(
+            "w-full h-full rounded-lg pb-0 px-4 focus:outline-none outline-0 font-[350]",
+            label ? " pt-2" : "",
+          )}
+        />
+        {error && (
+          <p className={`absolute -bottom-3 left-2 text-red-500 line-clamp-1 text-[9px] `}>
+            {error}
+          </p>
+        )}
+      </div>
+    );
   return (
-    <div className={cn(`grid relative `,wrapperStyles)} data-tip={dataTip}>
+    <div className={cn(`grid relative `, wrapperStyles)} data-tip={dataTip}>
       <Label
         hidden={!label}
         htmlFor={name}
@@ -161,69 +197,6 @@ export function Input({
       />
       {error && <p className={` text-red-500  text-sm mt-1`}>{error}</p>}
     </div>
-  );
-}
-
-interface IDateInputProps {
-  className?: string;
-  name: string;
-  placeholder?: string;
-  value?: string | number;
-  dataTip?: string;
-  others?: object;
-  required?: boolean;
-  wrapperStyles?: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  type: "time" | "datetime-local" | "date";
-  label?: ReactNode;
-  error?: string;
-  disabled?: boolean;
-}
-export function DateTimeInput({
-  className = "",
-  name = "date-input",
-  onChange,
-  value,
-  dataTip = "",
-  wrapperStyles = "",
-  others,
-  required = false,
-  type,
-  label,
-  error,
-  disabled,
-}: IDateInputProps) {
-  const handleOpenPicker = () => {
-    const dateInput = document.getElementById(name) as HTMLInputElement; //avoid id starting with number
-    dateInput.showPicker();
-  };
-  if (!name) return null;
-  return (
-    <label
-      className={`block grow focus-within: items-center gap-2 ${wrapperStyles}`}
-      title={dataTip}
-      htmlFor={name}
-    >
-      {label && (
-        <div onClick={handleOpenPicker} className="_label mb-2">
-          {label}
-        </div>
-      )}
-      <input
-        name={name}
-        id={name}
-        value={value}
-        type={type ?? "date"}
-        onChange={(e) => {
-          onChange(e);
-        }}
-        disabled={disabled}
-        className={`bg-accent/40 grow w-full min-w-full border px-2 py-2 uppercase rounded focus:border-border ${className}`}
-        {...others}
-        required={required}
-      />
-      {error && <p className={` text-red-500 text-xs mt-1`}>{error}</p>}
-    </label>
   );
 }
 
@@ -291,5 +264,68 @@ export function IconInputWithLabel({
       </div>
       {error && <p className={` text-red-500  text-xs mt-1`}>{error}</p>}
     </div>
+  );
+}
+
+interface IDateInputProps {
+  className?: string;
+  name: string;
+  placeholder?: string;
+  value?: string | number;
+  dataTip?: string;
+  others?: object;
+  required?: boolean;
+  wrapperStyles?: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  type: "time" | "datetime-local" | "date";
+  label?: React.ReactNode;
+  error?: string;
+  disabled?: boolean;
+}
+export function DateTimeInput({
+  className = "",
+  name = "date-input",
+  onChange,
+  value,
+  dataTip = "",
+  wrapperStyles = "",
+  others,
+  required = false,
+  type,
+  label,
+  error,
+  disabled,
+}: IDateInputProps) {
+  const handleOpenPicker = () => {
+    const dateInput = document.getElementById(name) as HTMLInputElement; //avoid id starting with number
+    dateInput.showPicker();
+  };
+  if (!name) return null;
+  return (
+    <label
+      className={`block grow focus-within: items-center gap-2 ${wrapperStyles}`}
+      title={dataTip}
+      htmlFor={name}
+    >
+      {label && (
+        <div onClick={handleOpenPicker} className="_label mb-2">
+          {label}
+        </div>
+      )}
+      <input
+        name={name}
+        id={name}
+        value={value}
+        type={type ?? "date"}
+        onChange={(e) => {
+          onChange(e);
+        }}
+        disabled={disabled}
+        className={`bg-accent/40 grow w-full min-w-full border px-2 py-2 uppercase rounded focus:border-border ${className}`}
+        {...others}
+        required={required}
+      />
+      {error && <p className={` text-red-500 text-xs mt-1`}>{error}</p>}
+    </label>
   );
 }

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import useGetParam, { useUpdateSearchParams } from "@/hooks/params";
 import {
@@ -128,6 +128,7 @@ interface ISELECT {
   error?: string;
   disabled?: boolean;
   required?: boolean;
+  modern?: boolean;
 }
 
 export default function SELECT({
@@ -141,11 +142,16 @@ export default function SELECT({
   paramKey,
   selectStyles,
   loading,
+  modern = true,
+  placeholder,
   ...props
 }: ISELECT) {
   const { setParam } = useUpdateSearchParams();
 
   const defaultSP = useGetParam(paramKey as string);
+
+  // Get the actual selected value
+  const selectedValue = value !== undefined ? value : defaultSP;
 
   const handleOnChange = (val: string) => {
     if (typeof onChange !== "undefined") {
@@ -154,7 +160,70 @@ export default function SELECT({
       if (paramKey) setParam((paramKey as string) ?? "filter", val);
     }
   };
+  const getDisplayValue = () => {
+    // Return undefined when no selection, not empty string
+    if (
+      selectedValue === undefined ||
+      selectedValue === null ||
+      selectedValue === ""
+    ) {
+      return undefined;
+    }
+    return selectedValue;
+  };
+  if (modern) {
+    return (
+      <div
+        className={cn(
+          "flex items-center group relative focus-within:ring-2 ring-primary border border-gray-300 rounded-lg h-13 ",
+          className,
+        )}
+      >
+        <label
+          hidden={!label}
+          htmlFor={name}
+          className={cn(
+            `absolute top-2 left-4 text-muted-foreground group-focus-within:top-2 group-focus-within:text-sm group-focus-within:text-primary transition-all duration-300 ease-out -translate-y-1/2 text-sm font-medium `,
+          )}
+        >
+          {label}
+        </label>
 
+        <select
+          value={getDisplayValue()}
+          name={name}
+          id={name}
+          onChange={(e) => handleOnChange?.(e.target.value)}
+          className={cn(
+            `w-full h-full rounded-lg pb-0 pt-2 px-4 focus:outline-none outline-0 font-[350]`,
+            selectStyles,
+          )}
+          {...props}
+        >
+          <option value="" className="bg-accent">
+            -- {placeholder || "Select an option"} --
+          </option>
+          {options?.map((op, i) => (
+            <option
+              key={i}
+              value={op.value}
+              selected={op.value == (value || defaultSP)}
+              className="bg-accent"
+            >
+              {op.label}
+            </option>
+          ))}
+        </select>
+        {error && (
+          <p
+            className={`absolute -bottom-3 left-2 text-red-500  line-clamp-2 text-[9px] `}
+          >
+            {error}
+          </p>
+        )}
+      </div>
+    );
+  }
   return (
     <>
       <div className={cn("flex items-center gap-2 relative", className)}>
@@ -175,7 +244,7 @@ export default function SELECT({
           {...props}
         >
           <option value="" hidden>
-            {props.placeholder}
+            {placeholder}
           </option>
           {options?.map((op, i) => (
             <option

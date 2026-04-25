@@ -26,6 +26,7 @@ export function OverlayLoader({
         blur ? "bg-modalOverlay/20 backdrop-blur-[1px]" : "",
         className,
       )}
+      style={{zIndex:100}}
     >
       {message && (
         <p className="mb-2 text-sm font-medium text-muted-foreground">
