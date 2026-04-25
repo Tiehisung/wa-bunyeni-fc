@@ -215,7 +215,9 @@ export default function SELECT({
           ))}
         </select>
         {error && (
-          <p className={`absolute -bottom-3 left-2 text-red-500  text-[9px] `}>
+          <p
+            className={`absolute -bottom-3 left-2 text-red-500  line-clamp-2 text-[9px] `}
+          >
             {error}
           </p>
         )}

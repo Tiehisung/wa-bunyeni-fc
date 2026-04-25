@@ -163,7 +163,7 @@ export function Input({
           )}
         />
         {error && (
-          <p className={`absolute -bottom-3 left-2 text-red-500  text-[9px] `}>
+          <p className={`absolute -bottom-3 left-2 text-red-500 line-clamp-1 text-[9px] `}>
             {error}
           </p>
         )}
