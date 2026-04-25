@@ -214,8 +214,10 @@ export const PrimarySearchWithSelect = ({
           { label: "All", value: sources.toString() },
           ...stringArrayToOptions(sources),
         ]}
+        value={searchSource}
         className=""
         selectStyles="border-none outline-none bg-transparents ring-0 focus:ring-0 capitalize"
+        modern={false}
       />
       {/* 📋 Datalist */}
       {datalist && listId && (
