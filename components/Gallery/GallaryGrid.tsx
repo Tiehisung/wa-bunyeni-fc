@@ -1,6 +1,8 @@
 import { IGallery } from "@/types/file.interface";
 import { SecondaryGalleryCard } from "./GalleryCardSecondary";
 import { PrimaryGalleryCard } from "./GalleryCardPrimary";
+import { StackModal } from "../modals/StackModal";
+import { EditGalleryUpload } from "./EditGallery";
 
 interface GalleryGridProps {
   galleries: IGallery[];

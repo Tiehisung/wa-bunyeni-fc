@@ -60,7 +60,7 @@ export function MVPsStats({ loading, mvps }: IProps) {
         trigger={"LEADERBOARD"}
         variant={"outline"}
         triggerStyles="h-32"
-        header="MoTM Rankings"
+        title="MoTM Rankings"
         className="min-w-[80vw]"
         id={"leaderboard"}
       >

@@ -14,7 +14,7 @@ import { shortText } from "@/lib";
 import { BsDot, BsEye, BsFillHandThumbsUpFill } from "react-icons/bs";
 import { DIALOG } from "@/components/Dialog";
 import { getDeviceId } from "@/lib/device";
- 
+
 import {
   useDeleteNewsCommentMutation,
   useGetNewsStatsQuery,
@@ -28,8 +28,8 @@ import { useSession } from "next-auth/react";
 import LoginModal from "@/components/auth/Login";
 
 export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
-const { data: session,   } = useSession();
-   const user=session?.user
+  const { data: session } = useSession();
+  const user = session?.user;
 
   const [updateViews] = useUpdateNewsViewsMutation();
 
@@ -206,8 +206,8 @@ const CommentRow = ({
   comment: IComment;
   newsItem?: INewsProps;
 }) => {
-const { data: session,   } = useSession();
-   const user=session?.user
+  const { data: session } = useSession();
+  const user = session?.user;
   const [deleteComment, { isLoading: isDeleting }] =
     useDeleteNewsCommentMutation();
 

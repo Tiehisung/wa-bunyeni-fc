@@ -10,6 +10,8 @@ import { isObjectId } from "@/lib/validate";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
 import { GalleryActions } from "./GalleryActions";
+import { StackModal } from "../modals/StackModal";
+import { EditGalleryUpload } from "./EditGallery";
 
 interface GalleryCardProps {
   gallery: IGallery;
@@ -99,6 +101,10 @@ export function PrimaryGalleryCard({ gallery }: GalleryCardProps) {
         }
         index={0}
       />
+
+      <StackModal title={'Edit Gallery'} description={gallery?.description} id={ gallery?._id as string} closeOnEsc>
+        <EditGalleryUpload gallery={gallery} />
+      </StackModal>
     </motion.div>
   );
 }
