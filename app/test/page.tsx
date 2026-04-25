@@ -1,31 +1,29 @@
 // app/test/page.tsx
 "use client";
 
-import { useGetPlayersQuery } from "@/services/player.endpoints";
-import { useEffect } from "react";
+import { Input } from "@/components/input/Inputs";
+import SELECT from "@/components/select/Select";
+import { ECardType } from "@/types/card.interface";
+import { useState } from "react";
 
 export default function TestPage() {
-  const { data, isLoading, error, isError, status } = useGetPlayersQuery('');
-
-  console.log(data)
-
-  useEffect(() => {
-    console.log("🔍 RTK Query Debug:");
-    console.log("  - isLoading:", isLoading);
-    console.log("  - isError:", isError);
-    console.log("  - error:", error);
-    console.log("  - status:", status);
-    console.log("  - data:", data);
-  }, [data, isLoading, error, isError, status]);
-
-  if (isLoading) return <div>Loading... (check console for debug)</div>;
-  if (isError) return <div>Error: {JSON.stringify(error)}</div>;
-  if (!data) return <div>No data received</div>;
-
+  const[data,setData]=useState('')
   return (
     <div>
-      <h1>Players Loaded: {data.data?.length || 0}</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <Input type="password" onChange={(e) => console.log(e)} name={"i"} label='Test input' error={'123'}/>
+      <SELECT
+        options={[
+          { label: "🟨 Yellow ", value: ECardType.YELLOW },
+          { label: "🟥 Red ", value: ECardType.RED },
+        ]}
+        label="Card type"
+        placeholder="Select"
+        className="grid"
+        // error={"error?.message"}
+        name='ct'
+        value={data}
+        onChange={v=>setData(v)}
+      />
     </div>
   );
 }

@@ -16,6 +16,7 @@ interface IProps {
   initialImage?: string;
   label?: ReactNode;
   className?: string;
+  imageClassNames?: string;
   maxSize?: number; // in MB
   aspectRatio?: "square" | "video" | "portrait" | "auto";
 }
@@ -27,7 +28,7 @@ export default function ImageUploadComponent({
   label,
   className,
   maxSize = 5,
-  aspectRatio = "square",
+  aspectRatio = "square",imageClassNames
 }: IProps) {
   const [uploadImage, { isLoading }] = useUploadImageMutation();
   const [preview, setPreview] = useState<string | undefined>(initialImage);
@@ -119,7 +120,7 @@ export default function ImageUploadComponent({
   };
 
   return (
-    <div className={cn("space-y-3", className)}>
+    <div className={cn("space-y-3 relative", className)}>
       {label && <Label className="text-sm font-medium _label">{label}</Label>}
 
       <input
@@ -159,7 +160,7 @@ export default function ImageUploadComponent({
       ) : (
         // Preview Area - Added 'group' class back
         <div className={cn("relative group", aspectRatioClasses[aspectRatio])}>
-          <div className="relative w-full h-full overflow-hidden rounded-xl bg-gray-100">
+          <div className={cn("relative w-full h-full overflow-hidden rounded-xl bg-gray-100",imageClassNames)}>
             <Image
               width={400}
               height={400}
@@ -191,7 +192,7 @@ export default function ImageUploadComponent({
             </div>
 
             {/* Desktop: Overlay on hover */}
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hidden lg:flex items-center justify-center gap-2">
+            <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hidden lg:flex items-center justify-center gap-2">
               <Button
                 size="sm"
                 variant="outline"
@@ -219,6 +220,7 @@ export default function ImageUploadComponent({
         message="Uploading image..."
         isLoading={isLoading}
         blur={false}
+        className="absolute"
       />
     </div>
   );

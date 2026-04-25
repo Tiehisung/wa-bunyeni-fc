@@ -23,7 +23,6 @@ export const getNewsItem = async (slug: string) => {
 };
 
 
-
 export async function generateMetadata({
   params,
 }: IPageProps): Promise<Metadata> {
