@@ -96,38 +96,39 @@ const newsApi = api.injectEndpoints({
             invalidatesTags: ['News']
         }),
 
-        // LIKE news article
-        likeNews: builder.mutation<IQueryResponse<{ likes: number }>, string>({
-            query: (newsId) => ({
-                url: `/news/${newsId}/like`,
-                method: "POST",
-            }),
-            invalidatesTags: ['News']
-        }),
+        // // LIKE news article
+        // likeNews: builder.mutation<IQueryResponse<{ likes: number }>, string>({
+        //     query: (newsId) => ({
+        //         url: `/news/${newsId}/like`,
+        //         method: "POST",
+        //     }),
+        //     invalidatesTags: ['News']
+        // }),
 
-        // UNLIKE news article
-        unlikeNews: builder.mutation<IQueryResponse<{ likes: number }>, string>({
-            query: (newsId) => ({
-                url: `/news/${newsId}/unlike`,
-                method: "POST",
-            }),
-            invalidatesTags: ['News']
-        }),
+        // // UNLIKE news article
+        // unlikeNews: builder.mutation<IQueryResponse<{ likes: number }>, string>({
+        //     query: (newsId) => ({
+        //         url: `/news/${newsId}/unlike`,
+        //         method: "POST",
+        //     }),
+        //     invalidatesTags: ['News']
+        // }),
 
         // SHARE news article
-        shareNews: builder.mutation<IQueryResponse<{ shares: number }>, {
-            newsId: string;
-            platform: 'facebook' | 'twitter' | 'linkedin' | 'whatsapp' | 'email';
-        }>({
-            query: ({ newsId, platform }) => ({
-                url: `/news/${newsId}/share`,
-                method: "POST",
-                body: { platform },
-            }),
-            invalidatesTags: ['News']
-        }),
+        // shareNews: builder.mutation<IQueryResponse<{ shares: number }>, {
+        //     newsId: string;
+        //     platform: 'facebook' | 'twitter' | 'linkedin' | 'whatsapp' | 'email';
+        // }>({
+        //     query: ({ newsId, platform }) => ({
+        //         url: `/news/${newsId}/share`,
+        //         method: "POST",
+        //         body: { platform },
+        //     }),
+        //     invalidatesTags: ['News']
+        // }),
 
         // DELETE news article
+        
         deleteNews: builder.mutation<IQueryResponse<INewsProps>, string>({
             query: (newsId) => ({
                 url: `/news/${newsId}`,
@@ -275,9 +276,9 @@ export const {
     useUpdateNewsMutation,
     usePatchNewsMutation,
     useTogglePublishStatusMutation,
-    useLikeNewsMutation,
-    useUnlikeNewsMutation,
-    useShareNewsMutation,
+    // useLikeNewsMutation,
+    // useUnlikeNewsMutation,
+    // useShareNewsMutation,
     useDeleteNewsMutation,
     useBulkDeleteNewsMutation,
     useIncrementViewCountMutation,

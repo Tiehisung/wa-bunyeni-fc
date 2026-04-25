@@ -85,7 +85,7 @@ export async function PUT(
             { $set: { ...body } }
         );
 
-        console.log(updated)
+     
 
         return NextResponse.json({
             message: "News updated",

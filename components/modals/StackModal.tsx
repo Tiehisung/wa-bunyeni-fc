@@ -113,7 +113,7 @@ export const StackModal = ({
                 title || description ? " border-b" : "",
               )}
             >
-              <div>
+              <div  className="flex flex-col justify-center items-center grow ">
                 <div className="text-sm font-semibold text-center">{title}</div>
                 <div
                   hidden={!description}
