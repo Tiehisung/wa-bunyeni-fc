@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
             date: { $gte: new Date() }
         })
             .populate('opponent')
-            .sort({ date: 'asc' })
+            .sort({ date: 'desc' })
             .limit(limit);
 
         return NextResponse.json({
