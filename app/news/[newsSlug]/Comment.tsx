@@ -1,8 +1,11 @@
+'use client'
+
 import { Button } from "@/components/buttons/Button";
 import QuillEditor from "@/components/editor/Quill";
 import { fireEscape } from "@/hooks/Esc";
 import { markupToPlainText } from "@/lib/dom";
 import { useUpdateNewsCommentsMutation } from "@/services/news.endpoints";
+import { IMiniUser } from "@/types/user";
  
 import { SendHorizontal } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -14,7 +17,7 @@ interface Props {
 
 const CommentForm = ({ newsId }: Props) => {
 const { data: session,   } = useSession();
-   const user=session?.user
+   const user=session?.user as IMiniUser
   const [comment, setComment] = useState("");
 
   const [updateComments, { isLoading: isCommenting }] =
@@ -28,7 +31,7 @@ const { data: session,   } = useSession();
     const result = await updateComments({
       newsId: newsId as string,
       comment,
-      userId: user?._id,
+      user,
     }).unwrap();
 
     if (result.success) {

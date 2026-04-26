@@ -14,9 +14,7 @@ import {
   Images,
   Mail,
   Info,
-  Trophy,
-  Heart,
-  Star,
+  
 } from "lucide-react";
 import { Drawer } from "@/components/headlessUI/Drawer";
 import { AVATAR } from "@/components/ui/avatar";
@@ -169,7 +167,7 @@ export default function MainNavbar() {
       <Drawer
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
-        position="bottom"
+        position="right"
         size="sm"
         title={
           <div className=" flex items-center gap-4 font-bold">
@@ -183,7 +181,7 @@ export default function MainNavbar() {
         }
         className=" max-h-[75vh]"
       >
-        <nav className="flex flex-col p-4 divide-y divide-border">
+        <nav className="flex flex-col p-4 divide-y divide-border ">
           {navLinks.map((item) => {
             if (item.href == pathname) return;
             return (
@@ -197,10 +195,11 @@ export default function MainNavbar() {
                   }
                   fireEscape();
                 }}
-                className="flex items-center gap-2 px-3 my-2 transition-colors font-medium justify-start py-3 rounded-none"
-                variant={"link"}
+                className="flex items-center gap-2 px-3 pb- transition-colors font-medium justify-start py-3 rounded-none"
+                variant={"ghost"}
+                size={'xl'}
               >
-                <div className="p-3 bg-accent rounded-md ">{item.icon}</div>{" "}
+                <div className="p-2 bg-accent rounded-md ">{item.icon}</div>{" "}
                 {item.label}
               </Button>
             );
