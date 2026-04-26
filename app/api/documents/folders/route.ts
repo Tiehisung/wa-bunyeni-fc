@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
             name,
             description,
             isDefault,
-            createdBy: session.user?.id
+            createdBy: session.user?._id
         });
 
         return NextResponse.json({

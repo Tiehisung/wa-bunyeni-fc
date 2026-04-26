@@ -2,7 +2,17 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import { EUserRole } from "@/types/user";
 
-
+export const MiniUserSchema = new Schema({
+    name: { type: String, },
+    avatar: String,
+    email: {
+        type: String,
+        lowercase: true,
+        trim: true,
+    },
+    role: { type: String, enum: Object.values(EUserRole)}}, {
+    timestamps: false,
+});
 
 
 const UserSchema = new Schema({

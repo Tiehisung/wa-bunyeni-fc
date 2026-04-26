@@ -35,7 +35,7 @@ export async function PATCH(
                     isPublished,
                     publishedAt: isPublished ? new Date() : null,
                     updatedAt: new Date(),
-                    updatedBy: session.user?.id,
+                    updatedBy: session.user?._id,
                 },
             },
             { new: true }

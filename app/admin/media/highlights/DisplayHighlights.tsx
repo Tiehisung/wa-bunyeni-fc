@@ -64,7 +64,7 @@ export const MatchHighlights = ({
             "/upload/w_400,h_400,c_fill,pg_1/",
           );
 
-          console.log(thumbnailUrl);
+      
           return (
             <div
               key={video?._id}

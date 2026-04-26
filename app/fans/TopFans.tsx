@@ -74,8 +74,8 @@ export default function TopFans() {
   const [registerAsFan] = useRegisterAsFanMutation();
 
   const _handleRegisterAsFan = async () => {
-    if (user?.id) {
-      await registerAsFan(user.id);
+    if (user?._id) {
+      await registerAsFan(user._id);
     }
   };
 

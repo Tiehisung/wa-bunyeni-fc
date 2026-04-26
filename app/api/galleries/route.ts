@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
       title: title || 'Untitled Gallery',
       description: description || '',
       timestamp: Date.now(),
-      createdBy: session.user?.id
+      createdBy: session.user?._id
     });
 
     return NextResponse.json({

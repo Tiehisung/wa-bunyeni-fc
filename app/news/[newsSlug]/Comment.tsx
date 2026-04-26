@@ -28,7 +28,7 @@ const { data: session,   } = useSession();
     const result = await updateComments({
       newsId: newsId as string,
       comment,
-      userId: user?.id,
+      userId: user?._id,
     }).unwrap();
 
     if (result.success) {

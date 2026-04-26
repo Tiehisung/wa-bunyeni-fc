@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
       title: matchDetails.title,
       match: match._id || match,
       season: matchDetails.season,
-      createdBy: session.user?.id
+      createdBy: session.user?._id
     });
 
     if (!savedSquad) {

@@ -31,7 +31,7 @@ export async function PATCH(
                 $set: {
                     note,
                     updatedAt: new Date(),
-                    updatedBy: session.user?.id,
+                    updatedBy: session.user?._id,
                 },
                 $inc: { updateCount: 1 },
             },

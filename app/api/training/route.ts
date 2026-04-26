@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
       note,
       createdAt: new Date(),
       updateCount: 0,
-      createdBy: session.user?.id
+      createdBy: session.user?._id
     });
 
     if (!savedSession) {

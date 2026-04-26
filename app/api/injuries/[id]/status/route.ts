@@ -39,7 +39,7 @@ export async function PATCH(
                 $set: {
                     status,
                     updatedAt: new Date(),
-                    updatedBy: session.user?.id,
+                    updatedBy: session.user?._id,
                     recoveredAt: status === 'recovered' ? new Date() : undefined,
                 },
             },

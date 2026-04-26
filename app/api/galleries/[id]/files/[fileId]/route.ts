@@ -32,7 +32,7 @@ export async function DELETE(
             id,
             {
                 $pull: { files: fileId },
-                $set: { updatedAt: new Date(), updatedBy: session.user?.id },
+                $set: { updatedAt: new Date(), updatedBy: session.user?._id },
             },
             { new: true }
         ).populate('files');

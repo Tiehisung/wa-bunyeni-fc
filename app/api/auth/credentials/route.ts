@@ -24,14 +24,14 @@ export async function POST(req: NextRequest,) {
 
     if (!matched) return NextResponse.json({ success: false, message: 'Incorrect password' });
 
-    const { _id, name, image, avatar, role } = user; //Eliminate pass
+    const { _id, name, avatar, role } = user; //Eliminate pass
 
     const safeUser = {
         name,
-        image: image || avatar,
+        avatar,
         role,
         email,
-        id: _id,
+        _id
     };
 
     //Normal user

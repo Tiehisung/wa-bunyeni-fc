@@ -118,7 +118,7 @@ export async function POST(
             sponsor: id,
             value,
             category: category || 'general',
-            createdBy: session.user?.id
+            createdBy: session.user?._id
         });
 
         await SponsorModel.findByIdAndUpdate(id, {

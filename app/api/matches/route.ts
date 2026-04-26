@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
     const saved = await MatchModel.create({
       ...formdata,
       slug,
-      createdBy: session.user?.id
+      createdBy: session.user?._id
     });
 
     await logAction({

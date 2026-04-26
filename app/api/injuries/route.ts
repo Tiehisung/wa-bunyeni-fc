@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
       player,
       title: title || `${player.name} Injury`,
       status: status || 'active',
-      createdBy: session.user?.id
+      createdBy: session.user?._id
     });
 
     if (!savedInjury) {

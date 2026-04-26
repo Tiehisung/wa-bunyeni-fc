@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
       email,
       about,
       ageStatus,
-      createdBy: session.user?.id
+      createdBy: session.user?._id
     });
 
     // Create User account for player

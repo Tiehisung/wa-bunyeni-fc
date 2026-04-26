@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
 
     const createdTeam = await TeamModel.create({
       ...teamData,
-      createdBy: session?.user?.id
+      createdBy: session?.user?._id
     });
 
     if (!createdTeam) {

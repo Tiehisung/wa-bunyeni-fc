@@ -141,7 +141,7 @@ export async function DELETE(
     }
 
     // Prevent self-deletion
-    if (session?.user?.id === userToDelete._id.toString()) {
+    if (session?.user?._id === userToDelete._id.toString()) {
       return NextResponse.json({
         success: false,
         message: 'Cannot delete your own account',
@@ -165,7 +165,7 @@ export async function DELETE(
       description: `User ${deleted?.email} was deleted`,
       meta: {
         userId: deleted?._id,
-        deletedBy: session?.user?.id,
+        deletedBy: session?.user?._id,
         deletedByEmail: session?.user?.email
       },
       severity: ELogSeverity.CRITICAL,

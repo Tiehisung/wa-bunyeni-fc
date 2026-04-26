@@ -20,9 +20,9 @@ export interface IUser {
 
 export interface IMiniUser {
   _id?: string
-  avatar: string
-  name: string;
-  email: string;
+  avatar?: string
+  name?: string;
+  email?: string;
   role?: EUserRole;
 }
 
@@ -55,12 +55,6 @@ export interface IFan extends IUser {
 }
 
 export interface ISession {
-  user: {
-    id: string
-    name: string;
-    avatar: string;
-    role?: EUserRole
-    email: string;
-  };
+  user: IMiniUser;
   expires: string
 }

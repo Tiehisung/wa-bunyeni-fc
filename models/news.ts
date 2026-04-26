@@ -1,5 +1,6 @@
 import { ENV } from "@/lib/env";
 import mongoose, { Schema } from "mongoose";
+import { MiniUserSchema } from "./user";
 
 const newsSchema = new Schema(
   {
@@ -13,7 +14,7 @@ const newsSchema = new Schema(
     },
     source: {
       type: Schema.Types.Mixed,
-      default:ENV.APP_URL,
+      default: ENV.APP_URL,
     },
     details: [
       {
@@ -33,11 +34,28 @@ const newsSchema = new Schema(
       type: Schema.Types.Mixed,
       default: () => ({ isTrending: true, isLatest: true }),
     },
-    likes: [{ user: { type: Schema.Types.ObjectId, ref: "User" }, date: String, device: String }],
-    comments: [{ user: { type: Schema.Types.ObjectId, ref: "User" }, date: String, device: String, comment: String }],
-    views: [{ user: { type: Schema.Types.ObjectId, ref: "User" }, date: String, device: String }],
+    likes: [{
+      user: MiniUserSchema,
+      device: String,
+      date: { type: String, default: () => new Date().toISOString() },
+    }],
+    comments: [{
+      user: MiniUserSchema,
+      device: String,
+      date: { type: String, default: () => new Date().toISOString() },
+      comment: String
+    }],
+    views: [{
+      user: MiniUserSchema,
+      device: String,
+      date: { type: String, default: () => new Date().toISOString() },
+    }],
     shares: {
-      type: [{ user: { type: Schema.Types.ObjectId, ref: "User" }, date: String, device: String }],
+      type: [{
+        user: MiniUserSchema,
+        device: String,
+        date: { type: String, default: () => new Date().toISOString() },
+      }],
       default: () => []
     },
 
@@ -45,9 +63,9 @@ const newsSchema = new Schema(
       type: String,
       default: 'unpublished', enum: ['published', 'unpublished', 'archived']
     },
-    reporter: { email: String, name: String, image: String, role: String, about: String },
-    editors: [{ email: String, name: String, image: String, role: String, about: String, date: String }],
-    createdBy: { _id: String, name: String, avatar: String } //As IUser
+
+    editors: [{ email: String, name: String, avatar: String, role: String, about: String, date: { type: String, default: () => new Date().toISOString() } }],
+    createdBy: MiniUserSchema //As IUser
   },
   { timestamps: true }
 );
