@@ -1,4 +1,4 @@
-import NextAuth from "next-auth"
+import NextAuth, { User } from "next-auth"
 import Google from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { EUserRole, ISession, } from './types/user';
@@ -81,12 +81,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                         description: `User with email ${user?.email} logged in.`,
                     })
                     return {
-                        _id: user?._id,
+                        _id: user?._id as string,
                         email: user?.email,
                         name: user?.name,
                         avatar: user?.avatar,
                         role: user?.role ?? EUserRole.FAN,
-                    }
+                    } as User
                 }
 
                 return null;
