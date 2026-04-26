@@ -53,7 +53,7 @@ export async function POST(
             }, { status: 404 });
         }
 
-        const isOwnAccount = session.user?.id === user._id.toString();
+        const isOwnAccount = session.user?._id === user._id.toString();
         const isAdmin = session.user?.role === 'admin' || session.user?.role === 'super_admin';
 
         if (!isOwnAccount && !isAdmin) {
@@ -85,7 +85,7 @@ export async function POST(
             title: `Password changed for user [${user.name}]`,
             description: `User password was changed`,
             severity: ELogSeverity.CRITICAL,
-            meta: { targetUserId: user._id, changedBy: session.user?.id },
+            meta: { targetUserId: user._id, changedBy: session.user?._id },
         });
 
         return NextResponse.json({

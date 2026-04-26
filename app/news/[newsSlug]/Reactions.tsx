@@ -14,7 +14,6 @@ import { shortText } from "@/lib";
 import { BsDot, BsEye, BsFillHandThumbsUpFill } from "react-icons/bs";
 import { DIALOG } from "@/components/Dialog";
 import { getDeviceId } from "@/lib/device";
-
 import {
   useDeleteNewsCommentMutation,
   useGetNewsStatsQuery,
@@ -26,10 +25,11 @@ import { toggleClick } from "@/lib/dom";
 import CommentForm from "./Comment";
 import { useSession } from "next-auth/react";
 import LoginModal from "@/components/auth/Login";
+import { IMiniUser } from "@/types/user";
 
 export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
   const { data: session } = useSession();
-  const user = session?.user;
+  const user = session?.user as IMiniUser;
 
   const [updateViews] = useUpdateNewsViewsMutation();
 
@@ -40,26 +40,29 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
   const { data: stats, refetch: refetchStats } = useGetNewsStatsQuery(
     newsItem?._id as string,
   );
-  console.log(stats?.data?.likes);
+
+  const device = getDeviceId();
+  console.log({ stats });
+  console.log("device", device);
 
   // Record view on mount
   useEffect(() => {
     updateViews({
       newsId: newsItem?._id as string,
-      deviceId: getDeviceId(),
-      userId: user?.id as string,
+      device,
+      user: user,
     });
   }, []);
 
   const [localLiked, setLocalLiked] = useState(
-    newsItem?.likes?.find((l) => l.device == getDeviceId()) ? true : false,
+    newsItem?.likes?.find((l) => l.device == device) ? true : false,
   );
 
   const handleLike = async () => {
     const result = await updateLikes({
       newsId: newsItem?._id as string,
-      deviceId: getDeviceId(),
-      userId: user?.id,
+      device,
+      user: user,
       isLike: !localLiked,
     }).unwrap();
 
@@ -71,8 +74,8 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
   const handleShare = async () => {
     const result = await updateShares({
       newsId: newsItem?._id as string,
-      deviceId: getDeviceId(),
-      userId: user?.id as string,
+      device,
+      user: user,
     }).unwrap();
 
     if (result.success) {
@@ -122,6 +125,7 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
               className=""
               text={newsItem?.headline.text}
             />
+            <ResourceShare />
           </POPOVER>
         </li>
         <li>
@@ -207,7 +211,7 @@ const CommentRow = ({
   newsItem?: INewsProps;
 }) => {
   const { data: session } = useSession();
-  const user = session?.user;
+  const user = session?.user as IMiniUser;
   const [deleteComment, { isLoading: isDeleting }] =
     useDeleteNewsCommentMutation();
 
@@ -215,8 +219,6 @@ const CommentRow = ({
     const result = await deleteComment({
       newsId: newsItem?._id as string,
       commentId,
-      userId: user?.id,
-      isAdmin: user?.role?.includes("admin"),
     }).unwrap();
 
     if (result.success) {
@@ -246,7 +248,7 @@ const CommentRow = ({
             className="border border-border rounded-2xl p-3 -ml-6 mt-4 _p text-wrap wrap-break-word max-sm:max-w-60 max-w-3/4 overflow-x-auto"
           />
 
-          {(user?.id == com.user || user?.role?.includes("admin")) && (
+          {(user?._id == com.user?._id || user?.role?.includes("admin")) && (
             <Button
               onClick={() => handleDeleteComment(com._id as string)}
               className="absolute right-2 top-1 p-0.5 _hover _shrink"

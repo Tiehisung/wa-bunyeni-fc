@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
             date: date || new Date(),
             attachmentUrl,
             reference: reference || `TRX-${Date.now()}`,
-            createdBy: session.user?.id
+            createdBy: session.user?._id
         });
 
         LoggerService.info('💰 Transaction Created', `${type}: ${description} - ${amount}`, request);

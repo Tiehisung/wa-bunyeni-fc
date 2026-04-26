@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
       assist,
       modeOfScore,
       teamId,
-      createdBy: session.user?.id
+      createdBy: session.user?._id
     });
 
     if (!savedGoal) {

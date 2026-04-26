@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
             ...sponsorData,
             badge: 0,
             totalDonations: 0,
-            createdBy: session?.user?.id
+            createdBy: session?.user?._id
         });
 
         if (!created) {

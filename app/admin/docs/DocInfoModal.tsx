@@ -137,7 +137,7 @@ export function FileInfoPane({
             <span className="text-sm text-right max-w-[60%]">
               {shortText(file.createdBy.name)}
               <AVATAR
-                src={file.createdBy.avatar}
+                src={file?.createdBy?.avatar as string}
                 alt={file?.createdBy.name}
                 size={"sm"}
               />

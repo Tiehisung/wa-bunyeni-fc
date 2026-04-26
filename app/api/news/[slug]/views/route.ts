@@ -20,7 +20,7 @@ export async function PATCH(
     try {
         const { slug } = await params;
         const filter = slugIdFilters(slug);
-        const { deviceId, userId } = await request.json();
+        const { device, user } = await request.json();
 
         const news = await NewsModel.findOne(filter);
         if (!news) {
@@ -31,21 +31,20 @@ export async function PATCH(
         }
 
         const alreadyViewed = news.views?.some(
-            (view: { device: string; user: string }) => view.device === deviceId && view.user === userId
+            (view: { device: string; user: any }) => view.device === device || view.user?._id === user?._id
         );
 
         if (!alreadyViewed) {
             const newView = {
-                user: userId ? new mongoose.Types.ObjectId(userId) : undefined,
-                date: new Date().toISOString(),
-                device: deviceId,
+                user: user ,
+                device: device,
             };
 
             news.views = [...(news.views || []), newView];
             await news.save();
 
-            if (userId) {
-                await updateFanPoints(userId, 'newsView');
+            if (user) {
+                await updateFanPoints(user, 'newsView');
             }
 
             return NextResponse.json({

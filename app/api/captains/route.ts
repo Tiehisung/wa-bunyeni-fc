@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
       role,
       isActive: true,
       startDate: new Date(),
-      createdBy: session.user?.id,
+      createdBy: session.user?._id,
     });
 
     const populatedCaptain = await CaptaincyModel.findById(newCaptain._id).lean();

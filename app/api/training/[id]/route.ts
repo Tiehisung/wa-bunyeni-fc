@@ -83,7 +83,7 @@ export async function PUT(
         $set: {
           ...formData,
           updatedAt: new Date(),
-          updatedBy: session.user?.id,
+          updatedBy: session.user?._id,
         },
         $inc: { updateCount: 1 },
       },

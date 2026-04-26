@@ -75,7 +75,7 @@ export async function PUT(
         $set: {
           ...updates,
           updatedAt: new Date(),
-          updatedBy: session.user?.id,
+          updatedBy: session.user?._id,
         },
       },
       { new: true, runValidators: true }
@@ -134,7 +134,7 @@ export async function PATCH(
         $set: {
           ...updates,
           updatedAt: new Date(),
-          updatedBy: session.user?.id,
+          updatedBy: session.user?._id,
         },
       },
       { new: true, runValidators: true }

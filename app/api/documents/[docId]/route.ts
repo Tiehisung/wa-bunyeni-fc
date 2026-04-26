@@ -68,7 +68,7 @@ export async function PUT(
                 $set: {
                     ...updates,
                     updatedAt: new Date(),
-                    updatedBy: session.user?.id
+                    updatedBy: session.user?._id
                 }
             },
             { runValidators: true }

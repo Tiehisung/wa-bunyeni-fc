@@ -30,7 +30,7 @@ export function useRecentSearches() {
         dispatch(addRecentSearch(search));
 
         // Optional: Sync to backend if user is logged in
-        if (user?.id) {
+        if (user?._id) {
             syncSearches([...recentSearches, {
                 id: `${Date.now()}-${search.query}`,
                 ...search,

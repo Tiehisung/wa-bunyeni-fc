@@ -43,7 +43,7 @@ export async function POST(
             id,
             {
                 $push: { files: { $each: fileIds } },
-                $set: { updatedAt: new Date(), updatedBy: session.user?.id },
+                $set: { updatedAt: new Date(), updatedBy: session.user?._id },
             },
             { new: true }
         ).populate('files');

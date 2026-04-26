@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
       player,
       type,
       description,
-      createdBy: session.user?.id
+      createdBy: session.user?._id
     });
 
     if (!savedCard) {

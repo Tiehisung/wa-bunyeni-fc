@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
         height: 225,
         crop: 'fill'
       }),
-      createdBy: session.user?.id
+      createdBy: session.user?._id
     });
 
     const populatedHighlight = await HighlightModel.findById(savedHighlight._id)

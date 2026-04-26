@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
       description,
       positionPlayed,
       season: season || existingMatch?.season,
-      createdBy: session.user?.id
+      createdBy: session.user?._id
     });
 
     if (!savedMVP) {

@@ -199,8 +199,8 @@ export function getTimeLeftOrAgo(date?: string | number | Date): TimeLeftResult 
 
   const expired = diffMs < 0;
   const formatted = expired
-    ? `${value} ${unit}${value !== 1 ? "s" : ""}`
-    : `${value} ${unit}${value !== 1 ? "s" : ""} left`;
+    ? `${value}${unit}`
+    : `${value}${unit} left`;
 
   return { value, unit, expired, formatted };
 }

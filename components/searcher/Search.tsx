@@ -188,9 +188,9 @@ export const PrimarySearchWithSelect = ({
 
   return (
     <div
-      className={`group bg-card flex items-center gap-2 border border-1.5 border-primary/30 focus-within:ring ring-primary focus-within:border-teal-ring-primary/80 rounded-full px-2 text-sm ${className}`}
+      className={`group bg-card flex items-center gap-2 border border-1.5 border-primary/30 focus-within:ring ring-primary focus-within:border-teal-ring-primary/80 rounded-md px-2 text-sm ${className}`}
     >
-      <CgSearch className="h-4 w-auto text-primary/30 group-focus-within:text-primary" />
+      <CgSearch size={20} className="h-4 w-auto text-primary/30 group-focus-within:text-primary" />
 
       <input
         onChange={handleOnChange}

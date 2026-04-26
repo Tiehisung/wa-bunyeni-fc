@@ -2,6 +2,7 @@
 import type { IQueryResponse } from "@/types";
 import { api } from "./api";
 import type { INewsProps, IPostNews } from "@/types/news.interface";
+import { IMiniUser } from "@/types/user";
 
 const newsApi = api.injectEndpoints({
     endpoints: (builder) => ({
@@ -128,7 +129,7 @@ const newsApi = api.injectEndpoints({
         // }),
 
         // DELETE news article
-        
+
         deleteNews: builder.mutation<IQueryResponse<INewsProps>, string>({
             query: (newsId) => ({
                 url: `/news/${newsId}`,
@@ -300,28 +301,18 @@ export default newsApi;
 
 interface IInteractionPayload {
     newsId: string;
-    userId: string
-    deviceId: string;
+    device?: string;
+    user?: IMiniUser
 }
 
-interface UpdateCommentPayload {
-    newsId: string;
-    userId?: string;
+interface UpdateCommentPayload extends IInteractionPayload {
     comment: string;
 }
 
-
-
-interface DeleteCommentPayload {
-    newsId: string;
-    userId?: string;
+interface DeleteCommentPayload extends IInteractionPayload {
     commentId: string;
-    isAdmin?: boolean;
 }
-interface UpdateLikePayload {
-    newsId: string;
-    userId?: string;
-    deviceId: string;
+interface UpdateLikePayload extends IInteractionPayload {
     isLike?: boolean;
 }
 

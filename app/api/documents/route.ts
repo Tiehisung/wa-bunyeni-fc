@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
             const createdDoc = await DocModel.create({
                 ...df,
                 folder: destinationFolderId,
-                createdBy: session.user?.id
+                createdBy: session.user?._id
             });
 
             await FolderModel.findByIdAndUpdate(

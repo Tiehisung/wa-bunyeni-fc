@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
       startDate: startDate || new Date(),
       contractType: contractType || 'permanent',
       isActive: true,
-      createdBy: session.user?.id
+      createdBy: session.user?._id
     });
 
     if (!saved) {

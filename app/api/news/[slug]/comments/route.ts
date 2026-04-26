@@ -39,7 +39,7 @@ export async function PATCH(
         }
 
         const newComment = {
-            user: session?.user?.id,
+            user: session?.user?._id,
             date: new Date().toISOString(),
             comment: comment.trim(),
             name: session?.user?.name,
@@ -49,8 +49,8 @@ export async function PATCH(
             $set: { comments: [newComment, ...(news.comments || [])] }
         });
 
-        if (session?.user?.id) {
-            await updateFanPoints(session.user.id, 'comment');
+        if (session?.user?._id) {
+            await updateFanPoints(session?.user?._id as string, 'comment');
         }
 
         const populatedNews = await NewsModel.findById(news._id)
@@ -98,7 +98,7 @@ export async function DELETE(
         const comment = news.comments.find((c: { _id: string }) => c._id == commentId);
         const isAdmin = session?.user?.role?.includes('admin');
 
-        if (!isAdmin && comment?.user?.toString() !== session?.user?.id) {
+        if (!isAdmin && comment?.user?._id?.toString() !== session?.user?._id) {
             return NextResponse.json({
                 success: false,
                 message: 'Not authorized to delete this comment',
