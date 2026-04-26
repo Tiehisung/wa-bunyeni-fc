@@ -229,20 +229,4 @@ export default function MainNavbar() {
     </>
   );
 }
-//  {/* <PrimarySearch placeholder="Search players, articles, and more..." />
-
-//           <div className="mt-6">
-//             <h3 className="text-sm font-medium text-gray-500">
-//               Recent Searches
-//             </h3>
-//             <div className="mt-2 space-y-2">
-//               {["player", "match", "article"].map((search) => (
-//                 <Button
-//                   key={search}
-//                   className="block w-full text-left px-2 py-1 text-sm rounded"
-//                 >
-//                   {search}
-//                 </Button>
-//               ))}
-//             </div>
-//           </div> */}
+ 

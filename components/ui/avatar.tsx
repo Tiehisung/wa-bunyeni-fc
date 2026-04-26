@@ -57,7 +57,7 @@ export { Avatar, AvatarImage, AvatarFallback };
 export type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | number;
 
 interface AVATARProps {
-  src: string;
+  src?: string;
 
   alt?: string;
   className?: string;
