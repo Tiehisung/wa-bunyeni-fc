@@ -81,7 +81,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                         description: `User with email ${user?.email} logged in.`,
                     })
                     return {
-                        _id: user?.id,
+                        _id: user?._id,
                         email: user?.email,
                         name: user?.name,
                         avatar: user?.avatar,
