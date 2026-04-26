@@ -4,16 +4,14 @@ import { auth } from '@/auth';
 import NewsModel from '@/models/news';
 import { getApiErrorMessage } from '@/lib/error-api';
 import connectDB from '@/config/db.config';
+import { slugIdFilters } from '@/lib/slug';
  
-import { LoggerService } from '@/shared/log.service';
-
 connectDB();
 
-
-// PATCH /api/news/[newsId]/publish - Toggle publish status
+ 
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: Promise<{ newsId: string }> }
+    { params }: { params: Promise<{ slug: string }> }
 ) {
     try {
         const session = await auth();
@@ -25,20 +23,18 @@ export async function PATCH(
             }, { status: 401 });
         }
 
-        const { newsId } = await params;
+        const { slug } = await params;
+         const filter = slugIdFilters(slug);
         const { isPublished } = await request.json();
 
-        const updated = await NewsModel.findByIdAndUpdate(
-            newsId,
+        const updated = await NewsModel.findOneAndUpdate(
+            filter,
             {
                 $set: {
                     isPublished,
                     publishedAt: isPublished ? new Date() : null,
-                    updatedAt: new Date(),
-                    updatedBy: session.user?._id,
                 },
             },
-            { new: true }
         );
 
         if (!updated) {
@@ -54,7 +50,6 @@ export async function PATCH(
             data: updated,
         });
     } catch (error) {
-        LoggerService.error('Failed to update publish status', error);
         return NextResponse.json({
             success: false,
             message: getApiErrorMessage(error, 'Failed to update publish status'),
