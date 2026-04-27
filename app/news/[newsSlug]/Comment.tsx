@@ -3,7 +3,7 @@
 import { Button } from "@/components/buttons/Button";
 import QuillEditor from "@/components/editor/Quill";
 import { fireEscape } from "@/hooks/Esc";
-import { markupToPlainText } from "@/lib/dom";
+import { markupToPlainText, toggleClick } from "@/lib/dom";
 import {
   useAddNewsCommentMutation,
   useEditNewsCommentMutation,
@@ -22,7 +22,7 @@ const CommentForm = ({ newsId, existingComment }: Props) => {
   console.log(existingComment);
   const [comment, setComment] = useState(existingComment?.comment || "");
 
-  const [updateComments, { isLoading: isCommenting }] =
+  const [addComment, { isLoading: isCommenting }] =
     useAddNewsCommentMutation();
 
   const [editComment, { isLoading: editing }] = useEditNewsCommentMutation();
@@ -41,9 +41,10 @@ const CommentForm = ({ newsId, existingComment }: Props) => {
 
       if (result.success) {
         fireEscape();
+        toggleClick(`edit-${existingComment?._id}`);
       }
     } else {
-      const result = await updateComments({
+      const result = await addComment({
         newsId: newsId as string,
         comment,
       }).unwrap();
