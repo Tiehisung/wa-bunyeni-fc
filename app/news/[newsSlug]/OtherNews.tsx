@@ -1,14 +1,11 @@
 "use client";
 
-import { INewsProps } from "@/types/news.interface";
 import { AnimateOnView } from "@/components/Animate/AnimateOnView";
-import { IQueryResponse } from "@/types";
 import { RxVideo } from "react-icons/rx";
 import TableLoader from "@/components/loaders/Table";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useGetNewsQuery } from "@/services/news.endpoints";
-import PageLoader from "@/components/loaders/Page";
 import Image from "next/image";
 
 export default function OtherNews({}) {

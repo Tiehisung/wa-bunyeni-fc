@@ -192,7 +192,7 @@ const newsApi = api.injectEndpoints({
         }),
 
         // Update comments
-        updateNewsComments: builder.mutation<
+        addNewsComment: builder.mutation<
             IQueryResponse<{ comments: any[]; totalComments: number }>,
             {
                 newsId: string;
@@ -201,19 +201,35 @@ const newsApi = api.injectEndpoints({
         >({
             query: ({ newsId, ...body }) => ({
                 url: `/news/${newsId}/comments`,
-                method: "PATCH",
+                method: "POST",
+                body,
+            }),
+            invalidatesTags: (_result, _error, { newsId }) => [{ type: "News", id: newsId }, 'News'],
+        }),
+        editNewsComment: builder.mutation<
+            IQueryResponse,
+            {
+                newsId: string;
+                comment: string;
+                commentId: string;
+            }
+        >({
+            query: ({ newsId, ...body }) => ({
+                url: `/news/${newsId}/comments`,
+                method: "PUT",
                 body,
             }),
             invalidatesTags: (_result, _error, { newsId }) => [{ type: "News", id: newsId }, 'News'],
         }),
 
         // Delete comment
-        deleteNewsComment: builder.mutation<IQueryResponse<{ totalComments: number }>, string>({
-            query: (newsId) => ({
+        deleteNewsComment: builder.mutation<IQueryResponse, { newsId: string, commentId: string }>({
+            query: ({ newsId, commentId }) => ({
                 url: `/news/${newsId}/comments`,
                 method: "DELETE",
+                body: { commentId }
             }),
-            invalidatesTags: (_result, _error, newsId) => [{ type: "News", id: newsId }, 'News'],
+            invalidatesTags: () => ['News'],
         }),
 
         // Update shares
@@ -243,20 +259,7 @@ const newsApi = api.injectEndpoints({
             providesTags: (_result, _error, newsId) => [{ type: "News", id: newsId }, 'News'],
         }),
 
-        // GET news stats (views, likes, shares)
-        // getNewsStats: builder.query<IQueryResponse<{
-        //     totalViews: number;
-        //     totalLikes: number;
-        //     totalShares: number;
-        //     averageReadTime: number;
-        //     topCategories: Array<{ category: string; count: number }>;
-        // }>, { startDate?: string; endDate?: string }>({
-        //     query: (params) => ({
-        //         url: "/news/stats",
-        //         params,
-        //     }),
-        //     providesTags: ['News'],
-        // }),
+
     }),
 });
 
@@ -276,14 +279,13 @@ export const {
     useUpdateNewsMutation,
     usePatchNewsMutation,
     useTogglePublishStatusMutation,
-    // useLikeNewsMutation,
-    // useUnlikeNewsMutation,
-    // useShareNewsMutation,
+  
     useDeleteNewsMutation,
     useBulkDeleteNewsMutation,
     useIncrementViewCountMutation,
     useUpdateNewsViewsMutation,
-    useUpdateNewsCommentsMutation,
+    useAddNewsCommentMutation,
+    useEditNewsCommentMutation,
     useDeleteNewsCommentMutation,
     useUpdateNewsSharesMutation,
     useUpdateNewsLikesMutation,

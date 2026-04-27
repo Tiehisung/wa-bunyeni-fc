@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/buttons/Button";
 import { IComment, INewsProps } from "@/types/news.interface";
-import { ThumbsDown, Trash } from "lucide-react";
+import { ThumbsDown, Trash, Edit } from "lucide-react";
 import { POPOVER } from "@/components/ui/popover";
 import { ResourceShare } from "@/components/SocialShare";
 import { useEffect, useState } from "react";
@@ -13,10 +13,8 @@ import { getTimeLeftOrAgo } from "@/lib/timeAndDate";
 import { shortText } from "@/lib";
 import { BsDot, BsEye, BsFillHandThumbsUpFill } from "react-icons/bs";
 import { DIALOG } from "@/components/Dialog";
-
 import {
   useDeleteNewsCommentMutation,
-  useGetNewsStatsQuery,
   useUpdateNewsSharesMutation,
   useUpdateNewsViewsMutation,
   useUpdateNewsLikesMutation,
@@ -27,14 +25,12 @@ import { useSession } from "next-auth/react";
 import LoginModal from "@/components/auth/Login";
 import { IMiniUser } from "@/types/user";
 import { useVisitor } from "@/hooks/useVisitor";
+import { PrimaryDropdown } from "@/components/Dropdown";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import Loader from "@/components/loaders/Loader";
+import { StackModal } from "@/components/modals/StackModal";
 
-export function NewsReactions({
-  newsItem,
- 
-}: {
-  newsItem?: INewsProps;
- 
-}) {
+export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
   const { data: session } = useSession();
   const user = session?.user as IMiniUser;
 
@@ -44,28 +40,22 @@ export function NewsReactions({
 
   const [updateShares] = useUpdateNewsSharesMutation();
 
-  const { data: stats, refetch: refetchStats } = useGetNewsStatsQuery(
-    newsItem?._id as string,
-  );
-
-  
   // Record view on mount
   useEffect(() => {
     updateViews(newsItem?._id as string);
   }, []);
-  
-   const { visitorId, } = useVisitor();
-   console.log({visitorId})
+
+  const { visitorId } = useVisitor();
 
   const [localLiked, setLocalLiked] = useState(
     newsItem?.likes?.find((l) => l.visitorId == visitorId) ? true : false,
   );
 
-  useEffect(()=>{
-    setLocalLiked(newsItem?.likes?.find((l) => l.visitorId == visitorId) ? true : false)
-  },[ newsItem?.likes,localLiked])
-
-  console.log({ stats, visitorId, localLiked });
+  useEffect(() => {
+    setLocalLiked(
+      newsItem?.likes?.find((l) => l.visitorId == visitorId) ? true : false,
+    );
+  }, [newsItem?.likes, localLiked]);
 
   const handleLike = async () => {
     const result = await updateLikes(newsItem?._id as string).unwrap();
@@ -76,11 +66,7 @@ export function NewsReactions({
   };
 
   const handleShare = async () => {
-    const result = await updateShares(newsItem?._id as string).unwrap();
-
-    if (result.success) {
-      refetchStats();
-    }
+    await updateShares(newsItem?._id as string).unwrap();
   };
 
   return (
@@ -211,9 +197,10 @@ const CommentRow = ({
     useDeleteNewsCommentMutation();
 
   const handleDeleteComment = async (commentId: string) => {
-    const result = await deleteComment(newsItem?._id as string).unwrap();
-    if (result.success) {
-    }
+    await deleteComment({
+      newsId: newsItem?._id as string,
+      commentId,
+    }).unwrap();
   };
   return (
     <li className="flex items-start gap-5 pb-6  ">
@@ -231,26 +218,44 @@ const CommentRow = ({
           </div>
         </header>
 
-        <div className="relative">
+        <div className="border border-border rounded-2xl relative">
           <div
             dangerouslySetInnerHTML={{
               __html: shortText(com?.comment, 3500) || "",
             }}
-            className="border border-border rounded-2xl p-3 -ml-6 mt-4 _p text-wrap wrap-break-word max-sm:max-w-60 max-w-3/4 overflow-x-auto"
+            className="p-3 mt-4 _p text-wrap wrap-break-word max-sm:max-w-60 max-w-3/4 overflow-x-auto"
           />
 
           {(user?._id == com.user?._id || user?.role?.includes("admin")) && (
-            <Button
-              onClick={() => handleDeleteComment(com._id as string)}
-              className="absolute right-2 top-1 p-0.5 _hover _shrink"
-              variant="ghost"
-              waiting={isDeleting}
-            >
-              <Trash size={24} />
-            </Button>
+            <PrimaryDropdown triggerStyles="absolute right-2 top-1 p-0.5 _hover _shrink">
+              <DropdownMenuItem
+                onClick={() => handleDeleteComment(com._id as string)}
+                className=""
+              >
+                <Trash size={24} /> Delete
+                {isDeleting && <Loader size="sm" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => toggleClick(`edit-${com?._id}`)}
+                className=""
+              >
+                <Edit size={24} /> Edit
+                {isDeleting && <Loader size="sm" />}
+              </DropdownMenuItem>
+            </PrimaryDropdown>
           )}
         </div>
       </section>
+
+      <StackModal
+        trigger={null}
+        triggerStyles="rounded-none"
+        variant="ghost"
+        title="Edit your comment"
+        id={`edit-${com?._id}`}
+      >
+        <CommentForm newsId={newsItem?._id as string} existingComment={com} />
+      </StackModal>
     </li>
   );
 };
