@@ -26,13 +26,14 @@ import CommentForm from "./Comment";
 import { useSession } from "next-auth/react";
 import LoginModal from "@/components/auth/Login";
 import { IMiniUser } from "@/types/user";
+import { useVisitor } from "@/hooks/useVisitor";
 
 export function NewsReactions({
   newsItem,
-  device,
+ 
 }: {
   newsItem?: INewsProps;
-  device?: string;
+ 
 }) {
   const { data: session } = useSession();
   const user = session?.user as IMiniUser;
@@ -53,15 +54,18 @@ export function NewsReactions({
     updateViews(newsItem?._id as string);
   }, []);
   
+   const { visitorId, } = useVisitor();
+   console.log({visitorId})
+
   const [localLiked, setLocalLiked] = useState(
-    newsItem?.likes?.find((l) => l.device == device) ? true : false,
+    newsItem?.likes?.find((l) => l.visitorId == visitorId) ? true : false,
   );
 
   useEffect(()=>{
-    setLocalLiked(newsItem?.likes?.find((l) => l.device == device) ? true : false)
+    setLocalLiked(newsItem?.likes?.find((l) => l.visitorId == visitorId) ? true : false)
   },[ newsItem?.likes,localLiked])
 
-  console.log({ stats, device, localLiked });
+  console.log({ stats, visitorId, localLiked });
 
   const handleLike = async () => {
     const result = await updateLikes(newsItem?._id as string).unwrap();

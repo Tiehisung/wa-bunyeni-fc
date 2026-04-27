@@ -31,7 +31,7 @@ export async function PATCH(
 
         const newShare = {
             user: session?.user,
-            device: visitorId,
+            visitorId: visitorId,
         };
 
         news.shares = [...(news.shares || []), newShare];

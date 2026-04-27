@@ -22,12 +22,11 @@ export async function GET(
             success: true,
             data: {
                 views: news.views?.length || 0,
-                comments: news.comments?.map((c: { _id: any; comment: any; date: any; user: any; name: any; }) => ({
+                comments: news.comments?.map((c: { _id: string; comment: string; date: string; user: any;   }) => ({
                     _id: c._id,
                     comment: c.comment,
                     date: c.date,
                     user: c.user,
-                    name: c.name
                 })) || [],
                 shares: news.shares?.length || 0,
                 likes: news.likes?.length || 0,

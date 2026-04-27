@@ -35,13 +35,13 @@ export async function PATCH(
         }
 
         const alreadyViewed = news.views?.some(
-            (view: { device: string; user: any }) => view.device === visitorId || view.user?._id === session?.user?._id
+            (view: { visitorId: string; user: any }) => view.visitorId === visitorId || view.user?._id === session?.user?._id
         );
 
         if (!alreadyViewed) {
             const newView = {
                 user: session?.user,
-                device: visitorId,
+                visitorId: visitorId,
             };
 
             news.views = [...(news.views || []), newView];

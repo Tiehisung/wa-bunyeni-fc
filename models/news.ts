@@ -36,24 +36,24 @@ const newsSchema = new Schema(
     },
     likes: [{
       user: MiniUserSchema,
-      device: String,
+      visitorId: String,
       date: { type: String, default: () => new Date().toISOString() },
     }],
     comments: [{
       user: MiniUserSchema,
-      device: String,
+      visitorId: String,
       date: { type: String, default: () => new Date().toISOString() },
       comment: String
     }],
     views: [{
       user: MiniUserSchema,
-      device: String,
+      visitorId: String,
       date: { type: String, default: () => new Date().toISOString() },
     }],
     shares: {
       type: [{
         user: MiniUserSchema,
-        device: String,
+        visitorId: String,
         date: { type: String, default: () => new Date().toISOString() },
       }],
       default: () => []

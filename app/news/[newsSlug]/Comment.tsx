@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { Button } from "@/components/buttons/Button";
 import QuillEditor from "@/components/editor/Quill";
@@ -6,18 +6,15 @@ import { fireEscape } from "@/hooks/Esc";
 import { markupToPlainText } from "@/lib/dom";
 import { useUpdateNewsCommentsMutation } from "@/services/news.endpoints";
 import { IMiniUser } from "@/types/user";
- 
 import { SendHorizontal } from "lucide-react";
-import { useSession } from "next-auth/react";
-import {  useState } from "react";
+import { useState } from "react";
 
 interface Props {
   newsId: string;
 }
 
 const CommentForm = ({ newsId }: Props) => {
-const { data: session,   } = useSession();
-   const user=session?.user as IMiniUser
+ 
   const [comment, setComment] = useState("");
 
   const [updateComments, { isLoading: isCommenting }] =
@@ -43,7 +40,6 @@ const { data: session,   } = useSession();
     <div className="border-t-2 pt-6 mt-6">
       <header className="flex justify-between items-center gap-3 mb-6">
         <span>Comment</span>
-        
       </header>
       <form onSubmit={handleComment} className="relative">
         <QuillEditor
@@ -56,21 +52,21 @@ const { data: session,   } = useSession();
         />
 
         <div className="flex items-center gap-5 justify-between">
-
-        <Button
-          type="submit"
-          className="backdrop-blur-2xl w-fit mt-2 justify-center"
-          waiting={isCommenting}
-          waitingText=""
-          primaryText=""
-          size="sm"
-          disabled={!comment}
+          <Button
+            type="submit"
+            className="backdrop-blur-2xl w-fit mt-2 justify-center"
+            waiting={isCommenting}
+            waitingText=""
+            primaryText=""
+            size="sm"
+            disabled={!comment}
           >
-          Send <SendHorizontal size={20} />
-        </Button><span className="text-xs text-muted-foreground">
-          {`${markupToPlainText(comment)?.length}/${maxLength}`}
-        </span>
-          </div>
+            Send <SendHorizontal size={20} />
+          </Button>
+          <span className="text-xs text-muted-foreground">
+            {`${markupToPlainText(comment)?.length}/${maxLength}`}
+          </span>
+        </div>
       </form>
     </div>
   );
