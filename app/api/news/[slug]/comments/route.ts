@@ -1,4 +1,4 @@
-// app/api/news/[slug]/comments/route.ts
+
 import { NextRequest, NextResponse } from 'next/server';
 import { LoggerService } from '@/shared/log.service';
 import { getApiErrorMessage } from '@/lib/error-api';
@@ -7,12 +7,10 @@ import { auth } from '@/auth';
 import NewsModel from '@/models/news';
 import { slugIdFilters } from '@/lib/slug';
 import { updateFanPoints } from '@/lib/fan';
- 
+import { getOrCreateVisitorId } from '@/lib/visitor';
 
 connectDB();
- 
 
-// PATCH /api/news/[slug]/comments - Add comment
 export async function PATCH(
     request: NextRequest,
     { params }: { params: Promise<{ slug: string }> }
@@ -22,6 +20,8 @@ export async function PATCH(
         const { slug } = await params;
         const filter = slugIdFilters(slug);
         const { comment } = await request.json();
+
+        const visitorId = await getOrCreateVisitorId();
 
         if (!comment || !comment.trim()) {
             return NextResponse.json({
@@ -39,10 +39,9 @@ export async function PATCH(
         }
 
         const newComment = {
-            user: session?.user?._id,
-            date: new Date().toISOString(),
+            user: session?.user,
             comment: comment.trim(),
-            name: session?.user?.name,
+            device: visitorId,
         };
 
         await NewsModel.findByIdAndUpdate(news._id, {

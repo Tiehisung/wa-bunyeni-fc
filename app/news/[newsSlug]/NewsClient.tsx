@@ -13,7 +13,7 @@ import { useParams } from "next/navigation";
 import { useGetNewsItemQuery } from "@/services/news.endpoints";
 import Image from "next/image";
 
-const NewsItemClient = () => {
+const NewsItemClient = ({device}:{device?:string}) => {
   const newsSlug = useParams().newsSlug;
   const [open, setOpen] = useState(false);
   const [gallery, setGallery] = useState<IFileProps[]>([]);
@@ -89,7 +89,7 @@ const NewsItemClient = () => {
 
           {/* Comments and reactions */}
           <section className=" mt-32 border-t-2 pt-4">
-            <NewsReactions newsItem={newsItem as INewsProps} />
+            <NewsReactions newsItem={newsItem as INewsProps} device={device}/>
           </section>
 
           <section className=" my-6 pt-6">

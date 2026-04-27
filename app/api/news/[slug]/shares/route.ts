@@ -1,26 +1,25 @@
-// app/api/news/[slug]/shares/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import mongoose from 'mongoose';
 import NewsModel from '@/models/news';
 import { LoggerService } from '@/shared/log.service';
 import { getApiErrorMessage } from '@/lib/error-api';
 import connectDB from '@/config/db.config';
 import { updateFanPoints } from '@/lib/fan';
 import { slugIdFilters } from '@/lib/slug';
+import { auth } from '@/auth';
+import { getOrCreateVisitorId } from '@/lib/visitor';
 
 connectDB();
 
- 
-
-// PATCH /api/news/[slug]/shares - Update news shares
 export async function PATCH(
     request: NextRequest,
     { params }: { params: Promise<{ slug: string }> }
 ) {
     try {
+        const session = await auth();
         const { slug } = await params;
         const filter = slugIdFilters(slug);
-        const { userId, deviceId } = await request.json();
+
+        const visitorId = await getOrCreateVisitorId();
 
         const news = await NewsModel.findOne(filter);
         if (!news) {
@@ -31,16 +30,15 @@ export async function PATCH(
         }
 
         const newShare = {
-            user: userId ? new mongoose.Types.ObjectId(userId) : undefined,
-            date: new Date().toISOString(),
-            device: deviceId,
+            user: session?.user,
+            device: visitorId,
         };
 
         news.shares = [...(news.shares || []), newShare];
         await news.save();
 
-        if (userId) {
-            await updateFanPoints(userId, 'share');
+        if (session?.user) {
+            await updateFanPoints(session?.user?._id as string, 'share');
         }
 
         return NextResponse.json({

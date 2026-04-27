@@ -43,14 +43,12 @@ export interface INewsProps {
 interface IInteraction {
   user?: IMiniUser;
   date: string;
-  device: string;
+  device?: string;
   _id: string
 }
 export interface IComment extends IInteraction {
   comment: string;
 }
-
-
 export interface IPostNews {
   details: {
     text?: string;
