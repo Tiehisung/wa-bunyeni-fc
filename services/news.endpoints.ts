@@ -183,19 +183,21 @@ const newsApi = api.injectEndpoints({
         }),
 
         // Update views
-        updateNewsViews: builder.mutation<IQueryResponse<{ views: number }>, IInteractionPayload>({
-            query: ({ newsId, ...body }) => ({
+        updateNewsViews: builder.mutation<IQueryResponse<{ views: number }>, string>({
+            query: (newsId) => ({
                 url: `/news/${newsId}/views`,
                 method: "PATCH",
-                body,
             }),
-            invalidatesTags: (_result, _error, { newsId }) => [{ type: "News", id: newsId }, 'News'],
+            invalidatesTags: (_result, _error, newsId) => [{ type: "News", id: newsId }, 'News'],
         }),
 
         // Update comments
         updateNewsComments: builder.mutation<
             IQueryResponse<{ comments: any[]; totalComments: number }>,
-            UpdateCommentPayload
+            {
+                newsId: string;
+                comment: string;
+            }
         >({
             query: ({ newsId, ...body }) => ({
                 url: `/news/${newsId}/comments`,
@@ -206,33 +208,31 @@ const newsApi = api.injectEndpoints({
         }),
 
         // Delete comment
-        deleteNewsComment: builder.mutation<IQueryResponse<{ totalComments: number }>, DeleteCommentPayload>({
-            query: ({ newsId, ...body }) => ({
+        deleteNewsComment: builder.mutation<IQueryResponse<{ totalComments: number }>, string>({
+            query: (newsId) => ({
                 url: `/news/${newsId}/comments`,
                 method: "DELETE",
                 body,
             }),
-            invalidatesTags: (_result, _error, { newsId }) => [{ type: "News", id: newsId }, 'News'],
+            invalidatesTags: (_result, _error, newsId) => [{ type: "News", id: newsId }, 'News'],
         }),
 
         // Update shares
-        updateNewsShares: builder.mutation<IQueryResponse<{ shares: number }>, IInteractionPayload>({
-            query: ({ newsId, ...body }) => ({
+        updateNewsShares: builder.mutation<IQueryResponse<{ shares: number }>, string>({
+            query: (newsId) => ({
                 url: `/news/${newsId}/shares`,
                 method: "PATCH",
-                body,
             }),
-            invalidatesTags: (_result, _error, { newsId }) => [{ type: "News", id: newsId }, 'News'],
+            invalidatesTags: (_result, _error, newsId) => [{ type: "News", id: newsId }, 'News'],
         }),
 
         // Update likes (NEW)
-        updateNewsLikes: builder.mutation<IQueryResponse<{ liked: boolean; likes: number }>, UpdateLikePayload>({
-            query: ({ newsId, ...body }) => ({
+        updateNewsLikes: builder.mutation<IQueryResponse<{ liked: boolean; likes: number }>, string>({
+            query: (newsId) => ({
                 url: `/news/${newsId}/likes`,
                 method: "PATCH",
-                body,
             }),
-            invalidatesTags: (_result, _error, { newsId }) => [{ type: "News", id: newsId }, 'News'],
+            invalidatesTags: (_result, _error, newsId) => [{ type: "News", id: newsId }, 'News'],
         }),
 
         // Get news stats
@@ -299,20 +299,4 @@ export const {
 // Export the API for use in store
 export default newsApi;
 
-interface IInteractionPayload {
-    newsId: string;
-    device?: string;
-    user?: IMiniUser
-}
-
-interface UpdateCommentPayload extends IInteractionPayload {
-    comment: string;
-}
-
-interface DeleteCommentPayload extends IInteractionPayload {
-    commentId: string;
-}
-interface UpdateLikePayload extends IInteractionPayload {
-    isLike?: boolean;
-}
 

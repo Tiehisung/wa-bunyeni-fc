@@ -4,7 +4,7 @@ import { Button } from "@/components/buttons/Button";
 import { IComment, INewsProps } from "@/types/news.interface";
 import { ThumbsDown, Trash } from "lucide-react";
 import { POPOVER } from "@/components/ui/popover";
-import SocialShare, { ResourceShare } from "@/components/SocialShare";
+import { ResourceShare } from "@/components/SocialShare";
 import { useEffect, useState } from "react";
 import { LiaCommentSolid } from "react-icons/lia";
 import { IoShareSocial } from "react-icons/io5";
@@ -13,7 +13,7 @@ import { getTimeLeftOrAgo } from "@/lib/timeAndDate";
 import { shortText } from "@/lib";
 import { BsDot, BsEye, BsFillHandThumbsUpFill } from "react-icons/bs";
 import { DIALOG } from "@/components/Dialog";
- 
+
 import {
   useDeleteNewsCommentMutation,
   useGetNewsStatsQuery,
@@ -27,7 +27,13 @@ import { useSession } from "next-auth/react";
 import LoginModal from "@/components/auth/Login";
 import { IMiniUser } from "@/types/user";
 
-export function NewsReactions({ newsItem ,device}: { newsItem?: INewsProps ,device?:string}) {
+export function NewsReactions({
+  newsItem,
+  device,
+}: {
+  newsItem?: INewsProps;
+  device?: string;
+}) {
   const { data: session } = useSession();
   const user = session?.user as IMiniUser;
 
@@ -41,28 +47,24 @@ export function NewsReactions({ newsItem ,device}: { newsItem?: INewsProps ,devi
     newsItem?._id as string,
   );
 
-  console.log({ stats });
-
-
+  
   // Record view on mount
   useEffect(() => {
-    updateViews({
-      newsId: newsItem?._id as string,
-    
-    });
+    updateViews(newsItem?._id as string);
   }, []);
-
+  
   const [localLiked, setLocalLiked] = useState(
     newsItem?.likes?.find((l) => l.device == device) ? true : false,
   );
 
+  useEffect(()=>{
+    setLocalLiked(newsItem?.likes?.find((l) => l.device == device) ? true : false)
+  },[ newsItem?.likes,localLiked])
+
+  console.log({ stats, device, localLiked });
+
   const handleLike = async () => {
-    const result = await updateLikes({
-      newsId: newsItem?._id as string,
-     
-      
-      isLike: !localLiked,
-    }).unwrap();
+    const result = await updateLikes(newsItem?._id as string).unwrap();
 
     if (result.success) {
       setLocalLiked(result?.data?.liked as boolean);
@@ -70,11 +72,7 @@ export function NewsReactions({ newsItem ,device}: { newsItem?: INewsProps ,devi
   };
 
   const handleShare = async () => {
-    const result = await updateShares({
-      newsId: newsItem?._id as string,
-    
-   
-    }).unwrap();
+    const result = await updateShares(newsItem?._id as string).unwrap();
 
     if (result.success) {
       refetchStats();
@@ -118,12 +116,7 @@ export function NewsReactions({ newsItem ,device}: { newsItem?: INewsProps ,devi
             id="shares-trigger"
             size={"default"}
           >
-            <SocialShare
-              onShare={handleShare}
-              className=""
-              text={newsItem?.headline.text}
-            />
-            <ResourceShare />
+            <ResourceShare onShare={handleShare} />
           </POPOVER>
         </li>
         <li>
@@ -214,11 +207,7 @@ const CommentRow = ({
     useDeleteNewsCommentMutation();
 
   const handleDeleteComment = async (commentId: string) => {
-    const result = await deleteComment({
-      newsId: newsItem?._id as string,
-      commentId,
-    }).unwrap();
-
+    const result = await deleteComment(newsItem?._id as string).unwrap();
     if (result.success) {
     }
   };
