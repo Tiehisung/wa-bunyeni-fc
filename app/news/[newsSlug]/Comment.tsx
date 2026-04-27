@@ -4,35 +4,52 @@ import { Button } from "@/components/buttons/Button";
 import QuillEditor from "@/components/editor/Quill";
 import { fireEscape } from "@/hooks/Esc";
 import { markupToPlainText } from "@/lib/dom";
-import { useUpdateNewsCommentsMutation } from "@/services/news.endpoints";
-import { IMiniUser } from "@/types/user";
+import {
+  useAddNewsCommentMutation,
+  useEditNewsCommentMutation,
+} from "@/services/news.endpoints";
+import { IComment } from "@/types/news.interface";
 import { SendHorizontal } from "lucide-react";
 import { useState } from "react";
 
 interface Props {
   newsId: string;
+  existingComment?: IComment;
 }
 
-const CommentForm = ({ newsId }: Props) => {
- 
-  const [comment, setComment] = useState("");
+const CommentForm = ({ newsId, existingComment }: Props) => {
+  const [comment, setComment] = useState(existingComment?.comment || "");
 
   const [updateComments, { isLoading: isCommenting }] =
-    useUpdateNewsCommentsMutation();
+    useAddNewsCommentMutation();
+
+  const [editComment, { isLoading: editing }] = useEditNewsCommentMutation();
 
   const maxLength = 3500;
 
-  const handleComment = async (e: { preventDefault: () => void }) => {
+  const handleAddComment = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    const result = await updateComments({
-      newsId: newsId as string,
-      comment,
-    }).unwrap();
+    if (existingComment) {
+      const result = await editComment({
+        newsId: newsId as string,
+        comment,
+        commentId: existingComment?._id,
+      }).unwrap();
 
-    if (result.success) {
-      fireEscape();
-      setComment("");
+      if (result.success) {
+        fireEscape();
+      }
+    } else {
+      const result = await updateComments({
+        newsId: newsId as string,
+        comment,
+      }).unwrap();
+
+      if (result.success) {
+        fireEscape();
+        setComment("");
+      }
     }
   };
 
@@ -41,7 +58,7 @@ const CommentForm = ({ newsId }: Props) => {
       <header className="flex justify-between items-center gap-3 mb-6">
         <span>Comment</span>
       </header>
-      <form onSubmit={handleComment} className="relative">
+      <form onSubmit={handleAddComment} className="relative">
         <QuillEditor
           value={comment}
           onChange={(val) => {
@@ -55,13 +72,13 @@ const CommentForm = ({ newsId }: Props) => {
           <Button
             type="submit"
             className="backdrop-blur-2xl w-fit mt-2 justify-center"
-            waiting={isCommenting}
+            waiting={isCommenting || editing}
             waitingText=""
             primaryText=""
             size="sm"
             disabled={!comment}
           >
-            Send <SendHorizontal size={20} />
+            {existingComment ? "Save" : "Send"} <SendHorizontal size={20} />
           </Button>
           <span className="text-xs text-muted-foreground">
             {`${markupToPlainText(comment)?.length}/${maxLength}`}

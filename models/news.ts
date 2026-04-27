@@ -43,6 +43,7 @@ const newsSchema = new Schema(
       user: MiniUserSchema,
       visitorId: String,
       date: { type: String, default: () => new Date().toISOString() },
+      updatedAt: { type: String, default: () => new Date().toISOString() },
       comment: String
     }],
     views: [{
