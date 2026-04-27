@@ -212,7 +212,6 @@ const newsApi = api.injectEndpoints({
             query: (newsId) => ({
                 url: `/news/${newsId}/comments`,
                 method: "DELETE",
-                body,
             }),
             invalidatesTags: (_result, _error, newsId) => [{ type: "News", id: newsId }, 'News'],
         }),
