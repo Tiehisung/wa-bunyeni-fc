@@ -41,7 +41,7 @@ export async function PATCH(
         const newComment = {
             user: session?.user,
             comment: comment.trim(),
-            device: visitorId,
+            visitorId: visitorId,
         };
 
         await NewsModel.findByIdAndUpdate(news._id, {

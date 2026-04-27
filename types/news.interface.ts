@@ -43,7 +43,7 @@ export interface INewsProps {
 interface IInteraction {
   user?: IMiniUser;
   date: string;
-  device?: string;
+  visitorId?: string;
   _id: string
 }
 export interface IComment extends IInteraction {

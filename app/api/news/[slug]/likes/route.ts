@@ -33,12 +33,12 @@ export async function PATCH(
         }
 
         const existingLike = news.likes?.find(
-            (like: { device: string; user: any }) => like.device === visitorId || (like.user?._id === user?._id)
+            (like: { visitorId: string; user: any }) => like.visitorId === visitorId || (like.user?._id === user?._id)
         );
 
         if (existingLike) {
             const withoutUserLike = news.likes?.filter(
-                (like: { device: string; user: any }) => like.device !== existingLike.device || (like.user?._id !== existingLike?.user?._id)
+                (like: { visitorId: string; user: any }) => like.visitorId !== existingLike.visitorId || (like.user?._id !== existingLike?.user?._id)
             );
 
             news.likes = withoutUserLike || [];
@@ -58,7 +58,7 @@ export async function PATCH(
         } else {
             const newLike = {
                 user: session?.user,
-                device: visitorId,
+                visitorId: visitorId,
             };
 
             news.likes = [...(news.likes || []), newLike];
