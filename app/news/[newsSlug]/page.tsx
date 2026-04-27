@@ -138,12 +138,10 @@ export async function generateMetadata({
 export default async function NewsItemPage() {  
   const visitorId =await getOrCreateVisitorId();
 
-  console.log({visitorId});
-
   return (
     <article className="flex max-lg:flex-wrap items-start gap-6 relative pt-6 md:pl-10">
       <section className="grow min-w-3/4">
-        <NewsItemClient />
+        <NewsItemClient device={visitorId}/>
       </section>
       <section className="sticky top-0 pt-4">
         <SearchAndFilterNews />

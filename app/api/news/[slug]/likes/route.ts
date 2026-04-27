@@ -36,8 +36,6 @@ export async function PATCH(
             (like: { device: string; user: any }) => like.device === visitorId || (like.user?._id === user?._id)
         );
 
-        console.log(existingLike)
-
         if (existingLike) {
             const withoutUserLike = news.likes?.filter(
                 (like: { device: string; user: any }) => like.device !== existingLike.device || (like.user?._id !== existingLike?.user?._id)
