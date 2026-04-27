@@ -247,17 +247,15 @@ const CommentRow = ({
         </div>
       </section>
 
-
       <StackModal
-              trigger={null}
-              
-              triggerStyles="rounded-none"
-              variant="ghost"
-              title="Edit your comment"
-              id={`edit-${com?._id}`}
-            >
-              <CommentForm newsId={newsItem?._id as string} existingComment={com}/>
-            </StackModal>
+        trigger={null}
+        triggerStyles="rounded-none"
+        variant="ghost"
+        title="Edit your comment"
+        id={`edit-${com?._id}`}
+      >
+        <CommentForm newsId={newsItem?._id as string} existingComment={com} />
+      </StackModal>
     </li>
   );
 };

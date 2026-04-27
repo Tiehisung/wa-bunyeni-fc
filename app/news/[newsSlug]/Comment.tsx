@@ -18,6 +18,8 @@ interface Props {
 }
 
 const CommentForm = ({ newsId, existingComment }: Props) => {
+
+  console.log(existingComment);
   const [comment, setComment] = useState(existingComment?.comment || "");
 
   const [updateComments, { isLoading: isCommenting }] =
