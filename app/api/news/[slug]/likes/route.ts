@@ -1,12 +1,13 @@
 // app/api/news/[slug]/likes/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import NewsModel from '@/models/news';
-import mongoose from 'mongoose';
 import { updateFanPoints } from '@/lib/fan';
 import { slugIdFilters } from '@/lib/slug';
 import { LoggerService } from '@/shared/log.service';
 import { getApiErrorMessage } from '@/lib/error-api';
 import connectDB from '@/config/db.config';
+import { auth } from '@/auth';
+import { getOrCreateVisitorId } from '@/lib/visitor';
 
 connectDB();
 
@@ -16,9 +17,12 @@ export async function PATCH(
     { params }: { params: Promise<{ slug: string }> }
 ) {
     try {
+        const session = await auth();
+        const user = session?.user
         const { slug } = await params;
         const filter = slugIdFilters(slug);
-        const { userId, name, deviceId, isLike } = await request.json();
+
+        const visitorId = await getOrCreateVisitorId();
 
         const news = await NewsModel.findOne(filter);
         if (!news) {
@@ -28,47 +32,47 @@ export async function PATCH(
             }, { status: 404 });
         }
 
-        const existingLikeIndex = news.likes?.findIndex(
-            (like: { device: string; user: string }) => like.device === deviceId && (userId && like.user === userId)
+        const existingLike = news.likes?.find(
+            (like: { device: string; user: any }) => like.device === visitorId || (like.user?._id === user?._id)
         );
 
-        if (isLike) {
-            if (existingLikeIndex === -1) {
-                const newLike = {
-                    user: userId ? new mongoose.Types.ObjectId(userId) : undefined,
-                    name: name,
-                    date: new Date().toISOString(),
-                    device: deviceId,
-                };
+        console.log(existingLike)
 
-                news.likes = [...(news.likes || []), newLike];
-                await news.save();
+        if (existingLike) {
+            const withoutUserLike = news.likes?.filter(
+                (like: { device: string; user: any }) => like.device !== existingLike.device || (like.user?._id !== existingLike?.user?._id)
+            );
 
-                if (userId) {
-                    await updateFanPoints(userId, 'reaction');
-                }
+            news.likes = withoutUserLike || [];
 
-                return NextResponse.json({
-                    success: true,
-                    message: 'Liked successfully',
-                    data: { liked: true, likes: news.likes.length }
-                });
-            } else {
-                return NextResponse.json({
-                    success: true,
-                    message: 'Already liked',
-                    data: { liked: true, likes: news.likes.length }
-                });
-            }
-        } else {
-            if (existingLikeIndex !== -1 && existingLikeIndex !== undefined) {
-                news.likes.splice(existingLikeIndex, 1);
-                await news.save();
+            await news.save();
+
+            if (session?.user) {
+                await updateFanPoints(session?.user?._id as string, 'reaction');
             }
 
             return NextResponse.json({
                 success: true,
                 message: 'Unliked successfully',
+                data: { liked: false, likes: news.likes.length }
+            });
+
+        } else {
+            const newLike = {
+                user: session?.user,
+                device: visitorId,
+            };
+
+            news.likes = [...(news.likes || []), newLike];
+            await news.save();
+
+            if (session?.user) {
+                await updateFanPoints(session?.user?._id as string, 'reaction');
+            }
+
+            return NextResponse.json({
+                success: true,
+                message: 'Liked successfully',
                 data: { liked: false, likes: news.likes.length }
             });
         }

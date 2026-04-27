@@ -6,9 +6,10 @@ import connectDB from '@/config/db.config';
 
 import NewsModel from '@/models/news';
 
-import mongoose from 'mongoose';
 import { slugIdFilters } from '@/lib/slug';
 import { updateFanPoints } from '@/lib/fan';
+import { auth } from '@/auth';
+import { getOrCreateVisitorId } from '@/lib/visitor';
 
 connectDB();
 
@@ -18,9 +19,12 @@ export async function PATCH(
     { params }: { params: Promise<{ slug: string }> }
 ) {
     try {
+        const session = await auth();
         const { slug } = await params;
         const filter = slugIdFilters(slug);
-        const { device, user } = await request.json();
+
+      
+        const visitorId = await getOrCreateVisitorId();
 
         const news = await NewsModel.findOne(filter);
         if (!news) {
@@ -31,20 +35,20 @@ export async function PATCH(
         }
 
         const alreadyViewed = news.views?.some(
-            (view: { device: string; user: any }) => view.device === device || view.user?._id === user?._id
+            (view: { device: string; user: any }) => view.device === visitorId || view.user?._id === session?.user?._id
         );
 
         if (!alreadyViewed) {
             const newView = {
-                user: user ,
-                device: device,
+                user: session?.user,
+                device: visitorId,
             };
 
             news.views = [...(news.views || []), newView];
             await news.save();
 
-            if (user) {
-                await updateFanPoints(user, 'newsView');
+            if (session?.user) {
+                await updateFanPoints(session?.user?._id as string, 'newsView');
             }
 
             return NextResponse.json({

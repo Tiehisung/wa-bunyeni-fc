@@ -13,7 +13,7 @@ import { getTimeLeftOrAgo } from "@/lib/timeAndDate";
 import { shortText } from "@/lib";
 import { BsDot, BsEye, BsFillHandThumbsUpFill } from "react-icons/bs";
 import { DIALOG } from "@/components/Dialog";
-import { getDeviceId } from "@/lib/device";
+ 
 import {
   useDeleteNewsCommentMutation,
   useGetNewsStatsQuery,
@@ -27,7 +27,7 @@ import { useSession } from "next-auth/react";
 import LoginModal from "@/components/auth/Login";
 import { IMiniUser } from "@/types/user";
 
-export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
+export function NewsReactions({ newsItem ,device}: { newsItem?: INewsProps ,device?:string}) {
   const { data: session } = useSession();
   const user = session?.user as IMiniUser;
 
@@ -41,16 +41,14 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
     newsItem?._id as string,
   );
 
-  const device = getDeviceId();
   console.log({ stats });
-  console.log("device", device);
+
 
   // Record view on mount
   useEffect(() => {
     updateViews({
       newsId: newsItem?._id as string,
-      device,
-      user: user,
+    
     });
   }, []);
 
@@ -61,8 +59,8 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
   const handleLike = async () => {
     const result = await updateLikes({
       newsId: newsItem?._id as string,
-      device,
-      user: user,
+     
+      
       isLike: !localLiked,
     }).unwrap();
 
@@ -74,8 +72,8 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
   const handleShare = async () => {
     const result = await updateShares({
       newsId: newsItem?._id as string,
-      device,
-      user: user,
+    
+   
     }).unwrap();
 
     if (result.success) {

@@ -9,6 +9,7 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useGetNewsQuery } from "@/services/news.endpoints";
 import PageLoader from "@/components/loaders/Page";
+import Image from "next/image";
 
 export default function OtherNews({}) {
   const searchParams = useSearchParams();
@@ -29,7 +30,7 @@ export default function OtherNews({}) {
             href={`${isAdmin ? "/admin" : ""}/news/${item?.slug || item?._id}`}
           >
             <div className="w-full overflow-hidden group relative">
-              <img
+              <Image
                 src={item?.headline?.image as string}
                 width={400}
                 height={500}

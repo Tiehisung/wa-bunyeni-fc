@@ -3,7 +3,7 @@ import { SearchAndFilterNews } from "./SearchAndFilter";
 import NewsItemClient from "./NewsClient";
 
 import { INewsProps } from "@/types/news.interface";
- 
+ import { getOrCreateVisitorId } from "@/lib/visitor";
 import { Metadata } from "next";
 import { ENV } from "@/lib/env";
 import { IPageProps, IQueryResponse } from "@/types";
@@ -135,7 +135,11 @@ export async function generateMetadata({
 //   };
 // }
 
-export default function NewsItemPage() {
+export default async function NewsItemPage() {  
+  const visitorId =await getOrCreateVisitorId();
+
+  console.log({visitorId});
+
   return (
     <article className="flex max-lg:flex-wrap items-start gap-6 relative pt-6 md:pl-10">
       <section className="grow min-w-3/4">
