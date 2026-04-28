@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { AnimateOnView } from "@/components/Animate/AnimateOnView";
 import Loader from "@/components/loaders/Loader";
@@ -31,7 +31,7 @@ const Desktop: React.FC<Props> = ({ squad }) => {
       <div className="relative h-64 md:h-80 lg:h-96 overflow-hidden">
         <Image
           src={squad?.coach?.avatar || (squad?.assistant?.avatar as string)}
-          alt="International break action"
+          alt={squad?.coach?.name as string}
           className="w-full h-full object-cover"
           width={400}
           height={320}
@@ -63,8 +63,11 @@ const Desktop: React.FC<Props> = ({ squad }) => {
               className="group bg-card rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border "
             >
               <div className="relative h-48 overflow-hidden">
-                <img
-                  src={player?.avatar}
+                <Image
+                  width={400}
+                  height={400}
+                  priority
+                  src={player?.avatar as string}
                   alt={player?.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -120,7 +123,10 @@ const Mobile: React.FC<Props> = ({ squad }) => {
 
       {/* Hero Section with Main Image - Mobile */}
       <div className="relative max-sm:h-[80vw] overflow-hidden">
-        <img
+        <Image
+          width={400}
+          height={400}
+          priority
           src={squad?.coach?.avatar || (squad?.assistant?.avatar as string)}
           alt="International break action"
           className="w-full h-full object-cover"
@@ -147,11 +153,14 @@ const Mobile: React.FC<Props> = ({ squad }) => {
       <div className="my-5">
         <div className=" mb-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {squad?.players?.slice(0, 6)?.map((player, index) => (
-            <AnimateOnView key={player?._id} index={index*1.2} once={false}>
+            <AnimateOnView key={player?._id} index={index * 1.2} once={false}>
               <div className="group bg-card rounded-2xl overflow-hidden hover:transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl border border-border">
                 <div className="relative h-32 overflow-hidden bg-gray-100">
-                  <img
-                    src={player.avatar}
+                  <Image
+                    width={400}
+                    height={400}
+                    priority
+                    src={player.avatar as string}
                     alt={player.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
                   />
@@ -199,8 +208,6 @@ interface TrendingProps {
 const LandingMatchSquad: React.FC<TrendingProps> = ({ className = "" }) => {
   const { data: squadsData, isLoading } = useGetSquadsQuery("");
   const squad = squadsData?.data ? squadsData?.data[0] : undefined;
-
-  console.log({ squad });
 
   if (isLoading) {
     return (

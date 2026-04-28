@@ -9,6 +9,8 @@ import { ELogSeverity } from '@/types/log.interface';
 import { LoggerService } from '../../../shared/log.service';
 import { getApiErrorMessage } from '../../../lib/error-api';
 import { logAction } from '../logs/helper';
+import { authorizeOrResponse } from '../auth/authorization';
+import { EUserRole } from '@/types/user';
 
 connectDB();
 
@@ -95,15 +97,9 @@ export async function GET(request: NextRequest) {
 // POST /api/training - Create new training session
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-
-    if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
-      return NextResponse.json({
-        success: false,
-        message: 'Unauthorized',
-      }, { status: 401 });
-    }
-
+     const session = await auth();
+    
+            authorizeOrResponse(session?.user?.role, [EUserRole.ADMIN, EUserRole.COACH]);
     const { attendance, date, location, note } = await request.json() as IPostTrainingSession;
 
     if (!date || !location) {
@@ -132,7 +128,7 @@ export async function POST(request: NextRequest) {
       note,
       createdAt: new Date(),
       updateCount: 0,
-      createdBy: session.user?._id
+      createdBy: session?.user 
     });
 
     if (!savedSession) {

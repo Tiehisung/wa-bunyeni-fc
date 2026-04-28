@@ -11,16 +11,18 @@ import { slugIdFilters } from '../../../../lib/slug';
 import { saveToArchive } from '../../archives/helper';
 import { logAction } from '../../logs/helper';
 import { hasher } from '../../../../lib/hasher';
+import { authorizeOrResponse } from '../../auth/authorization';
+import { EUserRole } from '@/types/user';
 
 connectDB();
 
 // GET /api/users/[slug] - Get single user
 export async function GET(
   request: NextRequest,
-  { params }: { params:Promise< { slug: string } >}
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const slug=(await params).slug
+    const slug = (await params).slug
     const filter = slugIdFilters(slug);
 
     const user = await UserModel.findOne(filter)
@@ -50,10 +52,10 @@ export async function GET(
 // PUT /api/users/[slug] - Update user
 export async function PUT(
   request: NextRequest,
-   { params }: { params:Promise< { slug: string } >}
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const slug=(await params).slug
+    const slug = (await params).slug
     const session = await auth();
 
     if (!session) {
@@ -124,11 +126,13 @@ export async function PUT(
 // DELETE /api/users/[slug] - Delete user
 export async function DELETE(
   request: NextRequest,
-   { params }: { params:Promise< { slug: string } >}
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const slug=(await params).slug
+    const slug = (await params).slug
     const session = await auth();
+
+    authorizeOrResponse(session?.user?.role, EUserRole.ADMIN);
 
     const filter = slugIdFilters(slug);
 

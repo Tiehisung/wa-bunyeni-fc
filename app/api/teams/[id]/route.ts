@@ -10,6 +10,8 @@ import TeamModel from '@/models/teams';
 import { LoggerService } from '../../../../shared/log.service';
 import { getApiErrorMessage } from '../../../../lib/error-api';
 import { logAction } from '../../logs/helper';
+import { authorizeOrResponse } from '../../auth/authorization';
+import { EUserRole } from '@/types/user';
 
 connectDB();
 
@@ -19,7 +21,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id =(await params).id
+    const id = (await params).id
     const team = await TeamModel.findById(id).lean();
 
     if (!team) {
@@ -48,7 +50,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id =(await params).id
+    const id = (await params).id
     const session = await auth();
 
     // Optional: Uncomment for auth check
@@ -71,7 +73,7 @@ export async function PUT(
           updatedBy: session?.user?._id,
         },
       },
-      {  runValidators: true }
+      { runValidators: true }
     );
 
     if (!updated) {
@@ -111,7 +113,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id =(await params).id
+    const id = (await params).id
     const session = await auth();
 
     if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -169,16 +171,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id =(await params).id
+    const id = (await params).id
     const session = await auth();
 
-    // Optional: Uncomment for auth check
-    // if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
-    //     return NextResponse.json({
-    //         success: false,
-    //         message: 'Unauthorized',
-    //     }, { status: 401 });
-    // }
+    authorizeOrResponse(session?.user?.role, EUserRole.ADMIN);
 
     const teamToDelete = await TeamModel.findById(id);
 

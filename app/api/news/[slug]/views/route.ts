@@ -23,7 +23,6 @@ export async function PATCH(
         const { slug } = await params;
         const filter = slugIdFilters(slug);
 
-      
         const visitorId = await getOrCreateVisitorId();
 
         const news = await NewsModel.findOne(filter);
@@ -44,8 +43,19 @@ export async function PATCH(
                 visitorId: visitorId,
             };
 
-            news.views = [...(news.views || []), newView];
-            await news.save();
+            // news.views = [...(news.views || []), newView];
+            // await news.save();
+
+            await NewsModel.findOneAndUpdate(
+                filter,
+                {
+                    $inc: { 'stats.viewCount': 1 },
+                    $set: {
+                        'stats.lastTrendingUpdate': new Date(),
+                        'views': [newView, ...(news.views || []),]
+                    },
+                }
+            );
 
             if (session?.user) {
                 await updateFanPoints(session?.user?._id as string, 'newsView');

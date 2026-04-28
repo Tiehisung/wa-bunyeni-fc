@@ -31,12 +31,11 @@ export async function POST(
         }
 
         const news = await NewsModel.findOne(filter);
-        if (!news) {
-            return NextResponse.json({
-                success: false,
-                message: 'News not found',
-            }, { status: 404 });
-        }
+        
+        if (!news) return NextResponse.json({
+            success: false,
+            message: 'News not found',
+        }, { status: 404 });
 
         const newComment = {
             user: session?.user,
@@ -45,26 +44,16 @@ export async function POST(
         };
 
         await NewsModel.findByIdAndUpdate(news._id, {
-            $set: { comments: [newComment, ...(news.comments || [])] }
+            $push: { comments: newComment },
+            $set: { 'stats.lastTrendingUpdate': new Date() },
+            $inc: { 'stats.commentCount': 1 },
         });
 
-        if (session?.user?._id) {
-            await updateFanPoints(session?.user?._id as string, 'comment');
-        }
-
-        const populatedNews = await NewsModel.findById(news._id)
-            .populate('comments.user', 'name image')
-            .lean();
-
-        const addedComment = populatedNews?.comments?.[0];
+        if (session?.user?._id) await updateFanPoints(session?.user?._id as string, 'comment');
 
         return NextResponse.json({
             success: true,
             message: 'Comment added successfully',
-            data: {
-                comment: addedComment,
-                totalComments: news.comments.length
-            }
         });
     } catch (error) {
         LoggerService.error('Failed to add comment', error);
@@ -132,7 +121,7 @@ export async function PUT(
                     "comments.$.updatedAt": new Date(),
                 },
             },
-       
+
         );
 
         return NextResponse.json({
@@ -169,7 +158,7 @@ export async function DELETE(
         }
 
         const comment = news.comments.find((c: { _id: string }) => c._id.toString() == commentId);
-        
+
         if (!comment) {
             return NextResponse.json({
                 success: false,
@@ -185,19 +174,21 @@ export async function DELETE(
                 message: 'Not authorized to delete this comment',
             }, { status: 403 });
         }
- 
-        const updated =await NewsModel.findOneAndUpdate(filter, 
+
+        const updated = await NewsModel.findOneAndUpdate(filter,
             {
                 $pull: {
                     comments: { _id: commentId }
-                }
+                },
+                $inc: { 'stats.commentCount': -1 },
+                $set: { 'stats.lastTrendingUpdate': new Date() }
             }
         )
 
         return NextResponse.json({
             success: true,
             message: 'Comment deleted successfully',
-            data: { totalComments: updated.comments.length ,}
+            data: { totalComments: updated.comments.length, }
         });
     } catch (error) {
         LoggerService.error('Failed to delete comment', error);

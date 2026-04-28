@@ -30,10 +30,7 @@ const newsSchema = new Schema(
     metaDetails: {}, //ISquad etc
 
     isPublished: Boolean,
-    stats: {
-      type: Schema.Types.Mixed,
-      default: () => ({ isTrending: true, isLatest: true }),
-    },
+
     likes: [{
       user: MiniUserSchema,
       visitorId: String,
@@ -64,35 +61,27 @@ const newsSchema = new Schema(
       type: String,
       default: 'unpublished', enum: ['published', 'unpublished', 'archived']
     },
-
+    stats: {
+      viewCount: { type: Number, default: 0 },
+      likeCount: { type: Number, default: 0 },
+      commentCount: { type: Number, default: 0 },
+      shareCount: { type: Number, default: 0 },
+      trendingScore: { type: Number, default: 0 },
+      lastTrendingUpdate: { type: Date, default: Date.now },
+    },
     editors: [{ email: String, name: String, avatar: String, role: String, about: String, date: { type: String, default: () => new Date().toISOString() } }],
     createdBy: MiniUserSchema //As IUser
   },
   { timestamps: true }
 );
 
-// Virtual for counts
-newsSchema.virtual("likesCount").get(function () {
-  return this.likes?.length || 0;
-});
-
-newsSchema.virtual("commentsCount").get(function () {
-  return this.comments?.length || 0;
-});
-
-newsSchema.virtual("viewsCount").get(function () {
-  return this.views?.length || 0;
-});
-
-newsSchema.virtual("sharesCount").get(function () {
-  return this.shares?.length || 0;
-});
 
 // Indexes for better query performance
 newsSchema.index({ createdAt: -1 });
 newsSchema.index({ tags: 1 });
 newsSchema.index({ type: 1 });
 newsSchema.index({ isPublished: 1 });
+newsSchema.index({ 'stats.trendingScore': -1 });
 
 
 const NewsModel = mongoose.models.news || mongoose.model("news", newsSchema);
