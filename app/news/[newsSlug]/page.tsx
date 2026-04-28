@@ -57,7 +57,7 @@ export async function generateMetadata({
       type: "article",
       publishedTime: publishedDate,
       authors: [
-        article?.reporter?.name || ENV.TEAM_NAME,
+        article?.createdBy?.name || ENV.TEAM_NAME,
         (article?.createdBy?.name as string) || "",
       ] as string[],
       images: [
