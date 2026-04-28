@@ -3,25 +3,22 @@
 import { AnimateOnView } from "@/components/Animate/AnimateOnView";
 import { RxVideo } from "react-icons/rx";
 import TableLoader from "@/components/loaders/Table";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import Link from "next/link";
-import { useGetNewsQuery } from "@/services/news.endpoints";
+import { useGetRelatedNewsQuery } from "@/services/news.endpoints";
 import Image from "next/image";
 
 export default function OtherNews({}) {
-  const searchParams = useSearchParams();
-  const paramsString = searchParams.toString();
+  const slug = useParams().newsSlug?.toString() || "";
+  const { data: relatedNews, isLoading } = useGetRelatedNewsQuery({ slug });
 
-  const { data: newsData, isLoading } = useGetNewsQuery(paramsString);
-
-  const newsId = useParams().newsId;
-  const others = newsData?.data?.filter((d) => d._id !== newsId);
   const isAdmin = usePathname().includes("/admin");
 
-  if (isLoading) return <TableLoader cols={1} rows={3} className="h-32 w-full" />;
+  if (isLoading)
+    return <TableLoader cols={1} rows={3} className="h-32 w-full" />;
   return (
     <div className="grid gap-5 gap-y-10 mt-5 sticky top-0">
-      {others?.map((item, index) => (
+      {relatedNews?.data?.map((item, index) => (
         <AnimateOnView key={item._id} index={index}>
           <Link
             href={`${isAdmin ? "/admin" : ""}/news/${item?.slug || item?._id}`}

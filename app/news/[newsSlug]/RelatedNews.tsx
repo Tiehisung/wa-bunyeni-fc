@@ -2,14 +2,14 @@
  
 import { RxVideo } from "react-icons/rx";
 import { AnimateOnView } from "@/components/Animate/AnimateOnView";
-import { useGetNewsQuery } from "@/services/news.endpoints";
+import { useGetRelatedNewsQuery } from "@/services/news.endpoints";
 import Loader from "@/components/loaders/Loader";
 import { H } from "@/components/Element";
 import DataErrorAlert from "@/components/error/DataError";
 import Link from "next/link";
 
-const YouMayLike = () => {
-  const { data: newsData, isLoading, error } = useGetNewsQuery("");
+const RelatedNews = ({ slug }: { slug: string }) => {
+  const { data: newsData, isLoading, error } = useGetRelatedNewsQuery({ slug });
   const news = newsData;
 
   if (isLoading) {
@@ -49,4 +49,4 @@ const YouMayLike = () => {
   );
 };
 
-export default YouMayLike;
+export default RelatedNews;

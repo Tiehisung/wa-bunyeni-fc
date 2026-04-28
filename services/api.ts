@@ -1,7 +1,5 @@
 // services/api.ts
-
  
-import { ENV } from "@/lib/env";
 import { RootState } from "@/store/store";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
  

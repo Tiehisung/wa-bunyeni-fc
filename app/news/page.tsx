@@ -1,5 +1,5 @@
 import { LatestNews } from "./Latest";
-import YouMayLike from "./YouMayLike";
+ 
 import { Metadata } from "next";
 import { ENV } from "@/lib/env";
 import { IQueryResponse } from "@/types";
@@ -8,7 +8,37 @@ import {   baseApiUrl } from "@/lib/configs";
 
 export const getNews = async (query?: string) => {
   try {
-    const uri = query ? `${`${baseApiUrl}/news`}${query}` : `${baseApiUrl}/news`;
+    const uri = query ? `${baseApiUrl}/news${query}` : `${baseApiUrl}/news`;
+
+    const response = await fetch(uri, { cache: "no-cache" });
+    return await response.json();
+  } catch {
+    return null;
+  }
+};
+export const getLatestNews = async (query?: string) => {
+  try {
+    const uri = query ? `${baseApiUrl}/news/latest${query}` : `${baseApiUrl}/news/latest`;
+
+    const response = await fetch(uri, { cache: "no-cache" });
+    return await response.json();
+  } catch {
+    return null;
+  }
+};
+export const getTrendingNews = async (query?: string) => {
+  try {
+    const uri = query ? `${baseApiUrl}/news/trending${query}` : `${baseApiUrl}/news/trending`;
+
+    const response = await fetch(uri, { cache: "no-cache" });
+    return await response.json();
+  } catch {
+    return null;
+  }
+};
+export const getRelatedNews = async (newsId: string, query?: string) => {
+  try {
+    const uri = query ? `${baseApiUrl}/news/${newsId}/related${query}` : `${baseApiUrl}/news/${newsId}/related`;
 
     const response = await fetch(uri, { cache: "no-cache" });
     return await response.json();
@@ -79,7 +109,7 @@ const NewsPage = () => {
     <main className="container space-y-10">
       <LatestNews />
 
-      <YouMayLike />
+ 
     </main>
   );
 };

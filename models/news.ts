@@ -27,6 +27,8 @@ const newsSchema = new Schema(
       , enum: ['general', 'squad', 'fixture', 'match', 'training',],
       default: 'general'
     },
+    tags:[String],
+    
     metaDetails: {}, //ISquad etc
 
     isPublished: Boolean,

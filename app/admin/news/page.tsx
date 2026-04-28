@@ -10,6 +10,7 @@ import { H } from "@/components/Element";
 import DataErrorAlert from "@/components/error/DataError";
 import { getErrorMessage } from "@/lib/error";
 import { useRouter, useSearchParams } from "next/navigation";
+import { AdminTrendingNewsMenu } from "./trending/TrendingMenu";
 
 const AdminNewsPage = () => {
   const  searchParams  = useSearchParams();
@@ -54,6 +55,8 @@ const AdminNewsPage = () => {
           <Plus /> Create
         </Button>
       </header>
+
+      <AdminTrendingNewsMenu />
 
       <AdminNews news={news} />
     </div>
