@@ -11,9 +11,10 @@ import DataErrorAlert from "@/components/error/DataError";
 import { getErrorMessage } from "@/lib/error";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AdminTrendingNewsMenu } from "./trending/TrendingMenu";
+import TrendNews from "./trending/page";
 
 const AdminNewsPage = () => {
-  const  searchParams  = useSearchParams();
+  const searchParams = useSearchParams();
   const paramsString = searchParams.toString();
 
   const { data: news, isLoading, error } = useGetNewsQuery(paramsString);
@@ -49,16 +50,19 @@ const AdminNewsPage = () => {
 
   return (
     <div>
-      <header className="flex items-center gap-4 px-3 flex-wrap justify-between uppercase">
+      <h1 className="flex items-center gap-4 px-3 flex-wrap justify-between uppercase">
         <H>News Publisher </H>
+      </h1>
+      <header className="flex items-center gap-4 px-3 flex-wrap uppercase">
+        <AdminTrendingNewsMenu />
         <Button onClick={() => router.push("/admin/news/create-news")}>
           <Plus /> Create
         </Button>
       </header>
 
-      <AdminTrendingNewsMenu />
-
       <AdminNews news={news} />
+
+      <TrendNews />
     </div>
   );
 };
