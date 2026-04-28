@@ -63,12 +63,12 @@ const Desktop: React.FC<Props> = ({ newsItems }) => {
       </div>
 
       {/* Hero Section with Main Image */}
-      <Link href={`/news/${main?.slug}`}>
+      <Link href={`/news/${main?.slug||main?._id}`}>
         <div className="relative h-64 md:h-80 lg:h-96 overflow-hidden">
           <Image
             width={400}
             height={400}
-            src={main?.headline?.image as string}
+            src={main?.headline?.image as string}  priority
             alt="International break action"
             className="w-full h-full object-cover"
           />
@@ -77,12 +77,7 @@ const Desktop: React.FC<Props> = ({ newsItems }) => {
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 leading-tight">
               {main?.headline?.text}
             </h2>
-            {/* <div
-              className="text-white text-sm line-clamp-2 "
-              dangerouslySetInnerHTML={{
-                __html: main?.details?.[0]?.text as string,
-              }}
-            /> */}
+            
           </div>
         </div>
       </Link>
@@ -91,14 +86,14 @@ const Desktop: React.FC<Props> = ({ newsItems }) => {
       <div className="py-6 md:py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {subs?.map((item) => (
-            <Link href={`/news/${item?.slug}`} key={item._id}>
+            <Link href={`/news/${item?.slug||item?._id}`} key={item._id}>
               <div className="group bg-card rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100">
                 <div className="relative h-48 overflow-hidden">
                   <Image
                     width={200}
                     height={200}
                     src={item?.headline?.image}
-                    alt={item?.headline?.text}
+                    alt={item?.headline?.text}  priority
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-3 left-3 bg-primary text-white text-xs font-semibold px-2 py-1 rounded">
@@ -155,11 +150,11 @@ const Mobile: React.FC<Props> = ({ newsItems }) => {
       </div>
 
       {/* Hero Section with Main Image - Mobile */}
-      <Link href={`/news/${main?.slug}`}>
+      <Link href={`/news/${main?.slug||main?._id}`}>
         <div className="relative max-sm:h-[80vw] overflow-hidden">
           <Image
             width={400}
-            height={400}
+            height={400}  priority
             src={main?.headline?.image as string}
             alt="International break action"
             className="w-full h-full object-cover"
@@ -170,12 +165,7 @@ const Mobile: React.FC<Props> = ({ newsItems }) => {
               {main?.headline?.text}
             </h2>
 
-            {/* <div
-              className="text-white/80 text-xs line-clamp-2 "
-              dangerouslySetInnerHTML={{
-                __html: main?.details?.[0]?.text as string,
-              }}
-            /> */}
+           
           </div>
         </div>
       </Link>
@@ -184,8 +174,8 @@ const Mobile: React.FC<Props> = ({ newsItems }) => {
       <div className="my-5">
         <div className="space-y-4 mb-5">
           {subs?.map((item) => (
-            <div
-              key={item?._id}
+            <Link
+              key={item?._id}href={`/news/${item?.slug??item?._id}`}
               className="bg-card overflow-hidden transition-colors cursor-pointer"
             >
               <div className="flex">
@@ -193,6 +183,8 @@ const Mobile: React.FC<Props> = ({ newsItems }) => {
                   <Image
                     width={200}
                     height={200}
+                    loading='eager'
+                    priority
                     src={item?.headline?.image}
                     alt={item?.headline?.text}
                     className="w-full h-full object-cover"
@@ -207,18 +199,17 @@ const Mobile: React.FC<Props> = ({ newsItems }) => {
                       <h3 className="font-semibold text-sm leading-tight line-clamp-2">
                         {item.headline?.text}
                       </h3>
-                      <Link
-                        href={`/news/${item?.slug}`}
+                      <div
                         className="flex items-center gap-1 text-primary text-xs font-medium mt-2"
                       >
                         <span>Read more</span>
                         <ChevronRight className="w-3 h-3" />
-                      </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
@@ -246,8 +237,7 @@ interface TrendingProps {
 const NEWSSECTION: React.FC<TrendingProps> = ({ className = "" }) => {
   const { data: newsData, isLoading } = useGetNewsQuery("");
 
- 
-
+  console.log(newsData)
   if (isLoading) {
     return (
       <div className=" space-y-8 flex justify-center items-center ">
