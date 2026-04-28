@@ -8,6 +8,7 @@ import { TSearchKey } from "@/types";
 import { Button } from "./buttons/Button";
 import SELECT from "./select/Select";
 import { stringArrayToOptions } from "@/lib/select";
+import {Search}from 'lucide-react'
 
 interface ISearchProps {
   label?: string;
@@ -51,7 +52,7 @@ export const PrimarySearch = ({
     <div
       className={`group bg-card flex items-center border border-1.5 border-primary/30 focus-within:ring ring-primary focus-within:border-teal-ring-primary/80 rounded-full grow px-2 text-sm ${className}`}
     >
-      <CgSearch className="h-4 w-auto text-primary/30 group-focus-within:text-primary" />
+      <CgSearch size={16} className="h-4 w-4 text-primary/30 group-focus-within:text-primary" />
       <input
         onChange={handleOnChange}
         id={name}

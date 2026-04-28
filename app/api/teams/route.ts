@@ -11,6 +11,8 @@ import TeamModel from '@/models/teams';
 import { LoggerService } from '../../../shared/log.service';
 import { getApiErrorMessage } from '../../../lib/error-api';
 import { logAction } from '../logs/helper';
+import { authorizeOrResponse } from '../auth/authorization';
+import { EUserRole } from '@/types/user';
 
 connectDB();
 
@@ -81,13 +83,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await auth();
 
-    // Optional: Uncomment for auth check
-    // if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
-    //     return NextResponse.json({
-    //         success: false,
-    //         message: 'Unauthorized',
-    //     }, { status: 401 });
-    // }
+    authorizeOrResponse(session?.user?.role, EUserRole.ADMIN);
 
     const teamData = await request.json() as IPostTeam;
 
@@ -104,7 +100,7 @@ export async function POST(request: NextRequest) {
 
     const createdTeam = await TeamModel.create({
       ...teamData,
-      createdBy: session?.user?._id
+      createdBy: session?.user
     });
 
     if (!createdTeam) {

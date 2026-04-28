@@ -17,6 +17,7 @@ import { EUserRole } from "@/types/user";
 import { LoggerService } from "../../../shared/log.service";
 import { getApiErrorMessage } from "../../../lib/error-api";
 import { slugify } from "@/lib/slugging";
+import { authorizeOrResponse } from "../auth/authorization";
 
 connectDB();
 
@@ -107,13 +108,8 @@ export async function POST(request: NextRequest) {
   try {
     const session = await auth();
 
-    if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
-      return NextResponse.json({
-        success: false,
-        message: 'Unauthorized',
-      }, { status: 401 });
-    }
-
+    authorizeOrResponse(session?.user?.role, EUserRole.ADMIN);
+ 
     const pf = await request.json() as IPostPlayer;
 
     // Ensure unique code
@@ -148,7 +144,7 @@ export async function POST(request: NextRequest) {
       email,
       about,
       ageStatus,
-      createdBy: session.user?._id
+      createdBy: session?.user 
     });
 
     // Create User account for player

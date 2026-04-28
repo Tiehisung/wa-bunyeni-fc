@@ -10,6 +10,8 @@ import { LoggerService } from '../../../../shared/log.service';
 import { getApiErrorMessage } from '../../../../lib/error-api';
 import { saveToArchive } from '../../archives/helper';
 import { logAction } from '../../logs/helper';
+import { authorizeOrResponse } from '../../auth/authorization';
+import { EUserRole } from '@/types/user';
 
 connectDB();
 
@@ -47,15 +49,9 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-
-    if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
-      return NextResponse.json({
-        success: false,
-        message: 'Unauthorized',
-      }, { status: 401 });
-    }
-
+   const session = await auth();
+  
+          authorizeOrResponse(session?.user?.role, EUserRole.ADMIN);
     const updates = await request.json();
     delete updates._id;
 
@@ -80,10 +76,10 @@ export async function PUT(
         $set: {
           ...updates,
           updatedAt: new Date(),
-          updatedBy: session.user?._id,
+          updatedBy: session?.user,
         },
       },
-      { new: true, runValidators: true }
+      {   runValidators: true }
     );
 
     if (!updated) {
@@ -124,13 +120,8 @@ export async function DELETE(
 ) {
   try {
     const session = await auth();
-
-    if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
-      return NextResponse.json({
-        success: false,
-        message: 'Unauthorized',
-      }, { status: 401 });
-    }
+   
+           authorizeOrResponse(session?.user?.role, EUserRole.ADMIN);
 
     const staffMember = await StaffModel.findById((await params).id);
 

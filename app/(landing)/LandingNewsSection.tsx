@@ -68,8 +68,9 @@ const Desktop: React.FC<Props> = ({ newsItems }) => {
           <Image
             width={400}
             height={400}
-            src={main?.headline?.image as string}  priority
-            alt="International break action"
+            priority
+            src={main?.headline?.image as string}   
+            alt={main?.headline?.text as string}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent"></div>
@@ -156,7 +157,7 @@ const Mobile: React.FC<Props> = ({ newsItems }) => {
             width={400}
             height={400}  priority
             src={main?.headline?.image as string}
-            alt="International break action"
+            alt={main?.headline?.text as string}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent"></div>

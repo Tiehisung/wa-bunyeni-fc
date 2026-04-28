@@ -10,6 +10,8 @@ import { formatDate } from '@/lib/timeAndDate';
 import { LoggerService } from '../../../../shared/log.service';
 import { getApiErrorMessage } from '../../../../lib/error-api';
 import { logAction } from '../../logs/helper';
+import { authorizeOrResponse } from '../../auth/authorization';
+import { EUserRole } from '@/types/user';
 
 connectDB();
 
@@ -19,7 +21,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id =(await params).id
+    const id = (await params).id
     const session = await TrainingSessionModel.findById(id).lean();
 
     if (!session) {
@@ -45,10 +47,10 @@ export async function GET(
 // PUT /api/training/[id] - Update training session
 export async function PUT(
   request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id =(await params).id
+    const id = (await params).id
     const session = await auth();
 
     if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
@@ -125,18 +127,13 @@ export async function PUT(
 // DELETE /api/training/[id] - Delete training session
 export async function DELETE(
   request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id =(await params).id
+    const id = (await params).id
     const session = await auth();
 
-    if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
-      return NextResponse.json({
-        success: false,
-        message: 'Unauthorized',
-      }, { status: 401 });
-    }
+    authorizeOrResponse(session?.user?.role, EUserRole.ADMIN);
 
     const existingSession = await TrainingSessionModel.findById(id);
 

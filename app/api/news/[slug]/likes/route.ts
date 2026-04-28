@@ -37,13 +37,14 @@ export async function PATCH(
         );
 
         if (existingLike) {
-            const withoutUserLike = news.likes?.filter(
-                (like: { visitorId: string; user: any }) => like.visitorId !== existingLike.visitorId || (like.user?._id !== existingLike?.user?._id)
+            await NewsModel.findOneAndUpdate(
+                filter,
+                {
+                    $pull: { likes: {_id: existingLike._id} },
+                    $inc: { 'stats.likeCount': -1 },
+                    $set: { 'stats.lastTrendingUpdate': new Date() }
+                }
             );
-
-            news.likes = withoutUserLike || [];
-
-            await news.save();
 
             if (session?.user) {
                 await updateFanPoints(session?.user?._id as string, 'reaction');
@@ -60,9 +61,14 @@ export async function PATCH(
                 user: session?.user,
                 visitorId: visitorId,
             };
-
-            news.likes = [...(news.likes || []), newLike];
-            await news.save();
+            await NewsModel.findOneAndUpdate(
+                filter,
+                {
+                    $push: { likes: newLike },
+                    $inc: { 'stats.likeCount': 1 },
+                    $set: { 'stats.lastTrendingUpdate': new Date() }
+                }
+            );
 
             if (session?.user) {
                 await updateFanPoints(session?.user?._id as string, 'reaction');

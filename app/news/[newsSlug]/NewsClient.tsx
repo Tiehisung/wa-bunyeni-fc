@@ -98,15 +98,15 @@ const NewsItemClient = ( ) => {
               content={
                 <div className="flex flex-col justify-center items-center gap-3">
                   <AVATAR
-                    src={newsItem?.reporter?.avatar as string}
+                    src={newsItem?.createdBy?.avatar as string}
                     alt="reporter"
                     className="h-16 w-16"
                     border
                   />
 
                   <div className="space-y-2.5">
-                    <h1 className="font-bold">{newsItem?.reporter?.name}</h1>
-                    <h1>{newsItem?.reporter?.about ?? "KonjiehiFC Staff"}</h1>
+                    <h1 className="font-bold">{newsItem?.createdBy?.name}</h1>
+                    <h1>{newsItem?.createdBy?.role ?? "KonjiehiFC Staff"}</h1>
                   </div>
                 </div>
               }

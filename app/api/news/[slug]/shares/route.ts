@@ -34,8 +34,14 @@ export async function PATCH(
             visitorId: visitorId,
         };
 
-        news.shares = [...(news.shares || []), newShare];
-        await news.save();
+        await NewsModel.findOneAndUpdate(
+            filter,
+            {
+                $push: { shares: newShare },
+                $inc: { 'stats.shareCount': 1 },
+                $set: { 'stats.lastTrendingUpdate': new Date() }
+            }
+        );
 
         if (session?.user) {
             await updateFanPoints(session?.user?._id as string, 'share');

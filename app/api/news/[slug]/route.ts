@@ -1,4 +1,4 @@
- 
+
 import connectDB from "@/config/db.config";
 import NewsModel from "@/models/news";
 import { NextRequest, NextResponse } from "next/server";
@@ -6,12 +6,15 @@ import { QueryFilter } from "mongoose";
 import ArchiveModel from "@/models/Archives";
 import { EArchivesCollection } from "@/types/archive.interface";
 import { logAction } from "../../logs/helper";
- 
+
 import { formatDate } from "@/lib/timeAndDate";
 import { slugIdFilters } from "@/lib/slug";
 import { ELogSeverity } from "@/types/log.interface";
 import { getApiErrorMessage } from "@/lib/error-api";
- 
+import { authorizeOrResponse } from "../../auth/authorization";
+import { auth } from "@/auth";
+import { EUserRole } from "@/types/user";
+
 connectDB();
 
 export async function GET(
@@ -24,7 +27,7 @@ export async function GET(
     return NextResponse.json({
         message: "News deleted",
         success: true,
-        data:news
+        data: news
     });
 }
 
@@ -36,6 +39,9 @@ export async function DELETE(
         const slug = (await params).slug;
         const query = { $or: [{ slug }, { _id: slug }] } as QueryFilter<string>
 
+        const session = await auth()
+
+        authorizeOrResponse(session?.user?.role, EUserRole.ADMIN);
         //First retrieve item
         const foundNewsItem = await NewsModel.findOne(query);
 
@@ -75,17 +81,18 @@ export async function PUT(
         const slug = (await params).slug;
         const query: QueryFilter<string> = slugIdFilters(slug)
 
-        console.log(query)
-
         const body = await request.json();
 
+        const session = await auth();
+        authorizeOrResponse(session?.user?.role, EUserRole.ADMIN);
+        
         //update field
         const updated = await NewsModel.findOneAndUpdate(
             query,
             { $set: { ...body } }
         );
 
-     
+
 
         return NextResponse.json({
             message: "News updated",

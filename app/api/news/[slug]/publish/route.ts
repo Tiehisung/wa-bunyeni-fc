@@ -1,13 +1,13 @@
-// app/api/news/[newsId]/publish/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import NewsModel from '@/models/news';
 import { getApiErrorMessage } from '@/lib/error-api';
 import connectDB from '@/config/db.config';
 import { slugIdFilters } from '@/lib/slug';
+import { authorizeOrResponse } from '@/app/api/auth/authorization';
+import { EUserRole } from '@/types/user';
  
 connectDB();
-
  
 export async function PATCH(
     request: NextRequest,
@@ -16,12 +16,7 @@ export async function PATCH(
     try {
         const session = await auth();
 
-        if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
-            return NextResponse.json({
-                success: false,
-                message: 'Unauthorized',
-            }, { status: 401 });
-        }
+        authorizeOrResponse(session?.user?.role, EUserRole.ADMIN);
 
         const { slug } = await params;
          const filter = slugIdFilters(slug);

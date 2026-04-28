@@ -31,6 +31,7 @@ export enum EUserRole {
   SUPER_ADMIN = 'super_admin',
   PLAYER = 'player',
   FAN = 'fan',
+  COACH = "coach",
 }
 export enum EUserAccount {
   CREDENTIALS = 'credentials',

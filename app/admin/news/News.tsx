@@ -56,7 +56,7 @@ const AdminNews: FC<{ news?: IQueryResponse<INewsProps[]> }> = ({ news }) => {
                 </p>
                 <div className="font-light text-sm">
                   <p>{formatDate(item?.createdAt, "March 2, 2025")}</p>
-                  <p>{item?.reporter?.name}</p>
+                  <p>{item?.createdBy?.name}</p>
                 </div>
               </Link>
 

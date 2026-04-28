@@ -8,6 +8,8 @@ import { removeEmptyKeys } from '@/lib';
 import { LoggerService } from '../../../shared/log.service';
 import { getApiErrorMessage } from '../../../lib/error-api';
 import { logAction } from '../logs/helper';
+import { authorizeOrResponse } from '../auth/authorization';
+import { EUserRole } from '@/types/user';
 
 connectDB();
 
@@ -78,12 +80,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await auth();
 
-    if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
-      return NextResponse.json({
-        success: false,
-        message: 'Unauthorized',
-      }, { status: 401 });
-    }
+    authorizeOrResponse(session?.user?.role, EUserRole.ADMIN);
 
     const {
       fullname,
@@ -143,7 +140,7 @@ export async function POST(request: NextRequest) {
       startDate: startDate || new Date(),
       contractType: contractType || 'permanent',
       isActive: true,
-      createdBy: session.user?._id
+      createdBy: session?.user
     });
 
     if (!saved) {

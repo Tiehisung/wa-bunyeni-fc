@@ -8,6 +8,8 @@ import { LoggerService } from '../../../shared/log.service';
 import { getApiErrorMessage } from '../../../lib/error-api';
 import { hasher } from '../../../lib/hasher';
 import { logAction } from '../logs/helper';
+import { authorizeOrResponse } from '../auth/authorization';
+import { EUserRole } from '@/types/user';
 
 connectDB();
 
@@ -69,13 +71,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
-
-    if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
-      return NextResponse.json({
-        success: false,
-        message: 'Unauthorized',
-      }, { status: 401 });
-    }
+   
+           authorizeOrResponse(session?.user?.role, EUserRole.ADMIN);
 
     const { email, password, image, name, role } = await request.json();
 
@@ -94,7 +91,8 @@ export async function POST(request: NextRequest) {
       password: hashedPass,
       image,
       name,
-      role
+      role,
+      createdBy: session?.user
     });
 
     const userResponse = user.toObject();

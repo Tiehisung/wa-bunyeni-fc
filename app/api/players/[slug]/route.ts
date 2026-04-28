@@ -21,6 +21,8 @@ import { LoggerService } from "../../../../shared/log.service";
 import { getApiErrorMessage } from "../../../../lib/error-api";
 import { slugIdFilters } from "../../../../lib/slug";
 import { logAction } from "../../logs/helper";
+import { EUserRole } from "@/types/user";
+import { authorizeOrResponse } from "../../auth/authorization";
 
 connectDB();
 
@@ -146,12 +148,7 @@ export async function PATCH(
     const slug = (await params).slug
     const session = await auth();
 
-    if (!session || !['admin', 'super_admin', 'player'].includes(session.user?.role || '')) {
-      return NextResponse.json({
-        success: false,
-        message: 'Unauthorized',
-      }, { status: 401 });
-    }
+    authorizeOrResponse(session?.user?.role, [EUserRole.ADMIN, EUserRole.PLAYER]);
 
     const filter = slugIdFilters(slug);
     const updates = await request.json();
@@ -206,12 +203,7 @@ export async function DELETE(
     const session = await auth();
 
     // Only super admin can delete players
-    if (session?.user?.role !== 'super_admin') {
-      return NextResponse.json({
-        success: false,
-        message: 'Unauthorized. Only super admins can delete players.',
-      }, { status: 403 });
-    }
+    authorizeOrResponse(session?.user?.role, EUserRole.ADMIN);
 
     const filter = slugIdFilters((await params).slug);
 

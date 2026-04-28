@@ -5,10 +5,7 @@ import { IMiniUser, IUser } from "./user";
 export interface INewsProps {
   _id: string;
   slug: string;
-  stats?: {
-    isTrending: boolean;
-    isLatest: boolean;
-  };
+
   headline: {
     text: string;
     image: string;
@@ -26,6 +23,15 @@ export interface INewsProps {
   summary?: string;
   tags?: string[];
 
+  //Reactions and stats
+  stats?: {
+    viewCount: number
+    likeCount: number
+    commentCount: number
+    shareCount: number
+    trendingScore: number
+    lastTrendingUpdate: string
+  };
   likes?: IInteraction[];
   views: IInteraction[];
   shares?: IInteraction[];
@@ -36,8 +42,6 @@ export interface INewsProps {
   updatedAt: string;
 
   createdBy?: IMiniUser
-  reporter?: IUser & { about?: string }
-
 }
 
 interface IInteraction {

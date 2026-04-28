@@ -11,6 +11,8 @@ import { formatDate } from '@/lib/timeAndDate';
 import { removeEmptyKeys } from '@/lib';
 import { LoggerService } from '../../../shared/log.service';
 import { getApiErrorMessage } from '../../../lib/error-api';
+import { EUserRole } from '@/types/user';
+import { authorizeOrResponse } from '../auth/authorization';
 
 connectDB();
 
@@ -76,13 +78,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
-
-    if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
-      return NextResponse.json({
-        success: false,
-        message: 'Unauthorized',
-      }, { status: 401 });
-    }
+    
+    authorizeOrResponse(session?.user?.role, [EUserRole.ADMIN, EUserRole.COACH]);
 
     const { match, players, assistant, coach, description, formation } = await request.json() as ISquad;
 
@@ -125,7 +122,7 @@ export async function POST(request: NextRequest) {
       title: matchDetails.title,
       match: match._id || match,
       season: matchDetails.season,
-      createdBy: session.user?._id
+      createdBy: session?.user?._id
     });
 
     if (!savedSquad) {

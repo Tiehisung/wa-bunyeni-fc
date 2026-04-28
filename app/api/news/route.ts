@@ -9,6 +9,8 @@ import { removeEmptyKeys } from "@/lib";
 import { slugify } from "@/lib/slugging";
 import { getApiErrorMessage } from "../../../lib/error-api";
 import { auth } from "@/auth";
+import { authorizeOrResponse } from "../auth/authorization";
+import { EUserRole } from "@/types/user";
 
 connectDB();
 export async function GET(request: NextRequest) {
@@ -57,12 +59,11 @@ export async function GET(request: NextRequest) {
       { "headline.text": regex }
     ]
 
-
   const cleaned = removeEmptyKeys(query)
 
   const news = await NewsModel.find(cleaned)
-
-    .sort({ createdAt: "desc" }).skip(skip)
+    .sort({ createdAt: "desc" })
+    .skip(skip)
     .limit(limit)
     .lean({ virtuals: true });
 
@@ -86,6 +87,7 @@ export async function POST(request: NextRequest) {
     const { headline, details, }: IPostNews = await request.json();
     const slug = slugify(headline.text as string);
 
+    authorizeOrResponse(session?.user?.role, EUserRole.ADMIN);
 
     const published = await NewsModel.create({
       slug,
