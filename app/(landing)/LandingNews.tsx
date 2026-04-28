@@ -51,10 +51,10 @@ const LandingNewsHeadlines = () => {
               date={item?.createdAt}
               tags={item?.tags}
               reactions={[
-                item?.likes?.length ?? 0,
-                item?.comments?.length ?? 0,
-                item?.shares?.length ?? 0,
-                item?.views?.length ?? 0,
+                item?.stats?.likeCount ?? 0,
+                item?.stats?.commentCount ?? 0,
+                item?.stats?.shareCount ?? 0,
+                item?.stats?.viewCount ?? 0,
               ].reduce((acc, p) => acc + p, 0)}
             />
           )) ?? []

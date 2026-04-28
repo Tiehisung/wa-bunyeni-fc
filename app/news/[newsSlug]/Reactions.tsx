@@ -90,7 +90,7 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
               className="font-light text-xs text-foreground"
               onClick={() => toggleClick("likes-trigger")}
             >
-              {newsItem?.likes?.length ?? ""}
+              {newsItem?.stats?.likeCount ?? ""}
             </span>
           </Button>
         </li>
@@ -98,7 +98,7 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
           <POPOVER
             trigger={
               <div className="flex items-center gap-2 font-light text-xs">
-                <IoShareSocial size={32} /> {newsItem?.shares?.length ?? ""}
+                <IoShareSocial size={32} /> {newsItem?.stats?.shareCount ?? ""}
               </div>
             }
             variant="ghost"
@@ -118,7 +118,7 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
                     size={24}
                     onClick={() => document.getElementById("comment")?.focus()}
                   />
-                  {newsItem?.comments?.length ?? ""}
+                  {newsItem?.stats?.commentCount ?? ""}
                 </div>
               }
               description={
@@ -135,7 +135,7 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
                     size={24}
                     onClick={() => document.getElementById("comment")?.focus()}
                   />
-                  {newsItem?.comments?.length ?? ""}
+                  {newsItem?.stats?.commentCount ?? ""}
                 </div>
               }
               triggerStyles="rounded-none"
@@ -152,7 +152,7 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
           <div className="flex items-center justify-center gap-2">
             {<BsEye className="opacity-65" />}
             <span className="font-light text-xs">
-              {newsItem?.views?.length}{" "}
+              {newsItem?.stats?.viewCount ?? ""}{" "}
             </span>
           </div>
         </li>
