@@ -1,4 +1,3 @@
- 
 import About from "./(landing)/About";
 import LandingFixtures from "./(landing)/Fixtures";
 import LandingNewsHeadlines from "./(landing)/LandingNews";
@@ -9,7 +8,6 @@ import Newsletter from "./(landing)/Newsletter";
 import Contact from "./contact/Contact";
 import { Metadata } from "next";
 import { ENV } from "@/lib/env";
- 
 
 export const metadata: Metadata = {
   title: `${ENV.TEAM_NAME} - Official Website`,
@@ -50,9 +48,6 @@ export const metadata: Metadata = {
 };
 
 const LandingPage = async () => {
- 
- 
-
   return (
     <div className="space-y-8 relative" id="home">
       <NEWSSECTION />
