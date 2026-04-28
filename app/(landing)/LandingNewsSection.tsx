@@ -1,17 +1,18 @@
-"use client";
+// "use client";
 
 import React from "react";
 import { ArrowRight, ChevronRight, TrendingUpIcon } from "lucide-react";
 
 import { INewsItem, INewsProps, INewsSection } from "@/types/news.interface";
-import {
-  useGetNewsQuery,
-  useGetTrendingNewsQuery,
-} from "@/services/news.endpoints";
+// import {
+//   useGetNewsQuery,
+//   useGetTrendingNewsQuery,
+// } from "@/services/news.endpoints";
 
 import Link from "next/link";
 import PageLoader from "@/components/loaders/Page";
 import Image from "next/image";
+import { getNews } from "../news/page";
 
 // Main News Section Props Interface
 export interface INewsSectionProps extends INewsSection {
@@ -48,6 +49,47 @@ export interface INewsSectionProps extends INewsSection {
   /** Additional data attributes for testing */
   dataTestId?: string;
 }
+interface TrendingProps {
+  className?: string;
+  // data: INewsSectionProps;
+}
+
+const NEWSSECTION: React.FC<TrendingProps> = async ({ className = "" }) => {
+  const news = await getNews();
+  // const { data: newsData, isLoading: loadingTrending } =
+  //   useGetTrendingNewsQuery({ limit: 4 });
+  // const { data: allNewsData, isLoading: loadingAll } = useGetNewsQuery("", {
+  //   skip: (newsData?.data?.length || 0) > 0,
+  // });
+
+  const isLoading = !news;
+
+  const newsItems = news?.data && news.data.length > 0 ? news.data : [];
+
+  console.log(newsItems);
+  if (isLoading) {
+    return (
+      <div className=" space-y-8 flex justify-center items-center ">
+        {isLoading}
+        <PageLoader />
+      </div>
+    );
+  }
+
+  return (
+    <div className={className}>
+      <div className="hidden md:block">
+        <Desktop newsItems={newsItems} />
+      </div>
+
+      <div className="block md:hidden">
+        <Mobile newsItems={newsItems} />
+      </div>
+    </div>
+  );
+};
+
+export default NEWSSECTION;
 
 interface Props {
   newsItems?: INewsProps[];
@@ -229,45 +271,3 @@ const Mobile: React.FC<Props> = ({ newsItems }) => {
 };
 
 // Main Responsive Component
-interface TrendingProps {
-  className?: string;
-  // data: INewsSectionProps;
-}
-
-const NEWSSECTION: React.FC<TrendingProps> = ({ className = "" }) => {
-  const { data: newsData, isLoading: loadingTrending } =
-    useGetTrendingNewsQuery({ limit: 4 });
-  const { data: allNewsData, isLoading: loadingAll } = useGetNewsQuery("", {
-    skip: (newsData?.data?.length || 0) > 0,
-  });
-
-  const isLoading = loadingTrending || loadingAll;
-
-  const newsItems =
-    newsData?.data && newsData.data.length > 0
-      ? newsData.data
-      : allNewsData?.data || [];
-
-  console.log(newsData);
-  if (isLoading) {
-    return (
-      <div className=" space-y-8 flex justify-center items-center ">
-        <PageLoader />
-      </div>
-    );
-  }
-
-  return (
-    <div className={className}>
-      <div className="hidden md:block">
-        <Desktop newsItems={newsItems} />
-      </div>
-
-      <div className="block md:hidden">
-        <Mobile newsItems={newsItems} />
-      </div>
-    </div>
-  );
-};
-
-export default NEWSSECTION;

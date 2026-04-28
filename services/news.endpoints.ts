@@ -2,7 +2,7 @@
 import type { IQueryResponse } from "@/types";
 import { api } from "./api";
 import type { INewsProps, IPostNews } from "@/types/news.interface";
-import { IMiniUser } from "@/types/user";
+ 
 
 const newsApi = api.injectEndpoints({
     endpoints: (builder) => ({
@@ -18,7 +18,7 @@ const newsApi = api.injectEndpoints({
         getTrendingNews: builder.query<IQueryResponse<INewsProps[]>, { limit?: number }>({
             query: (params) => ({
                 url: "/news/trending",
-                params: { limit: params?.limit || 5 },
+                params: { limit: params?.limit || 4 },
             }),
             providesTags: ['News'],
         }),
