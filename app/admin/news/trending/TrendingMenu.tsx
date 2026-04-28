@@ -14,6 +14,7 @@ import {
 import { TrendingUp, RefreshCw, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { scrollToElement } from "@/lib/dom";
 
 export function AdminTrendingNewsMenu() {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -56,8 +57,8 @@ export function AdminTrendingNewsMenu() {
           )}
           {isUpdating ? "Updating..." : "Recalculate Scores"}
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/admin/news/trending">View Statistics</Link>
+        <DropdownMenuItem asChild onClick={()=>scrollToElement('trends')}>
+          View Statistics
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
