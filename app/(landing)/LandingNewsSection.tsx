@@ -4,7 +4,7 @@ import React from "react";
 import { ArrowRight, ChevronRight, TrendingUpIcon } from "lucide-react";
 
 import { INewsItem, INewsProps, INewsSection } from "@/types/news.interface";
-import { useGetNewsQuery } from "@/services/news.endpoints";
+import {  useGetTrendingNewsQuery } from "@/services/news.endpoints";
 
 import Link from "next/link";
 import PageLoader from "@/components/loaders/Page";
@@ -236,7 +236,7 @@ interface TrendingProps {
 }
 
 const NEWSSECTION: React.FC<TrendingProps> = ({ className = "" }) => {
-  const { data: newsData, isLoading } = useGetNewsQuery("");
+  const { data: newsData, isLoading } = useGetTrendingNewsQuery({limit:4});
 
   console.log(newsData)
   if (isLoading) {
