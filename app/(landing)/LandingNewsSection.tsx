@@ -55,13 +55,13 @@ interface TrendingProps {
 }
 
 const NEWSSECTION: React.FC<TrendingProps> = async ({ className = "" }) => {
-  const news = await getNews();
+ 
   // const { data: newsData, isLoading: loadingTrending } =
   //   useGetTrendingNewsQuery({ limit: 4 });
   // const { data: allNewsData, isLoading: loadingAll } = useGetNewsQuery("", {
   //   skip: (newsData?.data?.length || 0) > 0,
   // });
-
+ const news = await getNews();
   const isLoading = !news;
 
   const newsItems = news?.data && news.data.length > 0 ? news.data : [];

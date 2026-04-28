@@ -9,7 +9,7 @@ const newsApi = api.injectEndpoints({
 
         // GET all news (with pagination, filtering)
         getNews: builder.query<IQueryResponse<INewsProps[]>, string>({
-            query: (paramsString = '') => `/news?${paramsString}`,
+            query: (paramsString = '') => `/news`,
             providesTags: ['News'],
 
         }),
@@ -150,11 +150,11 @@ const newsApi = api.injectEndpoints({
 
         // GET related news
         getRelatedNews: builder.query<IQueryResponse<INewsProps[]>, {
-            newsId: string;
+            slug: string;
             limit?: number;
         }>({
-            query: ({ newsId, limit }) => ({
-                url: `/news/${newsId}/related`,
+            query: ({ slug, limit }) => ({
+                url: `/news/${slug}/related`,
                 params: { limit: limit || 3 },
             }),
             providesTags: ['News']

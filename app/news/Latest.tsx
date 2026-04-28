@@ -2,13 +2,13 @@
 
 import { markupToPlainText } from "@/lib/dom";
 import NewsCard from "./NewsCard";
-import { useGetNewsQuery } from "@/services/news.endpoints";
+import { useGetLatestNewsQuery,  } from "@/services/news.endpoints";
 import { H } from "@/components/Element";
 import PageLoader from "@/components/loaders/Page";
 import DataErrorAlert from "@/components/error/DataError";
 
 export function LatestNews() {
-  const { data: newsData, isLoading, error } = useGetNewsQuery("");
+  const { data: newsData, isLoading, error } = useGetLatestNewsQuery({});
   const news = newsData;
 
   if (isLoading) {
