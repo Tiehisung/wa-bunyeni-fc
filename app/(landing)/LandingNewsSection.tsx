@@ -4,7 +4,10 @@ import React from "react";
 import { ArrowRight, ChevronRight, TrendingUpIcon } from "lucide-react";
 
 import { INewsItem, INewsProps, INewsSection } from "@/types/news.interface";
-import {  useGetTrendingNewsQuery } from "@/services/news.endpoints";
+import {
+  useGetNewsQuery,
+  useGetTrendingNewsQuery,
+} from "@/services/news.endpoints";
 
 import Link from "next/link";
 import PageLoader from "@/components/loaders/Page";
@@ -57,19 +60,17 @@ const Desktop: React.FC<Props> = ({ newsItems }) => {
     <div className="w-full max-w-6xl mx-auto overflow-hidden">
       {/* Trending Header */}
       <div className="flex items-center gap-2 my-6">
-        <span className=" font-semibold text-3xl tracking-wide">
-      TRENDING 
-        </span>
+        <span className=" font-semibold text-3xl tracking-wide">TRENDING</span>
       </div>
 
       {/* Hero Section with Main Image */}
-      <Link href={`/news/${main?.slug||main?._id}`}>
+      <Link href={`/news/${main?.slug || main?._id}`}>
         <div className="relative h-64 md:h-80 lg:h-96 overflow-hidden">
           <Image
             width={400}
             height={400}
             priority
-            src={main?.headline?.image as string}   
+            src={main?.headline?.image as string}
             alt={main?.headline?.text as string}
             className="w-full h-full object-cover"
           />
@@ -78,7 +79,6 @@ const Desktop: React.FC<Props> = ({ newsItems }) => {
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 leading-tight">
               {main?.headline?.text}
             </h2>
-            
           </div>
         </div>
       </Link>
@@ -87,14 +87,15 @@ const Desktop: React.FC<Props> = ({ newsItems }) => {
       <div className="py-6 md:py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {subs?.map((item) => (
-            <Link href={`/news/${item?.slug||item?._id}`} key={item._id}>
+            <Link href={`/news/${item?.slug || item?._id}`} key={item._id}>
               <div className="group bg-card rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100">
                 <div className="relative h-48 overflow-hidden">
                   <Image
                     width={200}
                     height={200}
                     src={item?.headline?.image}
-                    alt={item?.headline?.text}  priority
+                    alt={item?.headline?.text}
+                    priority
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-3 left-3 bg-primary text-white text-xs font-semibold px-2 py-1 rounded">
@@ -151,11 +152,12 @@ const Mobile: React.FC<Props> = ({ newsItems }) => {
       </div>
 
       {/* Hero Section with Main Image - Mobile */}
-      <Link href={`/news/${main?.slug||main?._id}`}>
+      <Link href={`/news/${main?.slug || main?._id}`}>
         <div className="relative max-sm:h-[80vw] overflow-hidden">
           <Image
             width={400}
-            height={400}  priority
+            height={400}
+            priority
             src={main?.headline?.image as string}
             alt={main?.headline?.text as string}
             className="w-full h-full object-cover"
@@ -165,8 +167,6 @@ const Mobile: React.FC<Props> = ({ newsItems }) => {
             <h2 className="text-lg font-bold text-white mb-1 leading-tight">
               {main?.headline?.text}
             </h2>
-
-           
           </div>
         </div>
       </Link>
@@ -176,7 +176,8 @@ const Mobile: React.FC<Props> = ({ newsItems }) => {
         <div className="space-y-4 mb-5">
           {subs?.map((item) => (
             <Link
-              key={item?._id}href={`/news/${item?.slug??item?._id}`}
+              key={item?._id}
+              href={`/news/${item?.slug ?? item?._id}`}
               className="bg-card overflow-hidden transition-colors cursor-pointer"
             >
               <div className="flex">
@@ -184,7 +185,7 @@ const Mobile: React.FC<Props> = ({ newsItems }) => {
                   <Image
                     width={200}
                     height={200}
-                    loading='eager'
+                    loading="eager"
                     priority
                     src={item?.headline?.image}
                     alt={item?.headline?.text}
@@ -200,9 +201,7 @@ const Mobile: React.FC<Props> = ({ newsItems }) => {
                       <h3 className="font-semibold text-sm leading-tight line-clamp-2">
                         {item.headline?.text}
                       </h3>
-                      <div
-                        className="flex items-center gap-1 text-primary text-xs font-medium mt-2"
-                      >
+                      <div className="flex items-center gap-1 text-primary text-xs font-medium mt-2">
                         <span>Read more</span>
                         <ChevronRight className="w-3 h-3" />
                       </div>
@@ -236,9 +235,20 @@ interface TrendingProps {
 }
 
 const NEWSSECTION: React.FC<TrendingProps> = ({ className = "" }) => {
-  const { data: newsData, isLoading } = useGetTrendingNewsQuery({limit:4});
+  const { data: newsData, isLoading: loadingTrending } =
+    useGetTrendingNewsQuery({ limit: 4 });
+  const { data: allNewsData, isLoading: loadingAll } = useGetNewsQuery("", {
+    skip: (newsData?.data?.length || 0) > 0,
+  });
 
-  console.log(newsData)
+  const isLoading = loadingTrending || loadingAll;
+
+  const newsItems =
+    newsData?.data && newsData.data.length > 0
+      ? newsData.data
+      : allNewsData?.data || [];
+
+  console.log(newsData);
   if (isLoading) {
     return (
       <div className=" space-y-8 flex justify-center items-center ">
@@ -250,11 +260,11 @@ const NEWSSECTION: React.FC<TrendingProps> = ({ className = "" }) => {
   return (
     <div className={className}>
       <div className="hidden md:block">
-        <Desktop newsItems={newsData?.data} />
+        <Desktop newsItems={newsItems} />
       </div>
 
       <div className="block md:hidden">
-        <Mobile newsItems={newsData?.data} />
+        <Mobile newsItems={newsItems} />
       </div>
     </div>
   );
