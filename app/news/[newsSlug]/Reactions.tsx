@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/buttons/Button";
 import { IComment, INewsProps } from "@/types/news.interface";
-import { ThumbsDown, Trash, Edit } from "lucide-react";
+import { ThumbsUp, Trash, Edit } from "lucide-react";
 import { POPOVER } from "@/components/ui/popover";
 import { ResourceShare } from "@/components/SocialShare";
 import { useEffect, useState } from "react";
@@ -84,13 +84,13 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
             {localLiked ? (
               <BsFillHandThumbsUpFill size={24} />
             ) : (
-              <ThumbsDown size={24} />
+              <ThumbsUp size={24} />
             )}
             <span
               className="font-light text-xs text-foreground"
               onClick={() => toggleClick("likes-trigger")}
             >
-              {newsItem?.stats?.likeCount ?? ""}
+              {newsItem?.stats?.likeCount?newsItem?.stats?.likeCount : ""}
             </span>
           </Button>
         </li>
@@ -165,6 +165,7 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
         <ResourceShare
           className="rounded-full bg-primary/90"
           text={newsItem?.headline.text}
+          onShare={handleShare}
         />
       </div>
 
@@ -204,15 +205,15 @@ const CommentRow = ({
   };
   return (
     <li className="flex items-start gap-5 pb-6  ">
-      <AVATAR src={com?.user?.avatar as string} alt={com?.user?.name} />
+      <AVATAR src={com?.user?.avatar as string} alt={com?.user?.name}  border/>
       <section>
         <header className="flex items-start gap-6 ">
-          <div className="flex items-baseline gap-0.5">
-            <h1 className="_subtitle">{com?.user?.name ?? "Anonymous"}</h1>
+          <div className="flex items-center gap-0.5">
+            <h1 className="font-semibold">{com?.user?.name ?? "Anonymous"}</h1>
             <span>
               <BsDot size={15} className="text-muted-foreground" />
             </span>
-            <span className="text-sm mt-2.5 font-light">
+            <span className="text-sm font-light">
               {getTimeLeftOrAgo(com?.date).formatted}
             </span>
           </div>
