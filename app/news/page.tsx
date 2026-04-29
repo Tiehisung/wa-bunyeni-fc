@@ -1,10 +1,10 @@
 import { LatestNews } from "./Latest";
- 
+
 import { Metadata } from "next";
 import { ENV } from "@/lib/env";
 import { IQueryResponse } from "@/types";
 import { INewsProps } from "@/types/news.interface";
-import {   baseApiUrl } from "@/lib/configs";
+import { baseApiUrl } from "@/lib/configs";
 
 export const getNews = async (query?: string) => {
   try {
@@ -18,7 +18,9 @@ export const getNews = async (query?: string) => {
 };
 export const getLatestNews = async (query?: string) => {
   try {
-    const uri = query ? `${baseApiUrl}/news/latest${query}` : `${baseApiUrl}/news/latest`;
+    const uri = query
+      ? `${baseApiUrl}/news/latest${query}`
+      : `${baseApiUrl}/news/latest`;
 
     const response = await fetch(uri, { cache: "no-cache" });
     return await response.json();
@@ -28,7 +30,9 @@ export const getLatestNews = async (query?: string) => {
 };
 export const getTrendingNews = async (query?: string) => {
   try {
-    const uri = query ? `${baseApiUrl}/news/trending${query}` : `${baseApiUrl}/news/trending`;
+    const uri = query
+      ? `${baseApiUrl}/news/trending${query}`
+      : `${baseApiUrl}/news/trending`;
 
     const response = await fetch(uri, { cache: "no-cache" });
     return await response.json();
@@ -38,7 +42,9 @@ export const getTrendingNews = async (query?: string) => {
 };
 export const getRelatedNews = async (newsId: string, query?: string) => {
   try {
-    const uri = query ? `${baseApiUrl}/news/${newsId}/related${query}` : `${baseApiUrl}/news/${newsId}/related`;
+    const uri = query
+      ? `${baseApiUrl}/news/${newsId}/related${query}`
+      : `${baseApiUrl}/news/${newsId}/related`;
 
     const response = await fetch(uri, { cache: "no-cache" });
     return await response.json();
@@ -68,6 +74,17 @@ export async function generateMetadata(): Promise<Metadata> {
   const url = `${ENV.APP_URL}/news/${article?.slug}`;
   const publishedDate = article?.createdAt || article?.updatedAt;
 
+  const otherImages = article?.details
+    ?.filter((d) => d.media?.find(m=>m?.resource_type=='image'))?.slice(0,2)
+    .map((detail) => detail.media?.find(m=>m?.resource_type=='image'))?.slice(0, 2)?.map(m=>( 
+      {
+          url: m?.secure_url as string,
+          width: 1200,
+          height: 630,
+          alt: article?.headline?.text,
+         
+    })) || [];
+
   return {
     title,
     description,
@@ -89,6 +106,7 @@ export async function generateMetadata(): Promise<Metadata> {
           height: 630,
           alt: article?.headline?.text,
         },
+        ...otherImages,
       ],
     },
     twitter: {
@@ -108,40 +126,10 @@ const NewsPage = () => {
   return (
     <main className="container space-y-10">
       <LatestNews />
-
- 
     </main>
   );
 };
 
 export default NewsPage;
 
-// export const metadata: Metadata = {
-//     title: `News | ${ENV.TEAM_NAME}`,
-//     description: `Latest news, updates, and announcements from ${ENV.TEAM_NAME}. Transfer news, match reports, injury updates, and exclusive club content. Stay informed with breaking news.`,
-//     keywords: [`${ENV.TEAM_NAME} news`, 'football news', 'club updates', 'transfer news', 'match reports'],
-//     openGraph: {
-//         title: `News | ${ENV.TEAM_NAME}`,
-//         description: `Latest news and updates from ${ENV.TEAM_NAME}. Breaking stories, match reports, and exclusive content.`,
-//         url: `${ENV.APP_URL}/news`,
-//         siteName: ENV.TEAM_NAME,
-//         type: 'website',
-//         images: [
-//             {
-//                 url: ENV.LOGO_URL,
-//                 width: 1200,
-//                 height: 630,
-//                 alt: `${ENV.TEAM_NAME} News`,
-//             },
-//         ],
-//     },
-//     twitter: {
-//         card: 'summary_large_image',
-//         title: `News | ${ENV.TEAM_NAME}`,
-//         description: `Latest news and updates from ${ENV.TEAM_NAME}.`,
-//         images: [ENV.LOGO_URL],
-//     },
-//     alternates: {
-//         canonical: `${ENV.APP_URL}/news`,
-//     },
-// };
+ 

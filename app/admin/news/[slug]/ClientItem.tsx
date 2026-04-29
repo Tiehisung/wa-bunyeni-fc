@@ -5,15 +5,13 @@ import FileRenderer from "@/components/files/FileRender";
 import { IFileProps } from "@/types/file.interface";
 import { ConfirmActionButton } from "@/components/buttons/ConfirmAction";
 import { shortText } from "@/lib";
-
 import { INewsProps } from "@/types/news.interface";
 import {
   useDeleteNewsMutation,
   useUpdateNewsMutation,
 } from "@/services/news.endpoints";
-
 import { smartToast } from "@/utils/toast";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
