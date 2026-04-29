@@ -30,7 +30,7 @@ const YouMayLikeNews = ({ slug }: { slug: string }) => {
               <div className="w-full overflow-hidden group relative">
                 <img
                   src={item?.headline?.image as string}
-                  alt={item?.headline.text}
+                  alt={item?.headline?.text as string}
                   className="aspect-4/2 w-full bg-secondary object-cover group-hover:opacity-85 xl:aspect-5/3 group-hover:scale-105 _slowTrans"
                 />
 
