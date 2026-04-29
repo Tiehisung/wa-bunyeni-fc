@@ -54,7 +54,7 @@ interface TrendingProps {
   // data: INewsSectionProps;
 }
 
-const NEWSSECTION: React.FC<TrendingProps> = async ({ className = "" }) => {
+const LandingTrendingNews: React.FC<TrendingProps> = async ({ className = "" }) => {
  
   // const { data: newsData, isLoading: loadingTrending } =
   //   useGetTrendingNewsQuery({ limit: 4 });
@@ -64,6 +64,7 @@ const NEWSSECTION: React.FC<TrendingProps> = async ({ className = "" }) => {
  const news = await getTrendingNews();
   const isLoading = !news;
 
+  console.log({news})
   const newsItems = news?.data && news.data.length > 0 ? news.data : [];
 
  
@@ -89,7 +90,7 @@ const NEWSSECTION: React.FC<TrendingProps> = async ({ className = "" }) => {
   );
 };
 
-export default NEWSSECTION;
+export default LandingTrendingNews;
 
 interface Props {
   newsItems?: INewsProps[];
