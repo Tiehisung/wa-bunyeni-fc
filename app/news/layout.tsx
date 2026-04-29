@@ -1,5 +1,5 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { FC, ReactNode } from "react";
+import {   ReactNode } from "react";
 
 const NewsLayout  = ({ children }:{children:ReactNode}) => {
   return (

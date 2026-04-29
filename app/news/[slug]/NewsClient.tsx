@@ -36,11 +36,11 @@ const NewsItemClient = ( ) => {
           dangerouslySetInnerHTML={{
             __html: newsItem?.headline?.text as string,
           }}
-          className="text-lg md:text-lg mb-5 font-bold _title"
+          className="text-lg mb-5 font-semibold "
         />
       </header>
 
-      <div className=" mt-15 gap-x-6">
+      <div className=" gap-x-6">
         <main className=" grow ">
           <ul>
             {newsItem?.details?.map((detail, index) => {
