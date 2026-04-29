@@ -24,7 +24,7 @@ export const getNewsItem = async (slug: string) => {
 export async function generateMetadata({
   params,
 }: IPageProps): Promise<Metadata> {
-  const { newsSlug: slug } = await params;
+  const {   slug } = await params;
   const articleData: IQueryResponse<INewsProps> = await getNewsItem(
     slug as string,
   );
