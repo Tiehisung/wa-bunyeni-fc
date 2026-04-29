@@ -40,7 +40,7 @@ export async function generateMetadata({
 
   const title = `${ENV.TEAM_NAME} - ${article?.headline?.text}`;
   const description = shortText(
-    article?.details?.find((d) => d.text)?.text as string,
+    article?.details?.find((d) => d?.text)?.text as string,
     120,
   );
 
