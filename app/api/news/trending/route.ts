@@ -2,7 +2,7 @@
 import { auth } from '@/auth';
 import { NextRequest, NextResponse } from 'next/server';
 import NewsModel from '@/models/news';
-import { LoggerService } from '@/shared/log.service';
+
 import { getApiErrorMessage } from '@/lib/error-api';
 
 import connectDB from '@/config/db.config';
@@ -18,19 +18,24 @@ export async function GET(request: NextRequest) {
         const searchParams = request.nextUrl.searchParams;
         const limit = parseInt(searchParams.get('limit') || '10');
 
-        const trendingNews = await NewsModel.find({
+        let trendingNews = await NewsModel.find({
             isPublished: true,
             'stats.trendingScore': { $gt: 0 }
         })
-            .sort({ 'stats.trendingScore': -1 })
-            .limit(limit)
+        
+        if(trendingNews.length === 0) {
+            // Fallback to latest news if no trending news is found
+            trendingNews = await NewsModel.find({ isPublished: true })
+                .sort({ createdAt: 'desc' })
+                .limit(limit);
+        }
 
         return NextResponse.json({
             success: true,
             data: trendingNews,
         });
     } catch (error) {
-        LoggerService.error('Failed to fetch trending news', error);
+  
         return NextResponse.json({
             success: false,
             message: getApiErrorMessage(error, 'Failed to fetch trending news'),
@@ -55,7 +60,7 @@ export async function POST(request: NextRequest) {
             timestamp: new Date().toISOString()
         });
     } catch (error: any) {
-        console.error('Trending update error:', error);
+       
         return NextResponse.json(
             { success: false, message: getApiErrorMessage(error) },
             { status: 500 }
