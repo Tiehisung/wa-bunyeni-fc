@@ -7,8 +7,8 @@ import Link from "next/link";
 import { useGetRelatedNewsQuery } from "@/services/news.endpoints";
 import Image from "next/image";
 
-export default function RelatedNews({newsSlug}:{newsSlug?:string}) {
-  const   slug   = useParams().slug?.toString()||newsSlug||'';
+export default function RelatedNews({ newsSlug }: { newsSlug?: string }) {
+  const slug = useParams().slug?.toString() || newsSlug || "";
   const { data: relatedNews, isLoading } = useGetRelatedNewsQuery({
     slug,
   });

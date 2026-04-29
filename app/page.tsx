@@ -1,13 +1,14 @@
 import About from "./(landing)/About";
 import LandingFixtures from "./(landing)/Fixtures";
 import LandingNewsHeadlines from "./(landing)/LandingNews";
-import NEWSSECTION from "./(landing)/LandingTrendingNews";
+ 
 import LandingPlayers from "./(landing)/LandingPlayers";
 import LandingMatchSquad from "./(landing)/LandingSquad";
 import Newsletter from "./(landing)/Newsletter";
 import Contact from "./contact/Contact";
 import { Metadata } from "next";
 import { ENV } from "@/lib/env";
+import LandingTrendingNews from "./(landing)/TrendingNews";
 
 export const metadata: Metadata = {
   title: `${ENV.TEAM_NAME} - Official Website`,
@@ -50,7 +51,7 @@ export const metadata: Metadata = {
 const LandingPage = async () => {
   return (
     <div className="space-y-8 relative" id="home">
-      <NEWSSECTION />
+      <LandingTrendingNews />
 
       <LandingPlayers />
 
@@ -68,7 +69,7 @@ const LandingPage = async () => {
 
       <Newsletter />
 
-      {/* <TrendingNews /> */}
+ 
     </div>
   );
 };
