@@ -17,7 +17,7 @@ const NewsItemClient = ( ) => {
   const newsSlug = useParams().newsSlug;
   const [open, setOpen] = useState(false);
   const [gallery, setGallery] = useState<IFileProps[]>([]);
-  const { data: newsItemData, isLoading: itemLoading } = useGetNewsItemQuery(
+  const { data: newsItemData, isLoading} = useGetNewsItemQuery(
     newsSlug?.toString() || "",
   );
   const newsItem = newsItemData?.data;
@@ -41,7 +41,7 @@ const NewsItemClient = ( ) => {
       </header>
 
       <div className=" mt-15 gap-x-6">
-        <main className=" grow my-6">
+        <main className=" grow ">
           <ul>
             {newsItem?.details?.map((detail, index) => {
               return (
@@ -55,7 +55,7 @@ const NewsItemClient = ( ) => {
 
                   {/* Large first media */}
                   {(detail?.media?.length ?? 0) > 0 && (
-                    <div key={index} className="flex flex-wrap gap-4">
+                    <div key={index} className="flex flex-wrap gap-1.5">
                       <Image
                         width={1000}
                         height={500}

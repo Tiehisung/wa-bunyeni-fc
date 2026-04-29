@@ -8,14 +8,14 @@ import NewsItemClient from "./ClientItem";
   useGetNewsQuery,
 } from "@/services/news.endpoints";
 import Loader from "@/components/loaders/Loader";
-import { AlertCircle } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useParams, useSearchParams } from "next/navigation";
+import { sParamsToObject } from "@/lib/searchParams";
+import DataErrorAlert from "@/components/error/DataError";
 
 export default function NewsItemPage() {
   const slug = useParams().slug;
   const  searchParams  = useSearchParams();
-  const paramsString = searchParams.toString();
+  const params = sParamsToObject(searchParams);
 
   const {
     data: newsItemData,
@@ -23,8 +23,9 @@ export default function NewsItemPage() {
     error: itemError,
   } = useGetNewsItemQuery(slug?.toString() || "");
 
-  const { data: newsData, isLoading: newsLoading } =
-    useGetNewsQuery(paramsString);
+  const { data: newsData, isLoading: newsLoading } = useGetNewsQuery({
+    ...params,
+  });
 
   const isLoading = itemLoading || newsLoading;
   const newsItem = newsItemData?.data;
@@ -39,18 +40,7 @@ export default function NewsItemPage() {
   }
 
   if (itemError || !newsItem) {
-    return (
-      <div className="flex max-lg:flex-wrap items-start gap-4 relative">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>
-            Failed to load news item:{" "}
-            {(itemError as any)?.message || "News item not found"}
-          </AlertDescription>
-        </Alert>
-      </div>
-    );
+    return <DataErrorAlert message={itemError} />;
   }
 
   return (

@@ -27,8 +27,8 @@ const newsSchema = new Schema(
       , enum: ['general', 'squad', 'fixture', 'match', 'training',],
       default: 'general'
     },
-    tags:[String],
-    
+    tags: [String],
+
     metaDetails: {}, //ISquad etc
 
     isPublished: Boolean,
@@ -64,11 +64,11 @@ const newsSchema = new Schema(
       default: 'unpublished', enum: ['published', 'unpublished', 'archived']
     },
     stats: {
-      viewCount: { type: Number, default: 0 },
-      likeCount: { type: Number, default: 0 },
-      commentCount: { type: Number, default: 0 },
-      shareCount: { type: Number, default: 0 },
-      trendingScore: { type: Number, default: 0 },
+      viewCount: {type: Number, default: 0,  min: 0,},
+      likeCount: {type: Number, default: 0,  min: 0,},
+      commentCount: {type: Number, default: 0,  min: 0,},
+      shareCount: {type: Number, default: 0,  min: 0,},
+      trendingScore: {type: Number, default: 0,  min: 0,},
       lastTrendingUpdate: { type: Date, default: Date.now },
     },
     editors: [{ email: String, name: String, avatar: String, role: String, about: String, date: { type: String, default: () => new Date().toISOString() } }],

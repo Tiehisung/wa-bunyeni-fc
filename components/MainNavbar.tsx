@@ -14,7 +14,6 @@ import {
   Images,
   Mail,
   Info,
-  
 } from "lucide-react";
 import { Drawer } from "@/components/headlessUI/Drawer";
 import { AVATAR } from "@/components/ui/avatar";
@@ -180,6 +179,13 @@ export default function MainNavbar() {
           </div>
         }
         className=" max-h-[75vh]"
+        footer={
+          <div className="flex items-center gap-4 py-2 pl-4 pt-5">
+            <ThemeModeToggle />
+
+            <LogoutBtn text="Logout" className="grow" />
+          </div>
+        }
       >
         <nav className="flex flex-col p-4 divide-y divide-border ">
           {navLinks.map((item) => {
@@ -197,19 +203,13 @@ export default function MainNavbar() {
                 }}
                 className="flex items-center gap-2 px-3 pb- transition-colors font-medium justify-start py-3 rounded-none"
                 variant={"ghost"}
-                size={'xl'}
+                size={"xl"}
               >
                 <div className="p-2 bg-accent rounded-md ">{item.icon}</div>{" "}
                 {item.label}
               </Button>
             );
           })}
-
-          <div className="flex items-center gap-4 py-2 pl-4 pt-5">
-            <ThemeModeToggle />
-
-            <LogoutBtn text="Logout" className="grow" />
-          </div>
         </nav>
       </Drawer>
 
@@ -228,4 +228,3 @@ export default function MainNavbar() {
     </>
   );
 }
- 

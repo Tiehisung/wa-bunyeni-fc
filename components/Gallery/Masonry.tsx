@@ -7,6 +7,7 @@ import IMAGE from "../Image";
 import { cn } from "@/lib/utils";
 import { POPOVER } from "../ui/popover";
 import { getThumbnail } from "@/lib/file";
+import Image from "next/image";
 
 interface MasonryGalleryProps {
   files: Array<IFileProps>;
@@ -54,7 +55,7 @@ export default function MasonryGallery({
     return (
       <div
         className={cn(
-          "columns-1 gap-6 sm:columns-2 lg:columns-3 xl:columns-4",
+          "columns-1 gap-2 sm:columns-2 lg:columns-3 xl:columns-4",
           wrapperStyles,
         )}
       >
@@ -63,7 +64,7 @@ export default function MasonryGallery({
             <div
               key={file?.public_id + i}
               className={cn(
-                "mb-6 break-inside-avoid overflow-hidden rounded-lg",
+                "mb-2 break-inside-avoid overflow-hidden rounded-lg",
                 className,
               )}
               onMouseEnter={() => setHoveredId(file?.public_id)}
@@ -129,12 +130,12 @@ export default function MasonryGallery({
     );
 
   return (
-    <div className="columns-1 gap-6 sm:columns-2 lg:columns-3 xl:columns-4">
+    <div className="columns-1 gap-2 sm:columns-2 lg:columns-3 xl:columns-4">
       {files.map((file, i) => (
         <div
           key={file?.public_id + i}
           className={cn(
-            "mb-6 break-inside-avoid overflow-hidden rounded-lg",
+            "mb-2 break-inside-avoid overflow-hidden rounded-lg",
             className,
           )}
           onClick={() => {
@@ -143,7 +144,7 @@ export default function MasonryGallery({
           }}
         >
           <div className="group relative aspect-3/4 w-full overflow-hidden bg-muted">
-            <img
+            <Image
               src={getThumbnail(file) as string}
               alt={file?.original_filename ?? (file?.public_id as string)}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
