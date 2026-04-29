@@ -1,7 +1,7 @@
 // news.endpoint.ts
-import  { IQueryParams, IQueryResponse } from "@/types";
+import { IQueryParams, IQueryResponse } from "@/types";
 import { api } from "./api";
-import  { INewsProps, IPostNews } from "@/types/news.interface";
+import { INewsProps, IPostNews } from "@/types/news.interface";
 
 
 const newsApi = api.injectEndpoints({
@@ -95,6 +95,14 @@ const newsApi = api.injectEndpoints({
                 body: { publish, scheduledDate },
             }),
             invalidatesTags: ['News']
+        }),
+
+        updateTrendingNews: builder.mutation<IQueryResponse, void>({
+            query: () => ({
+                url: `/news/trending`,
+                method: "POST",
+            }),
+            invalidatesTags: () => ['News'],
         }),
 
         // // LIKE news article
@@ -284,6 +292,7 @@ export const {
     useBulkDeleteNewsMutation,
     useIncrementViewCountMutation,
     useUpdateNewsViewsMutation,
+    useUpdateTrendingNewsMutation,
     useAddNewsCommentMutation,
     useEditNewsCommentMutation,
     useDeleteNewsCommentMutation,

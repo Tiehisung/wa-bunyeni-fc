@@ -8,7 +8,7 @@ import { H } from "@/components/Element";
 import DataErrorAlert from "@/components/error/DataError";
 import Link from "next/link";
 
-const RelatedNews = ({ slug }: { slug: string }) => {
+const YouMayLikeNews = ({ slug }: { slug: string }) => {
   const { data: newsData, isLoading, error } = useGetRelatedNewsQuery({ slug });
   const news = newsData;
 
@@ -49,4 +49,4 @@ const RelatedNews = ({ slug }: { slug: string }) => {
   );
 };
 
-export default RelatedNews;
+export default YouMayLikeNews;
