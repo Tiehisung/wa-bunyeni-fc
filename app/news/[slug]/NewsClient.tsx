@@ -14,7 +14,7 @@ import { useGetNewsItemQuery } from "@/services/news.endpoints";
 import Image from "next/image";
 
 const NewsItemClient = ( ) => {
-  const newsSlug = useParams().newsSlug;
+  const newsSlug = useParams().slug;
   const [open, setOpen] = useState(false);
   const [gallery, setGallery] = useState<IFileProps[]>([]);
   const { data: newsItemData, isLoading} = useGetNewsItemQuery(
