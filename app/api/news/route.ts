@@ -14,7 +14,7 @@ import { EUserRole } from "@/types/user";
 
 connectDB();
 export async function GET(request: NextRequest) {
-
+  const session = await auth()
   const { searchParams } = new URL(request.url);
   const page = Number.parseInt(searchParams.get("page") || "1", 10);
   const limit = Number.parseInt(searchParams.get("limit") || "10", 10);
@@ -63,6 +63,7 @@ export async function GET(request: NextRequest) {
 
   const news = await NewsModel.find(cleaned)
     .sort({ createdAt: "desc" })
+    .select(session?.user?.role.includes('admin') ? "-__v" : "-shares -likes -views -editors -__v")
     .skip(skip)
     .limit(limit)
     .lean({ virtuals: true });
