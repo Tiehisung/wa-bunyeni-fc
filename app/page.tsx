@@ -1,7 +1,6 @@
 import About from "./(landing)/About";
 import LandingFixtures from "./(landing)/Fixtures";
 import LandingNewsHeadlines from "./(landing)/LandingNews";
- 
 import LandingPlayers from "./(landing)/LandingPlayers";
 import LandingMatchSquad from "./(landing)/LandingSquad";
 import Newsletter from "./(landing)/Newsletter";

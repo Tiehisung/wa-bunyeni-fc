@@ -28,6 +28,7 @@ import { GlobalSearch } from "./searcher/Global";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { LogoutBtn } from "./auth/Auth";
+import { cn } from "@/lib/utils";
 
 interface ILink {
   label: string;
@@ -136,26 +137,15 @@ export default function MainNavbar() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-center space-x-8 h-10">
               {navLinks.map((link) => {
-                if (link.id && isLanding)
-                  return (
-                    <div
-                      key={link.label}
-                      onClick={() => scrollToSection(link.id)}
-                      className="inline-flex items-center px-1 pt-1 text-sm font-light hover:text-primary border-transparent border-b-2 hover:border-primary transition-colors cursor-pointer "
-                    >
-                      {link.label}
-                    </div>
-                  );
-                if (link.href)
-                  return (
-                    <Link
-                      key={link.label}
-                      href={link.href}
-                      className="inline-flex items-center px-1 pt-1 text-sm font-light hover:text-primary border-transparent border-b-2 hover:border-primary transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                  );
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href as string}
+                    className={cn("inline-flex items-center px-1 pt-1 text-sm font-light hover:text-primary border-transparent border-b-2 hover:border-primary transition-colors",pathname?.startsWith(link?.href as string)?'text-primary border-primary':'')}
+                  >
+                    {link.label}
+                  </Link>
+                );
               })}
             </div>
           </div>
