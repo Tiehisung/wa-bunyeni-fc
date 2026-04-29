@@ -44,7 +44,7 @@ export function TrendingNewsUpdateCard() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/news/trending/update", {
+      const response = await fetch("/api/news/trending", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
