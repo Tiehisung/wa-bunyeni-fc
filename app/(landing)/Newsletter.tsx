@@ -41,7 +41,7 @@ const Newsletter: React.FC = () => {
           >
             <Input
               type="email"
-              placeholder="Your email address"
+              label="Your email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="flex-1 px-5 py-3 "
