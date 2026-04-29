@@ -146,7 +146,7 @@ export default function MainNavbar() {
                       pathname?.startsWith(link?.href as string) &&
                         pathname !== "/"
                         ? "text-primary border-primary"
-                        : pathname !== "/"
+                        : pathname == "/"
                           ? "text-primary border-primary"
                           : "",
                     )}
