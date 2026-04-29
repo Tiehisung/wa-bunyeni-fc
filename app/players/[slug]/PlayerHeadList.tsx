@@ -1,7 +1,6 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { IPlayer } from "@/types/player.interface";
 import { getInitials } from "@/lib";
 import Link from "next/link";
 import { useParams } from "next/navigation";

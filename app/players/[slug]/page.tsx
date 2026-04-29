@@ -1,15 +1,15 @@
 import PlayerProfile from "./Profile";
 import { PlayerHeadList } from "./PlayerHeadList";
-import {   baseApiUrl } from "@/lib/configs";
+import { baseApiUrl } from "@/lib/configs";
 import { IPlayer } from "@/types/player.interface";
 import { IPageProps, IQueryResponse } from "@/types";
 import { Metadata } from "next";
 import { ENV } from "@/lib/env";
 import { TEAM } from "@/data/team";
 
-export const getPlayerById = async (slugOrId: string) => {
+export const getPlayer = async (slugOrIdOrEmail: string) => {
   try {
-    const response = await fetch(`${baseApiUrl}/players/${slugOrId}`, {
+    const response = await fetch(`${baseApiUrl}/players/${slugOrIdOrEmail}`, {
       cache: "no-store",
     });
 
@@ -25,23 +25,22 @@ export async function generateMetadata({
   params,
 }: IPageProps): Promise<Metadata> {
   const slug = (await params).slug as string;
-  const playerData: IQueryResponse<IPlayer> = await getPlayerById(slug);
+  const playerData: IQueryResponse<IPlayer> = await getPlayer(slug);
 
   const player = playerData?.data;
 
   if (!player) {
     return {
       title: `Player | ${TEAM.name}`,
-      description: "Latest updates from player at " + TEAM.name,
+      description: `Latest updates from player at ${TEAM.name}`,
     };
   }
 
   const title = `${TEAM.name} - ${player?.firstName} ${player?.lastName} `;
-    const description =
-      player?.about ||
-      player?.description ||
-      `Player profile for ${player?.firstName} ${player?.lastName}`;
-
+  const description =
+    player?.about ||
+    player?.description ||
+    `Player profile for ${player?.firstName} ${player?.lastName}`;
 
   const image = player?.avatar;
   const url = `${ENV.API_URL}/players/${slug}`;
@@ -80,9 +79,7 @@ export async function generateMetadata({
 }
 export default async function PlayerProfilePage({ params }: IPageProps) {
   const slug = (await params).slug;
-  const player: IQueryResponse<IPlayer> = await getPlayerById(
-    slug as string,
-  );
+  const player: IQueryResponse<IPlayer> = await getPlayer(slug as string);
 
   console.log(player?.data?.firstName);
 

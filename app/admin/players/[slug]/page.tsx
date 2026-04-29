@@ -30,7 +30,7 @@ import {Images}from 'lucide-react'
 
 export default function PlayerProfilePage() {
   const router = useRouter();
-  const playerSlug = useParams().playerSlug;
+  const playerSlug = useParams().slug;
 
   const { data: playerData, isLoading: playerLoading } = useGetPlayerQuery(
     playerSlug?.toString() || "",

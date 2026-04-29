@@ -61,6 +61,7 @@ export default function PlayerProfile({   stats }: PageProps) {
   });
 
   const { images } = usePlayerGalleryUtils(galleriesData?.data);
+  
   const slides = images?.slice(0, 10)?.map((file) => (
     <div key={file?.public_id as string}>
       <Image
@@ -78,7 +79,7 @@ export default function PlayerProfile({   stats }: PageProps) {
     return <PageLoader />;
   }
 
-  if (!error && !isLoading) {
+  if (error && !isLoading) {
     return <DataErrorAlert message={error} />;
   }
 

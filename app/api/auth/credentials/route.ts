@@ -12,7 +12,7 @@ connectDB();
 export async function POST(req: NextRequest,) {
     const { email: rawEmail, password } = await req.json()
 
-    const email = isValidEmail(rawEmail) ? rawEmail : rawEmail.concat('@kfc.com')
+    const email = isValidEmail(rawEmail) ? rawEmail : rawEmail.concat('@bfc.com')
 
     if (!email || !password) return NextResponse.json({ success: false, message: 'Invalid email or password' });
 
