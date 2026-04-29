@@ -141,7 +141,15 @@ export default function MainNavbar() {
                   <Link
                     key={link.label}
                     href={link.href as string}
-                    className={cn("inline-flex items-center px-1 pt-1 text-sm font-light hover:text-primary border-transparent border-b-2 hover:border-primary transition-colors",pathname?.startsWith(link?.href as string)?'text-primary border-primary':'')}
+                    className={cn(
+                      "inline-flex items-center px-1 pt-1 text-sm font-light hover:text-primary border-transparent border-b-2 hover:border-primary transition-colors",
+                      pathname?.startsWith(link?.href as string) &&
+                        pathname !== "/"
+                        ? "text-primary border-primary"
+                        : pathname !== "/"
+                          ? "text-primary border-primary"
+                          : "",
+                    )}
                   >
                     {link.label}
                   </Link>
