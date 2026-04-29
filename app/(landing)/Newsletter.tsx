@@ -50,6 +50,7 @@ const Newsletter: React.FC = () => {
             />
             <Button
               type="submit"
+              size='xl'
               className=" text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg"
             >
               Subscribe

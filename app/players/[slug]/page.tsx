@@ -24,7 +24,7 @@ export const getPlayerById = async (slugOrId: string) => {
 export async function generateMetadata({
   params,
 }: IPageProps): Promise<Metadata> {
-  const slug = (await params).playerSlug as string;
+  const slug = (await params).slug as string;
   const playerData: IQueryResponse<IPlayer> = await getPlayerById(slug);
 
   const player = playerData?.data;
@@ -79,9 +79,9 @@ export async function generateMetadata({
   };
 }
 export default async function PlayerProfilePage({ params }: IPageProps) {
-  const playerSlug = (await params).playerSlug;
+  const slug = (await params).slug;
   const player: IQueryResponse<IPlayer> = await getPlayerById(
-    playerSlug as string,
+    slug as string,
   );
 
   console.log(player?.data?.firstName);

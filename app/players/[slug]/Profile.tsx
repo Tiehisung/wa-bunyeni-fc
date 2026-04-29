@@ -45,12 +45,12 @@ interface PageProps {
 }
 
 export default function PlayerProfile({   stats }: PageProps) {
-  const { playerSlug } = useParams();
+  const { slug } = useParams();
   const {
     data: playerData,
     isLoading,
     error,
-  } = useGetPlayerQuery((playerSlug as string) ?? "");
+  } = useGetPlayerQuery((slug as string) ?? "");
 
   const player = playerData?.data;
   const { data: galleriesData } = useGetGalleriesQuery(`tags=${player?._id}`, {
