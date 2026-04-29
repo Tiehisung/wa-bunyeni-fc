@@ -10,7 +10,7 @@ import { getErrorMessage } from "@/lib/error";
 import CardLoader from "@/components/loaders/CardLoader";
 
 const LandingNewsHeadlines = () => {
-  const { data: newsData, isLoading, error } = useGetNewsQuery("");
+  const { data: newsData, isLoading, error } = useGetNewsQuery({ limit: 4 });
   const news = newsData;
   if (isLoading) {
     return (
