@@ -29,10 +29,11 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { LogoutBtn } from "./auth/Auth";
 import { cn } from "@/lib/utils";
+import { isActiveLink } from "@/lib";
 
 interface ILink {
   label: string;
-  href?: string;
+  href: string;
   id?: string;
   icon: React.ReactNode;
 }
@@ -137,17 +138,13 @@ export default function MainNavbar() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-center space-x-8 h-10">
               {navLinks.map((link) => {
-                const isActive =
-                  link.href === "/"
-                    ? pathname === "/" // Home: exact match only
-                    : pathname?.startsWith(link?.href as string) && pathname !== "/";
                 return (
                   <Link
                     key={link.label}
                     href={link.href as string}
                     className={cn(
                       "inline-flex items-center px-1 pt-1 text-sm font-light hover:text-primary border-transparent border-b-2 hover:border-primary transition-colors",
-                      isActive ? "text-primary border-primary" : "",
+                      isActiveLink(pathname,link.href) ? "text-primary border-primary" : "",
                     )}
                   >
                     {link.label}
