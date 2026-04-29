@@ -14,11 +14,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, RefreshCw, Clock, Trophy } from "lucide-react";
 import { toast } from "sonner";
+import { useUpdateTrendingNewsMutation } from "@/services/news.endpoints";
+import { smartToast } from "@/utils/toast";
 
 export function TrendingNewsUpdateCard() {
-  const [isLoading, setIsLoading] = useState(false);
+ 
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [trendingCount, setTrendingCount] = useState<number | null>(null);
+  const[updateTrends,{isLoading}]=useUpdateTrendingNewsMutation()
 
   // Fetch current trending status on load
   useEffect(() => {
@@ -41,31 +44,15 @@ export function TrendingNewsUpdateCard() {
   };
 
   const handleTriggerUpdate = async () => {
-    setIsLoading(true);
-
+   
     try {
-      const response = await fetch("/api/news/trending", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setLastUpdated(new Date());
-        setTrendingCount(data.count);
-        toast.success(data.message || "Trending scores updated!");
-        // Refresh the page data
-        window.dispatchEvent(new CustomEvent("trending-updated"));
-      } else {
-        toast.error(data.error || "Update failed");
-      }
+      const result = await  updateTrends().unwrap()
+      smartToast(result)
+       fetchTrendingStats();
     } catch (error) {
       toast.error("Failed to update trending scores");
     } finally {
-      setIsLoading(false);
+   
     }
   };
 

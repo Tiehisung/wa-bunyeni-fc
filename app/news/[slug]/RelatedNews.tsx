@@ -7,9 +7,11 @@ import Link from "next/link";
 import { useGetRelatedNewsQuery } from "@/services/news.endpoints";
 import Image from "next/image";
 
-export default function OtherNews({}) {
-  const slug = useParams().newsSlug?.toString() || "";
-  const { data: relatedNews, isLoading } = useGetRelatedNewsQuery({ slug });
+export default function RelatedNews({newsSlug}:{newsSlug?:string}) {
+  const   slug   = useParams().slug?.toString()||newsSlug||'';
+  const { data: relatedNews, isLoading } = useGetRelatedNewsQuery({
+    slug,
+  });
 
   const isAdmin = usePathname().includes("/admin");
 

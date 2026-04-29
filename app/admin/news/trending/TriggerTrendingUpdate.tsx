@@ -4,39 +4,23 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useUpdateTrendingNewsMutation } from "@/services/news.endpoints";
+import { smartToast } from "@/utils/toast";
 
 export function TriggerTrendingNewsUpdate() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [updateTrends, { isLoading }] = useUpdateTrendingNewsMutation();
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const handleTriggerUpdate = async () => {
-    setIsLoading(true);
-
     try {
-      const response = await fetch("/api/news/trending", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setLastUpdated(new Date());
-        toast.success(data.message || "Trending scores updated successfully!", {
-          description: `Updated ${data.count || 0} news items`,
-        });
-      } else {
-        toast.error(data.error || "Failed to update trending scores");
-      }
+      const result = await updateTrends().unwrap();
+      smartToast(result);
+      setLastUpdated(new Date());
     } catch (error) {
-      toast.error("Failed to trigger trending update. Please try again.");
+      toast.error("Failed to update trending scores");
     } finally {
-      setIsLoading(false);
     }
   };
-
   return (
     <div className="flex items-center gap-4">
       <Button

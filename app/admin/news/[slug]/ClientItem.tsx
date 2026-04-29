@@ -39,7 +39,6 @@ const NewsItemClient: FC<{ newsItem: INewsProps }> = ({ newsItem }) => {
     try {
       const result = await deleteNews(newsItem._id).unwrap();
       if (result.success) router.push("/admin/news");
-
       smartToast(result);
     } catch (error) {
       smartToast({ error });

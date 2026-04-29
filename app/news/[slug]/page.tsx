@@ -1,4 +1,4 @@
-import OtherNews from "./OtherNews";
+import OtherNews from "./RelatedNews";
 import { SearchAndFilterNews } from "./SearchAndFilter";
 import NewsItemClient from "./NewsClient";
 

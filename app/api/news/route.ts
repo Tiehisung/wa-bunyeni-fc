@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
 
   if (isPublished) query["isPublished"] = true
 
-  if (isUnpublished) query["isPublished"] = false
+  if (!session?.user?.role?.includes(EUserRole.ADMIN)) query["isPublished"] = true
 
   if (from || to) {
     query.createdAt = {};

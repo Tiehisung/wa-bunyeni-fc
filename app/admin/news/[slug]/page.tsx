@@ -1,6 +1,5 @@
 "use client";
 
-import OtherAdminNews from "./OtherNews";
 import { SearchAndFilterNews } from "./SearchAndFilter";
 import NewsItemClient from "./ClientItem";
  import {
@@ -11,6 +10,8 @@ import Loader from "@/components/loaders/Loader";
 import { useParams, useSearchParams } from "next/navigation";
 import { sParamsToObject } from "@/lib/searchParams";
 import DataErrorAlert from "@/components/error/DataError";
+import RelatedNews from "@/app/news/[slug]/RelatedNews";
+ 
 
 export default function NewsItemPage() {
   const slug = useParams().slug;
@@ -51,7 +52,7 @@ export default function NewsItemPage() {
       <section className="sticky top-0 pt-4">
         <SearchAndFilterNews />
         <br />
-        <OtherAdminNews news={news} />
+        <RelatedNews   />
       </section>
     </div>
   );
