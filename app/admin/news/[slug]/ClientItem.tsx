@@ -13,7 +13,7 @@ import {
 } from "@/services/news.endpoints";
 
 import { smartToast } from "@/utils/toast";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
