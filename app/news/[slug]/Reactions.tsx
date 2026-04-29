@@ -164,7 +164,7 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
         <p className="text-primary text-sm">Share this article</p>
         <ResourceShare
           className="rounded-full bg-primary/90"
-          text={newsItem?.headline.text}
+          text={newsItem?.headline?.text}
           onShare={handleShare}
         />
       </div>
