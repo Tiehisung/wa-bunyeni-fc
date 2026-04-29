@@ -12,7 +12,7 @@ import { INewsItem, INewsProps, INewsSection } from "@/types/news.interface";
 import Link from "next/link";
 import PageLoader from "@/components/loaders/Page";
 import Image from "next/image";
-import { getNews } from "../news/page";
+import { getTrendingNews } from "../news/page";
 
 // Main News Section Props Interface
 export interface INewsSectionProps extends INewsSection {
@@ -61,12 +61,12 @@ const NEWSSECTION: React.FC<TrendingProps> = async ({ className = "" }) => {
   // const { data: allNewsData, isLoading: loadingAll } = useGetNewsQuery("", {
   //   skip: (newsData?.data?.length || 0) > 0,
   // });
- const news = await getNews();
+ const news = await getTrendingNews();
   const isLoading = !news;
 
   const newsItems = news?.data && news.data.length > 0 ? news.data : [];
 
-  console.log(newsItems);
+ 
   if (isLoading) {
     return (
       <div className=" space-y-8 flex justify-center items-center ">

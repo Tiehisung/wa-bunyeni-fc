@@ -5,6 +5,7 @@ import { ENV } from "@/lib/env";
 import { IQueryResponse } from "@/types";
 import { INewsProps } from "@/types/news.interface";
 import { baseApiUrl } from "@/lib/configs";
+import { shortText } from "@/lib";
 
 export const getNews = async (query?: string) => {
   try {
@@ -66,24 +67,27 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   const title = `News | ${ENV.TEAM_NAME}`;
-  const description =
-    article?.details?.find((d) => d.text)?.text?.substring(0, 200) ||
-    `Latest news, updates, and announcements from ${ENV.TEAM_NAME}. Match reports, injury updates, and exclusive club content. Stay informed with breaking news.`;
+  const description = shortText(
+    article?.details?.find((d) => d.text)?.text as string,
+    120,
+  );
 
   const image = article?.headline?.image || ENV.LOGO_URL;
   const url = `${ENV.APP_URL}/news/${article?.slug}`;
   const publishedDate = article?.createdAt || article?.updatedAt;
 
-  const otherImages = article?.details
-    ?.filter((d) => d.media?.find(m=>m?.resource_type=='image'))?.slice(0,2)
-    .map((detail) => detail.media?.find(m=>m?.resource_type=='image'))?.slice(0, 2)?.map(m=>( 
-      {
-          url: m?.secure_url as string,
-          width: 1200,
-          height: 630,
-          alt: article?.headline?.text,
-         
-    })) || [];
+  const otherImages =
+    article?.details
+      ?.filter((d) => d.media?.find((m) => m?.resource_type == "image"))
+      ?.slice(0, 2)
+      .map((detail) => detail.media?.find((m) => m?.resource_type == "image"))
+      ?.slice(0, 2)
+      ?.map((m) => ({
+        url: m?.secure_url as string,
+        width: 1200,
+        height: 630,
+        alt: article?.headline?.text,
+      })) || [];
 
   return {
     title,
@@ -131,5 +135,3 @@ const NewsPage = () => {
 };
 
 export default NewsPage;
-
- 

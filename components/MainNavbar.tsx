@@ -180,7 +180,7 @@ export default function MainNavbar() {
         }
         className=" max-h-[75vh]"
         footer={
-          <div className="flex items-center gap-4 py-2 pl-4 pt-5">
+          <div className="flex items-center gap-4 py-2 px-4 ">
             <ThemeModeToggle />
 
             <LogoutBtn text="Logout" className="grow" />
