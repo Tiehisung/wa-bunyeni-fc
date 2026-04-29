@@ -1,0 +1,21 @@
+/* Unused */
+
+/* background images */
+._blue-bg1 {
+  background-image: url(../public/images/bg/blue-bg1.png);
+  background-position: bottom;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+._blue-bg2 {
+  background-image: url(../public/images/bg/blue-bg2.png);
+  background-position: bottom;
+  background-size: auto;
+  background-repeat: no-repeat;
+}
+._blue-bg3 {
+  background-image: url(../public/images/bg/blue-bg3.png);
+  background-position: bottom;
+  background-size: cover;
+  background-repeat: no-repeat;
+}

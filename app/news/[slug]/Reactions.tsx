@@ -1,0 +1,262 @@
+"use client";
+
+import { Button } from "@/components/buttons/Button";
+import { IComment, INewsProps } from "@/types/news.interface";
+import { ThumbsUp, Trash, Edit } from "lucide-react";
+import { POPOVER } from "@/components/ui/popover";
+import { ResourceShare } from "@/components/SocialShare";
+import { useEffect, useState } from "react";
+import { LiaCommentSolid } from "react-icons/lia";
+import { IoShareSocial } from "react-icons/io5";
+import { AVATAR } from "@/components/ui/avatar";
+import { getTimeLeftOrAgo } from "@/lib/timeAndDate";
+import { shortText } from "@/lib";
+import { BsDot, BsEye, BsFillHandThumbsUpFill } from "react-icons/bs";
+import { DIALOG } from "@/components/Dialog";
+import {
+  useDeleteNewsCommentMutation,
+  useUpdateNewsSharesMutation,
+  useUpdateNewsViewsMutation,
+  useUpdateNewsLikesMutation,
+} from "@/services/news.endpoints";
+import { toggleClick } from "@/lib/dom";
+import CommentForm from "./Comment";
+import { useSession } from "next-auth/react";
+import LoginModal from "@/components/auth/Login";
+import { IMiniUser } from "@/types/user";
+import { useVisitor } from "@/hooks/useVisitor";
+import { PrimaryDropdown } from "@/components/Dropdown";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import Loader from "@/components/loaders/Loader";
+import { StackModal } from "@/components/modals/StackModal";
+
+export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
+  const { data: session } = useSession();
+  const user = session?.user as IMiniUser;
+
+  const [updateViews] = useUpdateNewsViewsMutation();
+
+  const [updateLikes, { isLoading: isLiking }] = useUpdateNewsLikesMutation();
+
+  const [updateShares] = useUpdateNewsSharesMutation();
+
+  // Record view on mount
+  useEffect(() => {
+    updateViews(newsItem?._id as string);
+  }, []);
+
+  const { visitorId } = useVisitor();
+
+  const [localLiked, setLocalLiked] = useState(
+    newsItem?.likes?.find((l) => l.visitorId == visitorId) ? true : false,
+  );
+
+  useEffect(() => {
+    setLocalLiked(
+      newsItem?.likes?.find((l) => l.visitorId == visitorId) ? true : false,
+    );
+  }, [newsItem?.likes, localLiked]);
+
+  const handleLike = async () => {
+    const result = await updateLikes(newsItem?._id as string).unwrap();
+
+    if (result.success) {
+      setLocalLiked(result?.data?.liked as boolean);
+    }
+  };
+
+  const handleShare = async () => {
+    await updateShares(newsItem?._id as string).unwrap();
+  };
+
+  return (
+    <div>
+      <ul className="flex items-center flex-wrap">
+        <li>
+          <Button
+            onClick={handleLike}
+            className={`p-1.5 _shrink rounded-none  ${
+              localLiked ? "text-primary " : ""
+            }`}
+            variant="ghost"
+            waiting={isLiking}
+          >
+            {localLiked ? (
+              <BsFillHandThumbsUpFill size={24} />
+            ) : (
+              <ThumbsUp size={24} />
+            )}
+            <span
+              className="font-light text-xs text-foreground"
+              onClick={() => toggleClick("likes-trigger")}
+            >
+              {newsItem?.stats?.likeCount?newsItem?.stats?.likeCount : ""}
+            </span>
+          </Button>
+        </li>
+        <li>
+          <POPOVER
+            trigger={
+              <div className="flex items-center gap-2 font-light text-xs">
+                <IoShareSocial size={32} /> {newsItem?.stats?.shareCount ?? ""}
+              </div>
+            }
+            variant="ghost"
+            triggerClassNames="rounded-none"
+            id="shares-trigger"
+            size={"default"}
+          >
+            <ResourceShare onShare={handleShare} />
+          </POPOVER>
+        </li>
+        <li>
+          {!user ? (
+            <LoginModal
+              trigger={
+                <div className="font-light text-xs flex items-center gap-2">
+                  <LiaCommentSolid
+                    size={24}
+                    onClick={() => document.getElementById("comment")?.focus()}
+                  />
+                  {newsItem?.stats?.commentCount ?? ""}
+                </div>
+              }
+              description={
+                <p className="italic font-light text-center">
+                  Login to comment on our news article. Thank you!
+                </p>
+              }
+            />
+          ) : (
+            <DIALOG
+              trigger={
+                <div className="font-light text-xs flex items-center gap-2">
+                  <LiaCommentSolid
+                    size={24}
+                    onClick={() => document.getElementById("comment")?.focus()}
+                  />
+                  {newsItem?.stats?.commentCount ?? ""}
+                </div>
+              }
+              triggerStyles="rounded-none"
+              variant="ghost"
+              title="Comment on this news article"
+              id="comments-trigger"
+            >
+              <CommentForm newsId={newsItem?._id as string} />
+            </DIALOG>
+          )}
+        </li>
+
+        <li>
+          <div className="flex items-center justify-center gap-2">
+            {<BsEye className="opacity-65" />}
+            <span className="font-light text-xs">
+              {newsItem?.stats?.viewCount ?? ""}{" "}
+            </span>
+          </div>
+        </li>
+      </ul>
+
+      <br />
+
+      <div>
+        <p className="text-primary text-sm">Share this article</p>
+        <ResourceShare
+          className="rounded-full bg-primary/90"
+          text={newsItem?.headline?.text}
+          onShare={handleShare}
+        />
+      </div>
+
+      <br />
+      <hr />
+      <br />
+
+      {/* Comments */}
+      <ul className="grid gap-6 ">
+        {newsItem?.comments?.map((com, i) => (
+          <CommentRow comment={com} newsItem={newsItem} key={i} />
+        ))}
+      </ul>
+
+      <CommentForm newsId={newsItem?._id as string} />
+    </div>
+  );
+}
+
+const CommentRow = ({
+  comment: com,
+  newsItem,
+}: {
+  comment: IComment;
+  newsItem?: INewsProps;
+}) => {
+  const { data: session } = useSession();
+  const user = session?.user as IMiniUser;
+  const [deleteComment, { isLoading: isDeleting }] =
+    useDeleteNewsCommentMutation();
+
+  const handleDeleteComment = async (commentId: string) => {
+    await deleteComment({
+      newsId: newsItem?._id as string,
+      commentId,
+    }).unwrap();
+  };
+  return (
+    <li className="flex items-start gap-5 pb-6  ">
+      <AVATAR src={com?.user?.avatar as string} alt={com?.user?.name}  border/>
+      <section>
+        <header className="flex items-start gap-6 ">
+          <div className="flex items-center gap-0.5">
+            <h1 className="font-semibold">{com?.user?.name ?? "Anonymous"}</h1>
+            <span>
+              <BsDot size={15} className="text-muted-foreground" />
+            </span>
+            <span className="text-sm font-light">
+              {getTimeLeftOrAgo(com?.date).formatted}
+            </span>
+          </div>
+        </header>
+
+        <div className="border border-border rounded-2xl relative">
+          <div
+            dangerouslySetInnerHTML={{
+              __html: shortText(com?.comment, 3500) || "",
+            }}
+            className="p-3 mt-4 _p text-wrap wrap-break-word max-sm:max-w-60 max-w-3/4 overflow-x-auto"
+          />
+
+          {(user?._id == com.user?._id || user?.role?.includes("admin")) && (
+            <PrimaryDropdown triggerStyles="absolute right-2 top-1 p-0.5 _hover _shrink">
+              <DropdownMenuItem
+                onClick={() => handleDeleteComment(com._id as string)}
+                className=""
+              >
+                <Trash size={24} /> Delete
+                {isDeleting && <Loader size="sm" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => toggleClick(`edit-${com?._id}`)}
+                className=""
+              >
+                <Edit size={24} /> Edit
+                {isDeleting && <Loader size="sm" />}
+              </DropdownMenuItem>
+            </PrimaryDropdown>
+          )}
+        </div>
+      </section>
+
+      <StackModal
+        trigger={null}
+        triggerStyles="rounded-none"
+        variant="ghost"
+        title="Edit your comment"
+        id={`edit-${com?._id}`}
+      >
+        <CommentForm newsId={newsItem?._id as string} existingComment={com} />
+      </StackModal>
+    </li>
+  );
+};

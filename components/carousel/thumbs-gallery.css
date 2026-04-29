@@ -1,0 +1,35 @@
+/* moved all inline styles from component to external CSS file */
+.main-swiper {
+  --swiper-navigation-color: rgb(var(--color-primary) / 1);
+  --swiper-pagination-color: rgb(var(--color-primary) / 1);
+}
+
+.main-swiper .swiper-button-next,
+.main-swiper .swiper-button-prev {
+  width: 34px;
+  height: 34px;
+  background: rgb(var(--color-accent) / 0.7);
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+  border: solid 1px rgb(var(--color-border) / 0.5);
+}
+
+.main-swiper .swiper-button-next:after,
+.main-swiper .swiper-button-prev:after {
+  font-size: 20px;
+  color: white;
+}
+
+.main-swiper .swiper-button-next:hover,
+.main-swiper .swiper-button-prev:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.thumbs-swiper .swiper-slide-thumb-active {
+  opacity: 1 !important;
+  border-color: rgb(var(--color-primary) / 1) !important;
+}
+
+.thumbs-swiper .swiper-slide-thumb-active img {
+  filter: brightness(1.1);
+}

@@ -1,0 +1,60 @@
+/* Scrollbar */
+._hideScrollbar::-webkit-scrollbar {
+  width: none;
+  display: none;
+  background-color: #f5f5f5; /* For Chrome, Safari, and Opera */
+}
+._hideScrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-primary) / 20;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-Arsh);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-Red);
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+._marquee {
+  animation: marquee linear infinite;
+  white-space: nowrap;
+}
+._marquee:hover {
+  animation-play-state: paused;
+}
+
+._wordBreak {
+  overflow-wrap: break-word;
+  word-break: break-word; /* For legacy browser support */
+  hyphens: auto;
+}
+ 
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
