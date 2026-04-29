@@ -136,17 +136,16 @@ export default function MainNavbar() {
         <div className="hidden lg:block border-t border-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-center space-x-8 h-10">
-              {navLinks.map((link) => {
+              {navLinks.map((link) => {const isActive = link.href === "/"
+        ? pathname === "/"  // Home: exact match only
+        : pathname?.startsWith(link.href) && pathname !== "/";
                 return (
                   <Link
                     key={link.label}
                     href={link.href as string}
                     className={cn(
                       "inline-flex items-center px-1 pt-1 text-sm font-light hover:text-primary border-transparent border-b-2 hover:border-primary transition-colors",
-                      pathname?.startsWith(link?.href as string) &&
-                        pathname !== "/"
-                        ? "text-primary border-primary"
-                        : pathname !== "/"
+                   isActive
                           ? "text-primary border-primary"
                           : "",
                     )}
