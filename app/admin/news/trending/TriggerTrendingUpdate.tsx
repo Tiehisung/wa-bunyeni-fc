@@ -1,9 +1,8 @@
- 
 "use client";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { TrendingUp, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export function TriggerTrendingNewsUpdate() {
@@ -14,7 +13,7 @@ export function TriggerTrendingNewsUpdate() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/news/trending/update", {
+      const response = await fetch("/api/news/trending", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,7 +31,6 @@ export function TriggerTrendingNewsUpdate() {
         toast.error(data.error || "Failed to update trending scores");
       }
     } catch (error) {
-      console.error("Error triggering trending update:", error);
       toast.error("Failed to trigger trending update. Please try again.");
     } finally {
       setIsLoading(false);

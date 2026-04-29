@@ -143,7 +143,8 @@ export const sParamsToObject = (
   } else if (typeof searchParams === "string") {
     params = new URLSearchParams(searchParams);
   } else {
-    params = new URLSearchParams(window.location.search);
+    if (typeof window === "undefined") return {};
+    else params = new URLSearchParams(window.location.search);
   }
 
   const result: SearchParamsObject = {};
@@ -183,4 +184,3 @@ export const sParamsToObject = (
 
   return result;
 };
-

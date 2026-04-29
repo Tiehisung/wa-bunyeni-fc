@@ -1,15 +1,15 @@
 // news.endpoint.ts
-import type { IQueryResponse } from "@/types";
+import  { IQueryParams, IQueryResponse } from "@/types";
 import { api } from "./api";
-import type { INewsProps, IPostNews } from "@/types/news.interface";
- 
+import  { INewsProps, IPostNews } from "@/types/news.interface";
+
 
 const newsApi = api.injectEndpoints({
     endpoints: (builder) => ({
 
         // GET all news (with pagination, filtering)
-        getNews: builder.query<IQueryResponse<INewsProps[]>, string>({
-            query: (paramsString = '') => `/news`,
+        getNews: builder.query<IQueryResponse<INewsProps[]>, IQueryParams>({
+            query: (params = {}) => ({ url: `/news`, params }),
             providesTags: ['News'],
 
         }),
@@ -279,7 +279,7 @@ export const {
     useUpdateNewsMutation,
     usePatchNewsMutation,
     useTogglePublishStatusMutation,
-  
+
     useDeleteNewsMutation,
     useBulkDeleteNewsMutation,
     useIncrementViewCountMutation,

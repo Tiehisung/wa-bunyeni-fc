@@ -6,9 +6,12 @@ import { useGetLatestNewsQuery,  } from "@/services/news.endpoints";
 import { H } from "@/components/Element";
 import PageLoader from "@/components/loaders/Page";
 import DataErrorAlert from "@/components/error/DataError";
+import { sParamsToObject } from "@/lib/searchParams";
 
-export function LatestNews() {
-  const { data: newsData, isLoading, error } = useGetLatestNewsQuery({});
+export function LatestNews() {  
+  const params = sParamsToObject();
+
+  const { data: newsData, isLoading, error } = useGetLatestNewsQuery({...params});
   const news = newsData;
 
   if (isLoading) {

@@ -12,12 +12,12 @@ import { getErrorMessage } from "@/lib/error";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AdminTrendingNewsMenu } from "./trending/TrendingMenu";
 import TrendNews from "./trending/page";
+import { sParamsToObject } from "@/lib/searchParams";
 
 const AdminNewsPage = () => {
   const searchParams = useSearchParams();
-  const paramsString = searchParams.toString();
-
-  const { data: news, isLoading, error } = useGetNewsQuery(paramsString);
+  const params = sParamsToObject(searchParams);
+  const { data: news, isLoading, error } = useGetNewsQuery({ ...params });
   const router = useRouter();
   const ismobile = useIsMobile();
 
@@ -42,7 +42,6 @@ const AdminNewsPage = () => {
     return (
       <div>
         <H>News Publisher</H>
-
         <DataErrorAlert message={getErrorMessage(error)} />
       </div>
     );
