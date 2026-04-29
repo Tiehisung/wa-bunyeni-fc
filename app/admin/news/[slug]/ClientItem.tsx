@@ -57,11 +57,11 @@ const NewsItemClient: FC<{ newsItem: INewsProps }> = ({ newsItem }) => {
           dangerouslySetInnerHTML={{
             __html: newsItem?.headline?.text as string,
           }}
-          className="text-lg md:text-lg mb-5 font-bold _title"
+          className="text-lg mb-5 font-semibold "
         />
       </header>
 
-      <div className="grid lg:flex items-start mt-15 gap-x-6">
+      <div className="grid lg:flex items-start gap-x-6">
         <main className="_p grow my-6">
           <ul>
             {newsItem?.details?.map((detail, index) => {
