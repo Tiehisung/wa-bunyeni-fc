@@ -15,7 +15,7 @@ import Link from "next/link";
 
 const AdminNews: FC<{ news?: IQueryResponse<INewsProps[]> }> = ({ news }) => {
   return (
-    <div className="mb-24 mt-6 px-4 ">
+    <div className="mb-24 mt-6 ">
       <h1 className=" text-xl font-semibold mb-4 ">News📰</h1>
       <header className="flex items-center gap-2.5 my-6">
         <PrimarySearch

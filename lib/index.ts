@@ -56,3 +56,11 @@ export const getSafeUrl = (url: string) => {
 export const getUrlToShare = () => typeof window !== 'undefined' ? window.location.href : "";
 
 
+export  function isActiveLink(pathname: string, href: string): boolean {
+  if (href === "/") {
+    return pathname === "/";
+  }
+  return pathname?.startsWith(href);
+}
+
+ 

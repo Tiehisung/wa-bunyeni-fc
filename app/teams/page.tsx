@@ -9,6 +9,7 @@ import { formatDate } from "@/lib/timeAndDate";
 import { ITeam } from "@/types/match.interface";
 import { IQueryResponse } from "@/types";
 import { GlassmorphicGradient } from "@/components/Glasmorphic/Gradient";
+import { auth } from "@/auth";
 
 interface TeamsPageProps {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -48,6 +49,8 @@ async function getTeams(): Promise<IQueryResponse<ITeam[]>> {
 }
 
 export default async function TeamsPage({ searchParams }: TeamsPageProps) {
+
+
   const teamsData: IQueryResponse<ITeam[]> = await getTeams();
   const teams = teamsData?.data;
 
@@ -105,7 +108,9 @@ export default async function TeamsPage({ searchParams }: TeamsPageProps) {
 }
 
 // Team Card Component
-function TeamCard({ team }: { team: ITeam }) {
+export async function TeamCard({ team }: { team: ITeam }) {  
+  const session=await auth()
+  const isAdmin =session?.user?.role?.includes('admin')
   return (
     <Link href={`/teams/${team._id}`}>
       <GlassmorphicGradient className="group bg-card rounded-xl border hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer">
@@ -145,14 +150,14 @@ function TeamCard({ team }: { team: ITeam }) {
               </div>
             )}
 
-            {team.contact && (
+            {team.contact && isAdmin && (
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Phone className="w-4 h-4" />
                 <span>{team.contact}</span>
               </div>
             )}
 
-            {team.contactName && (
+            {team.contactName && isAdmin && (
               <div className="flex items-center gap-2 text-muted-foreground">
                 <User className="w-4 h-4" />
                 <span>{team.contactName}</span>

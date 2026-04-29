@@ -68,7 +68,7 @@ const Contact: React.FC = () => {
         >
           <Input
             type="text"
-            placeholder="Your Name"
+            label="Your Name"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             className="w-full px-5 py-3  "
@@ -77,7 +77,7 @@ const Contact: React.FC = () => {
           />
           <Input
             type="email"
-            placeholder="Email Address"
+            label="Email Address"
             value={formData.email}
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })

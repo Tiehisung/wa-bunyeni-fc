@@ -49,10 +49,10 @@ const AdminNewsPage = () => {
 
   return (
     <div>
-      <h1 className="flex items-center gap-4 px-3 flex-wrap justify-between uppercase">
+      <h1 className="flex items-center gap-4 flex-wrap justify-between uppercase">
         <H>News Publisher </H>
       </h1>
-      <header className="flex items-center gap-4 px-3 flex-wrap uppercase">
+      <header className="flex items-center gap-4 flex-wrap uppercase">
         <AdminTrendingNewsMenu />
         <Button onClick={() => router.push("/admin/news/create-news")}>
           <Plus /> Create

@@ -8,6 +8,7 @@ import { ENV } from "@/lib/env";
 import { baseApiUrl } from "@/lib/configs";
 import { formatDate } from "@/lib/timeAndDate";
 import { ITeam } from "@/types/match.interface";
+import { auth } from "@/auth";
 
 interface TeamPageProps {
   params: Promise<{ id: string }>;
@@ -64,6 +65,8 @@ async function getTeamById(id: string): Promise<ITeam | null> {
 }
 
 export default async function TeamPage({ params }: TeamPageProps) {
+   const session=await auth()
+    const isAdmin =session?.user?.role?.includes('admin')
   const { id } = await params;
   const team = await getTeamById(id);
 
@@ -178,7 +181,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
                 Contact Information
               </h2>
               <div className="space-y-3">
-                {team?.contactName && (
+                {team?.contactName && isAdmin && (
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="text-sm text-muted-foreground w-28">
                       Contact Person:
@@ -186,7 +189,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
                     <span className="font-medium">{team?.contactName}</span>
                   </div>
                 )}
-                {team?.contact && (
+                {team?.contact && isAdmin && (
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="text-sm text-muted-foreground w-28">
                       Phone:
@@ -215,12 +218,14 @@ export default async function TeamPage({ params }: TeamPageProps) {
                   <span className="text-sm text-muted-foreground">Added:</span>
                   <span className="text-sm">{formatDate(team?.createdAt)}</span>
                 </div>
+               { isAdmin && (
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">
                     Last Updated:
                   </span>
                   <span className="text-sm">{formatDate(team?.updatedAt)}</span>
                 </div>
+               )}
                 {team?.currentPlayers && team?.currentPlayers.length > 0 && (
                   <div className="flex justify-between">
                     <span className="text-sm text-muted-foreground">
