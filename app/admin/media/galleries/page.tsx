@@ -11,12 +11,10 @@ import { useGetPlayersQuery } from "@/services/player.endpoints";
 import DataErrorAlert from "@/components/error/DataError";
 import TableLoader from "@/components/loaders/Table";
 import { useSearchParams } from "next/navigation";
+import { sParamsToObject } from "@/lib/searchParams";
 
 export default function GalleriesAdmin() {
   const  searchParams  = useSearchParams();
-  const queryString = searchParams.toString()
-    ? `?${searchParams.toString()}`
-    : "";
 
   // Fetch galleries with query params
   const {
@@ -24,8 +22,9 @@ export default function GalleriesAdmin() {
     isLoading: galleriesLoading,
     error: galleriesError,
     isFetching,
-  } = useGetGalleriesQuery(queryString);
+  } = useGetGalleriesQuery({ ...sParamsToObject(searchParams) });
 
+  ;
   // Fetch players for tagging
   const { data: players, isLoading: playersLoading } = useGetPlayersQuery("");
 
@@ -38,7 +37,7 @@ export default function GalleriesAdmin() {
   if (galleriesError) return <DataErrorAlert message={galleriesError} />;
 
   return (
-    <div className="pt-16 _page">
+    <div className="pt-16 ">
       <GalleryUpload players={players?.data} trigger="Upload Files" />
 
       <br />
