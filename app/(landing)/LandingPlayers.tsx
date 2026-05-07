@@ -12,7 +12,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 const LandingPlayers = () => {
-  const { data: playersData, isLoading, error } = useGetPlayersQuery("");
+  const { data: playersData, isLoading, error } = useGetPlayersQuery({});
   const players = playersData;
 
   if (isLoading) {
