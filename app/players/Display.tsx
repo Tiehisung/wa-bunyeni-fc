@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from 'next/image'
 
 export default function OurPlayers() {
-  const { data, isLoading } = useGetPlayersQuery('');
+  const { data, isLoading } = useGetPlayersQuery({});
 
   if (isLoading) return <Loader />;
 
