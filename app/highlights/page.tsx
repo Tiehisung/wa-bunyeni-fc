@@ -11,16 +11,16 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import DataErrorAlert from "@/components/error/DataError";
 import { H } from "@/components/Element";
 import { useSearchParams } from "next/navigation";
+import { sParamsToObject } from "@/lib/searchParams";
 
 export default function MatchHighlightsPage() {
   const searchParams = useSearchParams();
-  const paramsString = searchParams.toString();
 
   const {
     data: highlights,
     isLoading: highlightsLoading,
     error: highlightsError,
-  } = useGetHighlightsQuery(paramsString);
+  } = useGetHighlightsQuery(sParamsToObject(searchParams));
 
   const { data: matches, isLoading: matchesLoading } = useGetMatchesQuery({});
 

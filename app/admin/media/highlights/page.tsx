@@ -10,12 +10,10 @@ import { OverlayLoader } from "@/components/loaders/OverlayLoader";
 import DataErrorAlert from "@/components/error/DataError";
 import TableLoader from "@/components/loaders/Table";
 import { useSearchParams } from "next/navigation";
+import { sParamsToObject } from "@/lib/searchParams";
 
 export default function MatchHighlightsPage() {
   const  searchParams  = useSearchParams();
-  const queryString = searchParams.toString()
-    ? `?${searchParams.toString()}`
-    : "";
 
   // Fetch highlights with query params
   const {
@@ -23,7 +21,7 @@ export default function MatchHighlightsPage() {
     isLoading: highlightsLoading,
     error: highlightsError,
     isFetching: highlightsFetching,
-  } = useGetHighlightsQuery(queryString);
+  } = useGetHighlightsQuery(sParamsToObject(searchParams));
 
   // Fetch matches for the uploader and search
   const { data: matches, isLoading: matchesLoading } = useGetMatchesQuery({});
