@@ -18,7 +18,7 @@ import Loader from "@/components/loaders/Loader";
  import DataErrorAlert from "@/components/error/DataError";
 
 export default function TrainingSettingsAdm() {
-  const { data: playersData, isLoading, error } = useGetPlayersQuery("");
+  const { data: playersData, isLoading, error } = useGetPlayersQuery({});
 
   const players = playersData;
 

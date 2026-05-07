@@ -11,7 +11,7 @@ import DocsAddBtn from "./Add";
 
 export default function DocsPage() {
   const { data: playersData, isLoading: playersLoading } =
-    useGetPlayersQuery("");
+    useGetPlayersQuery({});
 
   const isLoading = playersLoading;
   const players = playersData;
