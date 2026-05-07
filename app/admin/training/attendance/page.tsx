@@ -16,6 +16,7 @@ import { PrimaryAccordion } from "@/components/ui/accordion";
 import { useGetPlayersQuery } from "@/services/player.endpoints";
 import { useGetTrainingSessionsQuery } from "@/services/training.endpoints";
 import { useSearchParams } from "next/navigation";
+import { sParamsToObject } from "@/lib/searchParams";
 
 export interface ITrainingSession {
   date: string;
@@ -34,13 +35,12 @@ export interface ITrainingSession {
 
 const AttendancePage = () => {
   const  searchParams  = useSearchParams();
-  const paramsString = searchParams.toString();
 
   const {
     data: playersData,
     isLoading: playersLoading,
     error: playersError,
-  } = useGetPlayersQuery(paramsString);
+  } = useGetPlayersQuery(sParamsToObject(searchParams));
 
   const {
     data: trainingSessionsData,
