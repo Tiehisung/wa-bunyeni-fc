@@ -1,18 +1,17 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { IPlayer } from "@/types/player.interface";
 import { getInitials } from "@/lib";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useGetPlayersQuery } from "@/services/player.endpoints";
 
 export function PlayerHeadList(  ) {
-  const { playerSlug } = useParams();
+  const { slug } = useParams();
 
   const { data: playersData, isLoading } = useGetPlayersQuery("");
 
-  const otherPlayers = playersData?.data?.filter((p) => p?.slug !== playerSlug);
+  const otherPlayers = playersData?.data?.filter((p) => p?.slug !== slug);
 
   if (!playersData && !isLoading) {
     return null;
@@ -21,7 +20,7 @@ export function PlayerHeadList(  ) {
   return (
     <div className="fixed top-20 -left-2 z-10 flex items-center gap-4 flex-col border rounded-full p-1 bg-secondary/20 backdrop:blur-xs shadow-md max-h-[45vh] w-fit overflow-y-auto _hideScrollbar">
       {otherPlayers?.map((player) => {
-        const isSelected = playerSlug === player?.slug;
+        const isSelected = slug === player?.slug;
 
         return (
           <Link

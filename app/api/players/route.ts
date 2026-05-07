@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
 
     const slug = slugify(`${pf.firstName}-${pf.lastName}-${playerCode}`);
 
-    const email = (pf.email || `${playerCode}@bnfc.com`).toLowerCase();
+    const email = (pf.email || `${playerCode}@bfc.com`).toLowerCase();
 
     const existingPlayerByEmail = await PlayerModel.findOne({ email });
 
@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
     const existingUser = await UserModel.findOne({ email: pf.email });
 
     if (!existingUser) {
-      const password = await bcrypt.hash('bunyenifc', 10);
+      const password = await bcrypt.hash('1234', 10);
 
       await UserModel.create({
         email,

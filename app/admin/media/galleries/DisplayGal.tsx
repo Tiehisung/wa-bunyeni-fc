@@ -15,7 +15,7 @@ export function GalleryDisplay({
 }: GalleryDisplayProps) {
   // Fetch galleries if not provided via props
   const { data: fetchedGalleries, isLoading } = useGetGalleriesQuery(
-    undefined,
+    {},
     {
       skip: !!propGalleries, // Skip if galleries provided via props
     },

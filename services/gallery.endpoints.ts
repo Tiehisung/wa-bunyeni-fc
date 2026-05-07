@@ -1,5 +1,5 @@
 // services/galleries.endpoints.ts
-import type { IQueryResponse } from "@/types";
+import type { IQueryParams, IQueryResponse } from "@/types";
 import { api } from "./api";
 import type { ICloudinaryFile, IGallery } from "@/types/file.interface";
 
@@ -7,15 +7,9 @@ const galleriesApi = api.injectEndpoints({
     endpoints: (builder) => ({
 
         // Get all galleries with optional pagination/filtering
-        getGalleries: builder.query<IQueryResponse<IGallery[]>, string | void>({
-            query: (queryString = "") => `/galleries?${queryString}`,
-            providesTags: (result) =>
-                result?.data
-                    ? [
-                        ...result.data.map(({ _id }) => ({ type: 'Gallery' as const, id: _id })),
-                        { type: 'Gallery', id: 'LIST' },
-                    ]
-                    : [{ type: 'Gallery', id: 'LIST' }],
+        getGalleries: builder.query<IQueryResponse<IGallery[]>, IQueryParams>({
+            query: (params = {}) => ({ url: `/galleries`, params }),
+            providesTags: () => ['Gallery']
         }),
 
         // Get single gallery by ID

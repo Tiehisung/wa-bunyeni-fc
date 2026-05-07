@@ -1,5 +1,6 @@
  
 import { IPlayer } from "@/types/player.interface";
+import Image from 'next/image'
 
 export const PlayerCardA = ({
   player,
@@ -9,7 +10,7 @@ export const PlayerCardA = ({
 }) => {
   return (
     <div className="group after:h-1 after:w-full after:bg-primary after:mt-2 after:block">
-      <img
+      <Image
         alt={player?.lastName ?? "img"}
         src={player?.avatar as string}
         width={400}
