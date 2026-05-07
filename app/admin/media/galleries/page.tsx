@@ -4,7 +4,7 @@ import { GalleryUpload } from "@/components/Gallery/GalleryUpload";
 import { GalleryDisplay } from "./DisplayGal";
 import { SearchGallery } from "./Search";
 import InfiniteLimitScroller from "@/components/InfiniteScroll";
- 
+
 import Loader from "@/components/loaders/Loader";
 import { useGetGalleriesQuery } from "@/services/gallery.endpoints";
 import { useGetPlayersQuery } from "@/services/player.endpoints";
@@ -14,7 +14,7 @@ import { useSearchParams } from "next/navigation";
 import { sParamsToObject } from "@/lib/searchParams";
 
 export default function GalleriesAdmin() {
-  const  searchParams  = useSearchParams();
+  const searchParams = useSearchParams();
 
   // Fetch galleries with query params
   const {
@@ -24,9 +24,8 @@ export default function GalleriesAdmin() {
     isFetching,
   } = useGetGalleriesQuery({ ...sParamsToObject(searchParams) });
 
-  ;
   // Fetch players for tagging
-  const { data: players, isLoading: playersLoading } = useGetPlayersQuery("");
+  const { data: players, isLoading: playersLoading } = useGetPlayersQuery({});
 
   const isLoading = galleriesLoading || playersLoading;
 
