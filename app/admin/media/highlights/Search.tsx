@@ -9,7 +9,7 @@ interface IProps {
 }
 
 export function SearchHighlights({ matches }: IProps) {
-  const { data: playersData } = useGetPlayersQuery("");
+  const { data: playersData } = useGetPlayersQuery({});
 
   const matchTitles = matches?.map((m) => `${m.title} ${m.date}`) ?? [];
   return (
