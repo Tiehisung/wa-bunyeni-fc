@@ -11,3 +11,8 @@ export const symbols = {
     'dot-sm': '•',
     longDash: '–'
 }
+
+export const defaultPassword = {
+    raw: '1234',
+    hashed: "$2b$10$MljWFehL665sbEek7hWQue7Rrw9co.TG2CD4S7o4M5sS8j0dh8ELq"
+}

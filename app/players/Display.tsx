@@ -4,6 +4,7 @@ import Loader from "@/components/loaders/Loader";
 import { getAgeFromDOB } from "@/lib/timeAndDate";
 import { useGetPlayersQuery } from "@/services/player.endpoints";
 import Link from "next/link";
+import Image from 'next/image'
 
 export default function OurPlayers() {
   const { data, isLoading } = useGetPlayersQuery('');
@@ -21,7 +22,7 @@ export default function OurPlayers() {
 
             <div className="text-Blue text-2xl my-4">
               <Link
-                href={`/players/details?playerId=${player?._id}`}
+                href={`/players/${player?.slug||player?._id}`}
                 className="_link"
               >
                 {`${player?.lastName} ${player?.firstName}`}
@@ -36,7 +37,9 @@ export default function OurPlayers() {
             </h1>
 
             <div className="w-full min-w-60 h-80 aspect-5/3">
-              <img
+              <Image
+              width={400}
+              height={400}
                 alt={player?.lastName as string}
                 src={
                   (player?.featureMedia?.[0]?.secure_url as string) ||

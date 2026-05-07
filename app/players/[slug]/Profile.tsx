@@ -45,12 +45,12 @@ interface PageProps {
 }
 
 export default function PlayerProfile({   stats }: PageProps) {
-  const { playerSlug } = useParams();
+  const { slug } = useParams();
   const {
     data: playerData,
     isLoading,
     error,
-  } = useGetPlayerQuery((playerSlug as string) ?? "");
+  } = useGetPlayerQuery((slug as string) ?? "");
 
   const player = playerData?.data;
   const { data: galleriesData } = useGetGalleriesQuery(`tags=${player?._id}`, {
@@ -61,6 +61,7 @@ export default function PlayerProfile({   stats }: PageProps) {
   });
 
   const { images } = usePlayerGalleryUtils(galleriesData?.data);
+  
   const slides = images?.slice(0, 10)?.map((file) => (
     <div key={file?.public_id as string}>
       <Image
@@ -78,7 +79,7 @@ export default function PlayerProfile({   stats }: PageProps) {
     return <PageLoader />;
   }
 
-  if (!error && !isLoading) {
+  if (error && !isLoading) {
     return <DataErrorAlert message={error} />;
   }
 

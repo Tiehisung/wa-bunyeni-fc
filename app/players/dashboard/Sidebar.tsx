@@ -10,7 +10,6 @@ import {
   Users,
   AlertTriangle,
 } from "lucide-react";
-
 import { EPlayerFitness, IPlayer } from "@/types/player.interface";
 import { formatDate } from "@/lib/timeAndDate";
 import { Progress } from "@/components/ui/progress";
