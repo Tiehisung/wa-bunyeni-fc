@@ -81,8 +81,6 @@ export default async function PlayerProfilePage({ params }: IPageProps) {
   const slug = (await params).slug;
   const player: IQueryResponse<IPlayer> = await getPlayer(slug as string);
 
-  console.log(player?.data?.firstName);
-
   return (
     <>
       <main className="pl-2">
