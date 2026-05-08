@@ -136,7 +136,7 @@ export default function MainNavbar() {
         {/* Desktop Navigation Links (Optional) */}
         <div className="hidden lg:block border-t border-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-center space-x-8 h-10">
+            <div className="flex justify-center space-x-8 h-9">
               {navLinks.map((link) => {
                 return (
                   <Link

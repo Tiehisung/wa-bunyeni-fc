@@ -18,7 +18,7 @@ export function PlayerHeadList(  ) {
   }
 
   return (
-    <div className="fixed top-20 -left-2 z-10 flex items-center gap-4 flex-col border rounded-full p-1 bg-secondary/20 backdrop:blur-xs shadow-md max-h-[45vh] w-fit overflow-y-auto _hideScrollbar">
+    <div className="fixed top-24 -left-2 z-10 flex items-center gap-4 flex-col border rounded-full p-1 bg-secondary/20 backdrop:blur-xs shadow-md max-h-[45vh] w-fit overflow-y-auto _hideScrollbar">
       {otherPlayers?.map((player) => {
         const isSelected = slug === player?.slug;
 
