@@ -1,13 +1,5 @@
 "use client";
 
-import {
-  Radar,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  ResponsiveContainer,
-} from "recharts";
 import CardCarousel from "@/components/carousel/cards";
 import { usePlayerGalleryUtils } from "@/hooks/usePlayerGallery";
 import { IGallery } from "@/types/file.interface";
@@ -17,7 +9,6 @@ import GalleryGrid from "@/components/Gallery/GallaryGrid";
 import { IPlayerStats } from "@/types/stats";
 import { TEAM } from "@/data/team";
 import Link from "next/link";
-import useGetParam from "@/hooks/params";
 import { ResourceShare } from "@/components/SocialShare";
 import Image from "next/image";
 import {
@@ -28,23 +19,39 @@ import { useParams } from "next/navigation";
 import DataErrorAlert from "@/components/error/DataError";
 import PageLoader from "@/components/loaders/Page";
 import { useGetGalleriesQuery } from "@/services/gallery.endpoints";
+import { useState } from "react";
 
-const statsData = [
-  { stat: "PAS", value: 82 },
-  { stat: "SHT", value: 90 },
-  { stat: "PHY", value: 83 },
-  { stat: "DEF", value: 54 },
-  { stat: "SPD", value: 88 },
-  { stat: "DRI", value: 87 },
-];
+// Default placeholder image for fallbacks
+const DEFAULT_AVATAR = "/images/placeholder-player.png";
+const DEFAULT_GALLERY_IMAGE = "/images/placeholder-image.jpg";
 
 interface PageProps {
-   
   stats?: IPlayerStats;
 }
 
-export default function PlayerProfile({   stats }: PageProps) {
+// Helper function to safely get image URL
+const getSafeImageUrl = (url: string | undefined, fallback: string = DEFAULT_AVATAR): string => {
+  if (!url || url.trim() === "") {
+    return fallback;
+  }
+  return url;
+};
+
+// Helper for gallery images
+const getSafeGalleryImage = (file: any): { src: string; alt: string } => {
+  const src = file?.secure_url && file.secure_url.trim() !== "" 
+    ? file.secure_url 
+    : DEFAULT_GALLERY_IMAGE;
+  const alt = file?.description && file.description.trim() !== "" 
+    ? file.description 
+    : "Gallery image";
+  return { src, alt };
+};
+
+export default function PlayerProfile({ stats }: PageProps) {
   const { slug } = useParams();
+  const [mainImageError, setMainImageError] = useState(false);
+  
   const {
     data: playerData,
     isLoading,
@@ -52,7 +59,7 @@ export default function PlayerProfile({   stats }: PageProps) {
   } = useGetPlayerQuery((slug as string) ?? "");
 
   const player = playerData?.data;
-  const { data: galleriesData } = useGetGalleriesQuery({tags:player?._id}, {
+  const { data: galleriesData } = useGetGalleriesQuery({ tags: player?._id }, {
     skip: !player?._id,
   });
   const { data: statsData } = useGetPlayerStatsQuery(player?._id as string, {
@@ -61,18 +68,31 @@ export default function PlayerProfile({   stats }: PageProps) {
 
   const { images } = usePlayerGalleryUtils(galleriesData?.data);
   
-  const slides = images?.slice(0, 10)?.map((file) => (
-    <div key={file?.public_id as string}>
-      <Image
-        src={file?.secure_url as string}
-        alt={(file?.description as string) ?? "slide"}
-        className="w-full h-72 object-cover"
-        width={400}
-        height={400}
-      />
-      <p>{file?.description}</p>
-    </div>
-  ));
+  // Safe slides generation with error handling
+  const slides = images?.slice(0, 10)?.map((file) => {
+    const { src, alt } = getSafeGalleryImage(file);
+    return (
+      <div key={file?.public_id || Math.random()}>
+        <div className="relative w-full h-72">
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            className="object-cover rounded-lg"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            onError={(e) => {
+              // Fallback to placeholder on error
+              const target = e.target as HTMLImageElement;
+              target.src = DEFAULT_GALLERY_IMAGE;
+            }}
+          />
+        </div>
+        {file?.description && (
+          <p className="mt-2 text-sm text-muted-foreground">{file.description}</p>
+        )}
+      </div>
+    );
+  }) ?? [];
 
   if (isLoading) {
     return <PageLoader />;
@@ -89,6 +109,16 @@ export default function PlayerProfile({   stats }: PageProps) {
           stats.ratings.length
         ).toFixed(1)
       : "0";
+
+  // Safe player avatar URL
+  const playerAvatar = mainImageError 
+    ? DEFAULT_AVATAR 
+    : getSafeImageUrl(player?.avatar);
+
+  // Safe team logo URL
+  const teamLogo = TEAM?.logo && TEAM.logo.trim() !== "" 
+    ? TEAM.logo 
+    : DEFAULT_AVATAR;
 
   return (
     <main
@@ -121,34 +151,46 @@ export default function PlayerProfile({   stats }: PageProps) {
         <div className="flex-1">
           <div className="text-left mb-4 capitalize">
             <p className="bg-muted px-3 py-1 rounded-md text-xs w-fit">
-              {player?.position}
+              {player?.position || "Player"}
             </p>
             <h2 className="text-5xl font-bold mt-2">
-              {player?.lastName}{" "}
-              <span className="text-muted-foreground">{player?.firstName}</span>
+              {player?.lastName || "Unknown"}{" "}
+              <span className="text-muted-foreground">{player?.firstName || "Player"}</span>
             </h2>
           </div>
 
-          {/* Player video/image */}
-          <div className="rounded-xl overflow-hidden mb-6">
-            <img
-              src={player?.avatar as string}
-              alt={player?.lastName as string}
-              className="w-auto max-h-[60vh] object-cover"
-            />
+          {/* Player video/image - Fixed sizing */}
+          <div className="relative rounded-xl overflow-hidden mb-6 bg-gray-100 aspect-video">
+            {playerAvatar ? (
+              <Image
+                src={playerAvatar}
+                alt={player?.lastName || "Player avatar"}
+                fill
+                className="object-contain"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                priority
+                onError={() => setMainImageError(true)}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                <span className="text-gray-400">No image available</span>
+              </div>
+            )}
           </div>
 
           {/* Description */}
-          <div
-            className="_p mb-5 font-semibold"
-            dangerouslySetInnerHTML={{
-              __html: generatePlayerAbout(
-                player?.firstName ?? "",
-                player?.lastName ?? "",
-                player?.position,
-              ),
-            }}
-          />
+          {player && (
+            <div
+              className="_p mb-5 font-semibold"
+              dangerouslySetInnerHTML={{
+                __html: generatePlayerAbout(
+                  player?.firstName ?? "",
+                  player?.lastName ?? "",
+                  player?.position,
+                ),
+              }}
+            />
+          )}
 
           {/* Social Links */}
           <div className="flex gap-4 mt-6 text-muted-foreground">
@@ -166,7 +208,13 @@ export default function PlayerProfile({   stats }: PageProps) {
 
         {/* Right Section */}
         <div className="flex-1 relative">
-          <CardCarousel cards={slides} effect="flip" />
+          {slides && slides.length > 0 ? (
+            <CardCarousel cards={slides} effect="flip" />
+          ) : (
+            <div className="w-full h-72 bg-gray-100 rounded-lg flex items-center justify-center">
+              <p className="text-muted-foreground">No gallery images available</p>
+            </div>
+          )}
 
           {/* Trophies */}
           <div className="w-fit my-3">
@@ -236,11 +284,19 @@ export default function PlayerProfile({   stats }: PageProps) {
           {/* Product / Shirt */}
           <div className="mt-8 flex justify-end" id="sponsor">
             <div className="bg-linear-to-r from-purple-600 to-indigo-500 rounded-xl p-4 flex items-center gap-4 shadow-lg">
-              <img
-                src={TEAM.logo}
-                alt={player?.training?.team as string}
-                className="w-20"
-              />
+              <div className="relative w-20 h-20">
+                <Image
+                  src={teamLogo}
+                  alt={player?.training?.team || "Team logo"}
+                  fill
+                  className="object-contain"
+                  sizes="80px"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = DEFAULT_AVATAR;
+                  }}
+                />
+              </div>
               <div>
                 <p className="text-sm font-semibold">
                   Sponsor <strong>Me</strong>
@@ -251,28 +307,12 @@ export default function PlayerProfile({   stats }: PageProps) {
           </div>
 
           <ResourceShare
-            title={`${player?.firstName} ${player?.lastName}`}
-            text={`Check out ${player?.firstName} ${player?.lastName} from Bunyeni FC!`}
+            title={`${player?.firstName || ""} ${player?.lastName || ""}`}
+            text={`Check out ${player?.firstName || ""} ${player?.lastName || ""} from Bunyeni FC!`}
           />
         </div>
 
         {/* Radar Chart */}
-      </section>
-
-      <section className="h-64 w-full flex justify-center">
-        <ResponsiveContainer width="100%" height="100%">
-          <RadarChart data={statsData as any}>
-            <PolarGrid stroke="#333" />
-            <PolarAngleAxis dataKey="stat" tick={{ fontSize: 12 }} />
-            <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} />
-            <Radar
-              dataKey="value"
-              stroke="#9b5cff"
-              fill="#9b5cff"
-              fillOpacity={0.4}
-            />
-          </RadarChart>
-        </ResponsiveContainer>
       </section>
 
       <section>
