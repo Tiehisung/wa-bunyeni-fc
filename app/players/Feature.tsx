@@ -28,7 +28,7 @@ export function FeaturedPlayers() {
   }
 
   return (
-    <section className="_page flex flex-wrap gap-4 items-start justify-center">
+    <section className=" flex flex-wrap gap-4 items-start justify-center">
       {featuredPlayers?.map((player, index) => {
         const name = `${player?.firstName} ${player?.lastName}`;
         return (
