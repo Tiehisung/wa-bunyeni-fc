@@ -6,7 +6,6 @@ import Loader from "@/components/loaders/Loader";
 import { useGetGalleriesQuery } from "@/services/gallery.endpoints";
 import { useGetPlayerQuery } from "@/services/player.endpoints";
 import DataErrorAlert from "@/components/error/DataError";
-import useGetParam from "@/hooks/params";
 import { useSession } from "next-auth/react";
 
 const PlayerGalleriesPage = () => {
@@ -14,13 +13,11 @@ const PlayerGalleriesPage = () => {
  
   const user=session?.user
 
-  const playerId = useGetParam("playerId");
-
   const { data: playerData, isLoading: playerLoading } = useGetPlayerQuery(
     user?.email || "",
   );
 
-  const tags = [playerId as string, user?.name].filter(Boolean).join(",");
+  const tags = [playerData?.data?._id as string, user?.name,user?._id].filter(Boolean).join(",");
 
   const {
     data: galleriesData,
@@ -28,7 +25,7 @@ const PlayerGalleriesPage = () => {
     error,
     refetch,
     isFetching,
-  } = useGetGalleriesQuery({});
+  } = useGetGalleriesQuery({tags});
 
   const isLoading = playerLoading || galleriesLoading;
   const player = playerData?.data;
