@@ -11,6 +11,8 @@ import { slugify } from '@/lib/slugging';
 import { formatDate } from '@/lib/timeAndDate';
 import { getApiErrorMessage } from '../../../lib/error-api';
 import '@/shared/models.imports'
+import { authorizeOrResponse } from '../auth/authorization';
+import { EUserRole } from '@/types/user';
 
 connectDB();
 
@@ -96,12 +98,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await auth();
 
-    if (!session) {
-      return NextResponse.json({
-        success: false,
-        message: 'Unauthorized',
-      }, { status: 401 });
-    }
+  authorizeOrResponse(session?.user?.role, [EUserRole.ADMIN,EUserRole.COACH],);
 
     const formdata: IPostMatch = await request.json();
     const slug = slugify(`${formdata.title}-${formdata.date}`, false);
@@ -109,7 +106,7 @@ export async function POST(request: NextRequest) {
     const saved = await MatchModel.create({
       ...formdata,
       slug,
-      createdBy: session.user?._id
+      createdBy: session?.user
     });
 
     await logAction({

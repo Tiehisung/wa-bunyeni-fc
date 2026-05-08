@@ -9,7 +9,7 @@ import { useGetPlayersQuery } from "@/services/player.endpoints";
 export function PlayerHeadList(  ) {
   const { slug } = useParams();
 
-  const { data: playersData, isLoading } = useGetPlayersQuery("");
+  const { data: playersData, isLoading } = useGetPlayersQuery({});
 
   const otherPlayers = playersData?.data?.filter((p) => p?.slug !== slug);
 
@@ -24,7 +24,7 @@ export function PlayerHeadList(  ) {
 
         return (
           <Link
-            href={`/players/${player?.slug}`}
+            href={`/players/${player?.slug||player?._id}`}
             key={player?._id}
             title={`${player?.lastName?.[0]}. ${player?.firstName}`}
             className={

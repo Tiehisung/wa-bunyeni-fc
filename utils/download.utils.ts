@@ -1,6 +1,6 @@
 // utils/download.ts
 
-import { IFileProps, IGallery } from '@/types/file.interface';
+import { IGallery } from '@/types/file.interface';
 
 export interface DownloadItem {
     url: string;

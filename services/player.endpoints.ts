@@ -9,7 +9,7 @@ const playerApi = api.injectEndpoints({
     endpoints: (builder) => ({
 
         getPlayers: builder.query<IQueryResponse<IPlayer[]>, IQueryParams>({
-            query: (params) => ({url:`/players`,params}),
+            query: (params = {}) => ({url:`/players`,params}),
             providesTags: ["Players"],
         }),
         getPlayer: builder.query<IQueryResponse<IPlayer>, string>({

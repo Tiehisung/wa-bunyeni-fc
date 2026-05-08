@@ -61,7 +61,7 @@ const SquadForm = ({ defaultMatch, onSuccess }: IProps) => {
   );
   const existingSquad = squadData?.data;
 
-  const { data: playersData } = useGetPlayersQuery("");
+  const { data: playersData } = useGetPlayersQuery({});
   const players = playersData?.data || [];
 
   const [createSquad, { isLoading: isCreating }] = useCreateSquadMutation();

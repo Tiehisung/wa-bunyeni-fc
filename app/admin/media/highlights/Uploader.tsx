@@ -57,7 +57,7 @@ export function HighlightUpload({
     useCreateHighlightMutation();
 
   const { data: playersData, isLoading: playersLoading } =
-    useGetPlayersQuery("");
+    useGetPlayersQuery({});
 
   const {
     control,

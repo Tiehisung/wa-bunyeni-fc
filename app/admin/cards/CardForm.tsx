@@ -40,7 +40,7 @@ interface IProps {
 export function CardForm({ match, card, player: defaultPlayer }: IProps) {
   // Fetch players
   const { data: playersData, isLoading: isLoadingPlayers } =
-    useGetPlayersQuery("");
+    useGetPlayersQuery({});
 
   // Fetch matches
   const { data: matchesData, isLoading: isLoadingMatches } = useGetMatchesQuery(

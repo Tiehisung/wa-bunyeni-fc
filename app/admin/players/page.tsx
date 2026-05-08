@@ -12,16 +12,17 @@ import { H } from "@/components/Element";
 import { Separator } from "@/components/ui/separator";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { sParamsToObject } from "@/lib/searchParams";
 
 export default function AdminPlayers() {
   const searchParams = useSearchParams();
-  const paramsString = searchParams.toString();
+  
 
   const {
     data: playersData,
     isLoading: playersLoading,
     error: playersError,
-  } = useGetPlayersQuery(paramsString);
+  } = useGetPlayersQuery(sParamsToObject(searchParams));
 
   const isLoading = playersLoading;
   const players = playersData;

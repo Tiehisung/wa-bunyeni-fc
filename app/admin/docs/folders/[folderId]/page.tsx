@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 
 export default function FolderPage() {
   // Fetch players for tagging
-  const { data: players } = useGetPlayersQuery("");
+  const { data: players } = useGetPlayersQuery({});
   const { folderId } = useParams<{ folderId: string }>();
 
   const { data: folder } = useGetFolderByIdQuery(folderId as string);
