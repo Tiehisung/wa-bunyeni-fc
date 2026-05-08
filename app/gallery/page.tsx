@@ -10,16 +10,17 @@ import Loader from "@/components/loaders/Loader";
 import { useGetGalleriesQuery } from "@/services/gallery.endpoints";
 import { useSearchParams } from "next/navigation";
 import DataErrorAlert from "@/components/error/DataError";
+import { sParamsToObject } from "@/lib/searchParams";
 
 const GalleryPage = () => {
   const searchParams = useSearchParams();
-  const paramsString = searchParams.toString();
+ 
 
   const {
     data: galleries,
     isLoading: galleriesLoading,
     error: galleriesError,
-  } = useGetGalleriesQuery(paramsString, {});
+  } = useGetGalleriesQuery(sParamsToObject(searchParams), {});
 
   const isLoading = galleriesLoading;
 

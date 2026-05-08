@@ -32,7 +32,7 @@ export const MatchHighlights = ({
 
   // Fetch highlights if not provided via props
   const { data: fetchedHighlights, isLoading } = useGetHighlightsQuery(
-    matchId ? `?matchId=${matchId}` : undefined,
+    {matchId:matchId ? `${matchId}` : undefined},
     { skip: !!propHighlights },
   );
 

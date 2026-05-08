@@ -12,6 +12,8 @@ import { formatDate } from '@/lib/timeAndDate';
 import { slugIdFilters } from '../../../../lib/slug';
 import { getApiErrorMessage } from '../../../../lib/error-api';
 import '@/shared/models.imports'
+import { authorizeOrResponse } from '../../auth/authorization';
+import { EUserRole } from '@/types/user';
 connectDB();
 
 // GET /api/matches/[slug] - Get single match by slug or ID
@@ -59,12 +61,7 @@ export async function PUT(
         const slug =(await params).slug
         const session = await auth();
 
-        if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
-            return NextResponse.json({
-                success: false,
-                message: 'Unauthorized',
-            }, { status: 401 });
-        }
+         authorizeOrResponse(session?.user?.role, [EUserRole.ADMIN,EUserRole.COACH],);
 
         const filter = slugIdFilters(slug);
         const body = await request.json();
@@ -72,7 +69,7 @@ export async function PUT(
 
         const updated = await MatchModel.findOneAndUpdate(
             filter,
-            { $set: { ...body, updatedAt: new Date() } },
+            { $set: { ...body, } },
             { new: true, runValidators: true }
         ).populate('opponent').populate('goals').populate('squad');
 
@@ -115,12 +112,7 @@ export async function PATCH(
         const slug =(await params).slug
         const session = await auth();
 
-        if (!session || !['admin', 'super_admin', 'coach'].includes(session.user?.role || '')) {
-            return NextResponse.json({
-                success: false,
-                message: 'Unauthorized',
-            }, { status: 401 });
-        }
+         authorizeOrResponse(session?.user?.role, [EUserRole.ADMIN,EUserRole.COACH],);
 
         const filter = slugIdFilters(slug);
         const updates = await request.json();
@@ -167,12 +159,7 @@ export async function DELETE(
         const slug =(await params).slug
         const session = await auth();
 
-        if (!session || !['admin', 'super_admin'].includes(session.user?.role || '')) {
-            return NextResponse.json({
-                success: false,
-                message: 'Unauthorized',
-            }, { status: 401 });
-        }
+    authorizeOrResponse(session?.user?.role, [EUserRole.ADMIN,EUserRole.COACH],);
 
         const filter = slugIdFilters(slug);
         const deleted = await MatchModel.findOneAndDelete(filter);

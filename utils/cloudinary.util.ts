@@ -10,12 +10,14 @@ export const getOptimizedUrl = (publicId: string, options?: any) => {
         ...options
     });
 };
+
 interface IThumbnailOptions {
     resourceType: 'image' | 'video';
     width?: number;
     height?: number;
     crop?: string;
 }
+
 /**
  * Generate an optimized Cloudinary thumbnail URL for an image or video.
  *

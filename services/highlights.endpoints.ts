@@ -1,5 +1,5 @@
 // services/highlights.endpoints.ts
-import type { IQueryResponse } from "@/types";
+import type { IQueryParams, IQueryResponse } from "@/types";
 import { api } from "./api";
 import { IMatchHighlight } from "@/types/match.interface";
 
@@ -7,8 +7,8 @@ const highlightsApi = api.injectEndpoints({
     endpoints: (builder) => ({
 
         // Get all highlights with optional pagination/filtering
-        getHighlights: builder.query<IQueryResponse<IMatchHighlight[]>, string | void>({
-            query: (queryString = "") => `/highlights?${queryString}`,
+        getHighlights: builder.query<IQueryResponse<IMatchHighlight[]>, IQueryParams>({
+            query: (params = {}) => ({url:`/highlights`,params}),
             providesTags: ["Highlights"],
         }),
 

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { sParamsToObject } from "@/lib/searchParams";
 import { useGetPlayersQuery } from "@/services/player.endpoints";
 import { IPlayer } from "@/types/player.interface";
 import { Search, User } from "lucide-react";
@@ -28,7 +29,7 @@ export function PlayerDisplayPanel({
 
   // Fetch players using RTK Query
   const { data: playersData, isLoading } = useGetPlayersQuery(
-    searchParams.toString(),
+    sParamsToObject(searchParams),
   );
   const players = defaultPlayers ?? playersData?.data ?? [];
 

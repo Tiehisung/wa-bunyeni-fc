@@ -22,7 +22,6 @@ import {
   useDeletePlayerMutation,
   useGetPlayerQuery,
 } from "@/services/player.endpoints";
-import { buildQueryString } from "@/lib/searchParams";
 import { IPlayer } from "@/types/player.interface";
 import { useParams, useRouter } from "next/navigation";
 import { H } from "@/components/Element";
@@ -36,9 +35,9 @@ export default function PlayerProfilePage() {
     playerSlug?.toString() || "",
   );
   const { data: galleriesData } = useGetGalleriesQuery(
-    `?tags=${playerData?.data?._id}`,
+    {tags:playerData?.data?._id},
   );
-  const { data: playersData } = useGetPlayersQuery(buildQueryString());
+  const { data: playersData } = useGetPlayersQuery({});
 
   const [updatePlayer] = useUpdatePlayerMutation();
   const [deletePlayer] = useDeletePlayerMutation();

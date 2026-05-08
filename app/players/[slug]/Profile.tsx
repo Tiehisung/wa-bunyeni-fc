@@ -8,7 +8,6 @@ import {
   PolarRadiusAxis,
   ResponsiveContainer,
 } from "recharts";
-import { IPlayer } from "@/types/player.interface";
 import CardCarousel from "@/components/carousel/cards";
 import { usePlayerGalleryUtils } from "@/hooks/usePlayerGallery";
 import { IGallery } from "@/types/file.interface";
@@ -53,7 +52,7 @@ export default function PlayerProfile({   stats }: PageProps) {
   } = useGetPlayerQuery((slug as string) ?? "");
 
   const player = playerData?.data;
-  const { data: galleriesData } = useGetGalleriesQuery(`tags=${player?._id}`, {
+  const { data: galleriesData } = useGetGalleriesQuery({tags:player?._id}, {
     skip: !player?._id,
   });
   const { data: statsData } = useGetPlayerStatsQuery(player?._id as string, {

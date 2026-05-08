@@ -27,7 +27,7 @@ interface ScoreEventsTabProps {
 }
 
 export function ScoreEventsTab({ match }: ScoreEventsTabProps) {
-  const { data: playersData } = useGetPlayersQuery("");
+  const { data: playersData } = useGetPlayersQuery({});
 
   const players = playersData?.data || [];
   const [addGoal, { isLoading }] = useCreateGoalMutation();

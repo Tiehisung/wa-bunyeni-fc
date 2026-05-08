@@ -19,7 +19,7 @@ export default function LiveMatchPage() {
   } = useGetLiveMatchQuery({});
 
   const { data: playersData, isLoading: playersLoading } =
-    useGetPlayersQuery("");
+    useGetPlayersQuery({});
 
   const isLoading = matchLoading || playersLoading;
   const match = matchData;

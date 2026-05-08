@@ -7,7 +7,7 @@ import Loader from "@/components/loaders/Loader";
 import DataErrorAlert from "@/components/error/DataError";
 
 export function FeaturedPlayers() {
-  const { data: playersData, isLoading, error } = useGetPlayersQuery("");
+  const { data: playersData, isLoading, error } = useGetPlayersQuery({});
   const players = playersData;
 
   if (isLoading) {
@@ -28,7 +28,7 @@ export function FeaturedPlayers() {
   }
 
   return (
-    <section className="_page flex flex-wrap gap-4 items-start justify-center">
+    <section className=" flex flex-wrap gap-4 items-start justify-center">
       {featuredPlayers?.map((player, index) => {
         const name = `${player?.firstName} ${player?.lastName}`;
         return (

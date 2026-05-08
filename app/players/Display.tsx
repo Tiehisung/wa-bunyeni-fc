@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from 'next/image'
 
 export default function OurPlayers() {
-  const { data, isLoading } = useGetPlayersQuery('');
+  const { data, isLoading } = useGetPlayersQuery({});
 
   if (isLoading) return <Loader />;
 
@@ -45,7 +45,7 @@ export default function OurPlayers() {
                   (player?.featureMedia?.[0]?.secure_url as string) ||
                   player?.avatar
                 }
-                className="w-full min-w-60 h-full bg-cover object-cover"
+                className="w-full h-full bg-cover object-cover"
               />
             </div>
             <div
