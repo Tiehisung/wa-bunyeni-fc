@@ -45,7 +45,7 @@ export function MVPForm({
 }: IProps) {
   // Fetch players
   const { data: playersData, isLoading: isLoadingPlayers } =
-    useGetPlayersQuery("");
+    useGetPlayersQuery({});
 
   // Fetch matches
   const { data: matchesData, isLoading: isLoadingMatches } = useGetMatchesQuery(

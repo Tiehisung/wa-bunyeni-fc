@@ -28,7 +28,7 @@ export function PlayerDisplayPanel({
 
   // Fetch players using RTK Query
   const { data: playersData, isLoading } = useGetPlayersQuery(
-    searchParams.toString(),
+    { },
   );
   const players = defaultPlayers ?? playersData?.data ?? [];
 

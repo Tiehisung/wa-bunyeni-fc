@@ -1,4 +1,4 @@
-import type { IQueryResponse } from "@/types";
+import type { IQueryParams, IQueryResponse } from "@/types";
 import { api } from "./api";
 import type { IPlayer,   } from "@/types/player.interface";
 import { IPlayersStats, IPlayerStats } from "@/types/stats";
@@ -8,8 +8,8 @@ import { IPostPlayer } from "@/app/admin/players/new/NewSigningForms";
 const playerApi = api.injectEndpoints({
     endpoints: (builder) => ({
 
-        getPlayers: builder.query<IQueryResponse<IPlayer[]>, string>({
-            query: (paramsString = '') => `/players?${paramsString}`,
+        getPlayers: builder.query<IQueryResponse<IPlayer[]>, IQueryParams>({
+            query: (params) => ({url:`/players`,params}),
             providesTags: ["Players"],
         }),
         getPlayer: builder.query<IQueryResponse<IPlayer>, string>({
