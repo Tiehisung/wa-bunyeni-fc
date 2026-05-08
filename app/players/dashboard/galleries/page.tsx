@@ -2,17 +2,18 @@
 
 import { PlayerGalleriesClient } from "./Galleries";
 import HEADER from "@/components/Element";
- 
 import Loader from "@/components/loaders/Loader";
 import { useGetGalleriesQuery } from "@/services/gallery.endpoints";
 import { useGetPlayerQuery } from "@/services/player.endpoints";
-import { useAppSelector } from "@/store/hooks/store";
 import DataErrorAlert from "@/components/error/DataError";
 import useGetParam from "@/hooks/params";
+import { useSession } from "next-auth/react";
 
 const PlayerGalleriesPage = () => {
-  const { user } = useAppSelector((s) => s.auth);
+  const { data:session } = useSession()
  
+  const user=session?.user
+
   const playerId = useGetParam("playerId");
 
   const { data: playerData, isLoading: playerLoading } = useGetPlayerQuery(
@@ -20,9 +21,6 @@ const PlayerGalleriesPage = () => {
   );
 
   const tags = [playerId as string, user?.name].filter(Boolean).join(",");
-  const queryString = `tags=${tags}`;
-
-  console.log(queryString);
 
   const {
     data: galleriesData,
