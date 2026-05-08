@@ -16,7 +16,7 @@ export default function OurPlayers() {
   if (isLoading) return <Loader />;
 
   const players = data?.data;
-  
+
   const handleImageError = (playerId: string) => {
     setFailedImages(prev => ({ ...prev, [playerId]: true }));
   };
@@ -25,7 +25,7 @@ export default function OurPlayers() {
     if (failedImages[player._id]) return DEFAULT_AVATAR;
     return (player?.featureMedia?.[0]?.secure_url || player?.avatar || DEFAULT_AVATAR);
   };
-  
+
   return (
     <div className="py-6">
       <ul className="space-y-5">
@@ -50,24 +50,28 @@ export default function OurPlayers() {
             </h1>
 
             {/* Fixed Image Container */}
-            <div className="relative w-full max-w-2xl h-80 md:h-96 lg:h-[400px] overflow-hidden rounded-lg bg-gray-100">
-              <Image
-                src={getImageSrc(player)}
-                alt={player?.lastName || "Player image"}
-                fill
-                className="object-contain"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
-                priority={false}
-                onError={() => handleImageError(player._id)}
-              />
-            </div>
+            <section className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8">
+              {/* Image Container - Fixed width on desktop, full on mobile */}
+              <div className="relative w-full md:w-80 lg:w-96 h-80 md:h-96 lg:h-[400px] flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                <Image
+                  src={getImageSrc(player)}
+                  alt={player?.lastName || "Player image"}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 100vw, 400px"
+                  priority={false}
+                  onError={() => handleImageError(player._id)}
+                />
+              </div>
 
-            <div
-              dangerouslySetInnerHTML={{
-                __html: (player?.description ?? player?.about) as string,
-              }}
-              className="mt-6"
-            />
+              {/* Description Content - Takes remaining space */}
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: (player?.description ?? player?.about) as string,
+                }}
+                className="flex-1 mt-0 prose prose-sm max-w-none"
+              />
+            </section>
           </li>
         ))}
       </ul>
