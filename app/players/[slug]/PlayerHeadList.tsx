@@ -24,7 +24,7 @@ export function PlayerHeadList(  ) {
 
         return (
           <Link
-            href={`/players/${player?.slug}`}
+            href={`/players/${player?.slug||player?._id}`}
             key={player?._id}
             title={`${player?.lastName?.[0]}. ${player?.firstName}`}
             className={
