@@ -7,8 +7,7 @@ import { ENV } from "@/lib/env";
 import { shortText } from "@/lib";
 import { IPageProps, IQueryResponse } from "@/types";
 import { baseApiUrl } from "@/lib/configs";
-import {   stripHTML } from "@/lib/dom";
-
+import { stripHTML } from "@/lib/dom";
 
 export const getNewsItem = async (slug: string) => {
   try {
@@ -61,6 +60,7 @@ export async function generateMetadata({
         height: 630,
         alt: article?.headline?.text,
       })) || [];
+  console.log({ image }, otherImages);
   return {
     title,
     description,

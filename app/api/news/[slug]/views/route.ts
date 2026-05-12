@@ -23,8 +23,6 @@ export async function PATCH(
     const { slug } = await params;
     const filter = slugIdFilters(slug);
 
-    console.log("@views", slug);
-
     const visitorId = await getOrCreateVisitorId();
 
     const news = await NewsModel.findOne(filter);
