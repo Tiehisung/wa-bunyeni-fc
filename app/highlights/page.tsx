@@ -38,7 +38,7 @@ export default function MatchHighlightsPage() {
     );
   }
 
-  if (highlightsError) {
+  if (highlightsError&& !highlights) {
     return <DataErrorAlert message={highlightsError} />;
   }
 

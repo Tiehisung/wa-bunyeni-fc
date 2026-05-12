@@ -1,6 +1,6 @@
 'use client'
 
-import { markupToPlainText } from "@/lib/dom";
+import { stripHTML } from "@/lib/dom";
 import NewsCard from "./NewsCard";
 import { useGetLatestNewsQuery,  } from "@/services/news.endpoints";
 import { H } from "@/components/Element";
@@ -23,7 +23,7 @@ export function LatestNews() {
     );
   }
 
-  if (error || !news?.data?.length) {
+  if (error || !news?.data) {
     return (
       <div>
         <H>LATEST NEWS</H>
@@ -41,7 +41,7 @@ export function LatestNews() {
             key={item?._id}
             id={item?.slug}
             title={item?.headline?.text}
-            summary={markupToPlainText(
+            summary={stripHTML(
               item?.details?.find((d) => d.text)?.text as string,
             )}
             image={item?.headline?.image}
