@@ -29,10 +29,13 @@ import { PrimaryDropdown } from "@/components/Dropdown";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import Loader from "@/components/loaders/Loader";
 import { StackModal } from "@/components/modals/StackModal";
+import { useParams } from "next/navigation";
 
 export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
   const { data: session } = useSession();
   const user = session?.user as IMiniUser;
+
+  const slug = useParams().slug || newsItem?._id;
 
   const [updateViews] = useUpdateNewsViewsMutation();
 
@@ -42,7 +45,7 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
 
   // Record view on mount
   useEffect(() => {
-    updateViews(newsItem?._id as string);
+    updateViews(slug as string);
   }, []);
 
   const { visitorId } = useVisitor();
@@ -90,7 +93,7 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
               className="font-light text-xs text-foreground"
               onClick={() => toggleClick("likes-trigger")}
             >
-              {newsItem?.stats?.likeCount?newsItem?.stats?.likeCount : ""}
+              {newsItem?.stats?.likeCount ? newsItem?.stats?.likeCount : ""}
             </span>
           </Button>
         </li>
@@ -205,7 +208,7 @@ const CommentRow = ({
   };
   return (
     <li className="flex items-start gap-5 pb-6  ">
-      <AVATAR src={com?.user?.avatar as string} alt={com?.user?.name}  border/>
+      <AVATAR src={com?.user?.avatar as string} alt={com?.user?.name} border />
       <section>
         <header className="flex items-start gap-6 ">
           <div className="flex items-center gap-0.5">
