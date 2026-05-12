@@ -1,4 +1,4 @@
- 
+
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -57,7 +57,7 @@ export default async function TeamsPage({ searchParams }: TeamsPageProps) {
   // Filter out the main team if needed (optional)
   const opponentTeams = teams?.filter((team) => team.name !== ENV.TEAM_NAME);
 
-  if (!teams?.length) {
+  if (teams?.length == 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -108,9 +108,9 @@ export default async function TeamsPage({ searchParams }: TeamsPageProps) {
 }
 
 // Team Card Component
-export async function TeamCard({ team }: { team: ITeam }) {  
-  const session=await auth()
-  const isAdmin =session?.user?.role?.includes('admin')
+export async function TeamCard({ team }: { team: ITeam }) {
+  const session = await auth()
+  const isAdmin = session?.user?.role?.includes('admin')
   return (
     <Link href={`/teams/${team._id}`}>
       <GlassmorphicGradient className="group bg-card rounded-xl border hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer">
