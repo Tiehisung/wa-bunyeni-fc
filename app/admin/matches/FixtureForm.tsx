@@ -2,7 +2,7 @@
 
 import { logos } from "@/assets/images";
 import { Button } from "@/components/buttons/Button";
-import { DateTimeInput } from "@/components/input/Inputs";
+import { DateTimeInput, Input } from "@/components/input/Inputs";
 import RadioButtons from "@/components/input/Radio";
 import ContentShowcaseWrapper from "@/components/ShowcaseWrapper";
 import {
@@ -15,7 +15,7 @@ import {
 import { fireEscape } from "@/hooks/Esc";
 import { ISelectOptionLV } from "@/types";
 import { useState } from "react";
-import { IMatch } from "@/types/match.interface";
+import { EMatchCategory, IMatch } from "@/types/match.interface";
 import {
   useCreateMatchMutation,
   useUpdateMatchMutation,
@@ -29,8 +29,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { useGetTeamsQuery } from "@/services/team.endpoints";
-import { COMBOBOX } from "@/components/ComboBox";
 import { useSession } from "next-auth/react";
+import SELECT from "@/components/select/Select";
+import { enumToOptions } from "@/lib/select";
 
 // Zod schema for form validation
 
@@ -41,9 +42,10 @@ enum EMatchType {
 
 const matchFormSchema = z.object({
   matchType: z.enum([EMatchType.HOME, EMatchType.AWAY]),
-  opponentId: z.string().min(1, "Please select an opponent team"),
-  date: z.string().min(1, "Match date is required"),
-  time: z.string().min(1, "Match time is required"),
+  category: z.enum(EMatchCategory),
+  opponentId: z.string().min(11, "Please select an opponent team"),
+  date: z.string().min(6, "Match date is required"),
+  time: z.string().min(4, "Match time is required"),
   fixtureFlier: z.string().optional(),
 });
 
@@ -78,7 +80,7 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     reset,
   } = useForm<MatchFormData>({
     resolver: zodResolver(matchFormSchema),
@@ -92,27 +94,28 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
       date: isUpdateMode ? fixture?.date?.split("T")?.[0] : "",
       time: isUpdateMode ? fixture?.time : "",
       fixtureFlier: isUpdateMode ? fixture?.fixtureFlier : "",
+      category: isUpdateMode ? fixture?.category : EMatchCategory.U13,
     },
   });
 
   const onSubmit = async (data: MatchFormData) => {
     setWaiting(true);
 
+    console.log(data)
+
     const opponentTeam = teamsData?.data?.find(
       (t) => t._id === data.opponentId,
     );
 
     const matchData = {
-      date: data.date,
-      time: data.time,
+      ...(isUpdateMode && fixture && { ...fixture }),
+      ...data,
       isHome: data.matchType === EMatchType.HOME,
       opponent: opponentTeam || null,
       title:
         data.matchType === EMatchType.HOME
           ? `${TEAM.name} VS ${opponentTeam?.name}`
           : `${opponentTeam?.name} VS ${TEAM.name}`,
-      fixtureFlier: data.fixtureFlier,
-      ...(isUpdateMode && fixture && { ...fixture }),
     } as Partial<IMatch>;
 
     try {
@@ -129,6 +132,7 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
             date: "",
             time: "",
             fixtureFlier: "",
+            category: EMatchCategory.U13,
           });
         }
       }
@@ -159,29 +163,21 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
           <CardContent className="max-w-xl sm:min-w-sm">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Opponent Selection */}
-              <div>
-                <label className="_label mb-2 block text-sm font-medium">
-                  Select Opponent Team *
-                </label>
-                <Controller
-                  name="opponentId"
-                  control={control}
-                  render={({ field }) => (
-                    <COMBOBOX
-                      options={teamOptions}
-                      onChange={(option: any) => field.onChange(option?.value)}
-                      className="bg-popover rounded w-full"
-                      defaultOptionValue={field.value}
-                      placeholder="Choose opponent..."
-                    />
-                  )}
-                />
-                {errors.opponentId && (
-                  <p className="text-sm text-red-600 mt-1">
-                    {errors.opponentId.message}
-                  </p>
+              <Controller
+                name="opponentId"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <SELECT
+                    label="Select Opponent Team *"
+                    options={teamOptions}
+                    {...field}
+                    onChange={field.onChange}
+                    className="bg-popover rounded w-full"
+                    placeholder="Choose opponent..."
+                    error={fieldState.error?.message}
+                  />
                 )}
-              </div>
+              />
 
               {/* Match Type Radio */}
               <Controller
@@ -202,66 +198,80 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
                   {errors.matchType.message}
                 </p>
               )}
-
+              <Controller
+                name="category"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <SELECT
+                    label="Category"
+                    options={enumToOptions(EMatchCategory)}
+                    {...field}
+                    onChange={field.onChange}
+                    error={fieldState.error?.message}
+                  />
+                )}
+              />
               {/* Date Input */}
-              <Controller
-                name="date"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <DateTimeInput
-                    name="match-date"
-                    onChange={field.onChange}
-                    type="date"
-                    required
-                    value={field.value}
-                    label="Date Of Play *"
-                    error={fieldState.error?.message}
-                  />
-                )}
-              />
-
-              {/* Time Input */}
-              <Controller
-                name="time"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <DateTimeInput
-                    name="match-time"
-                    onChange={field.onChange}
-                    type="time"
-                    required
-                    label="Time Of Play *"
-                    value={field.value}
-                    error={fieldState.error?.message}
-                  />
-                )}
-              />
-
-              {/* Image Upload */}
               <div>
-                <label className="_label mb-2 block text-sm font-medium text-gray-700">
-                  Fixture Flier (Optional)
+                <label className="_label mb-2 block text-sm font-medium ">
+                  Date Of Play *
                 </label>
                 <Controller
-                  name="fixtureFlier"
+                  name="date"
                   control={control}
-                  render={({ field }) => (
-                    <ImageUploader
-                      onUpload={field.onChange}
-                      folder="/fliers"
-                      initialImage={field.value}
-                      aspectRatio="square"
-                      maxSize={5}
+                  render={({ field, fieldState }) => (
+                    <Input
+                      name="match-date"
+                      onChange={field.onChange}
+                      type="date"
+                      value={field.value}
+                      label=""
+                      error={fieldState.error?.message}
+                    />
+                  )}
+                />
+              </div>
+              <div>
+                <label className="_label mb-2 block text-sm font-medium ">
+                  Kick-off Time *
+                </label>
+                <Controller
+                  name="time"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <Input
+                      name="match-time"
+                      onChange={field.onChange}
+                      type="time"
+                      value={field.value}
+                      label=""
+                      error={fieldState.error?.message}
                     />
                   )}
                 />
               </div>
 
+              {/* Image Upload */}
+
+              <Controller
+                name="fixtureFlier"
+                control={control}
+                render={({ field }) => (
+                  <ImageUploader
+                    label="Fixture Flier (Optional)"
+                    onUpload={field.onChange}
+                    folder="/fliers"
+                    initialImage={field.value}
+                    aspectRatio="square"
+                    maxSize={5}
+                  />
+                )}
+              />
               {/* Submit Button */}
               <Button
                 type="submit"
                 waiting={waiting}
-                disabled={waiting || !isValid || isLocked}
+                disabled={waiting || isLocked}
                 waitingText={isUpdateMode ? "Updating..." : "Saving..."}
                 primaryText={isUpdateMode ? "Update Fixture" : "Save Fixture"}
                 className=" px-3 py-2 w-full justify-center"
