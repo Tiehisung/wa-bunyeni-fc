@@ -4,7 +4,7 @@ import { Button } from "@/components/buttons/Button";
 import QuillEditor from "@/components/editor/Quill";
 import { fireEscape } from "@/hooks/Esc";
 import { useUpdateSearchParams } from "@/hooks/params";
-import { markupToPlainText, toggleClick } from "@/lib/dom";
+import { stripHTML } from "@/lib/dom";
 import {
   useAddNewsCommentMutation,
   useEditNewsCommentMutation,
@@ -19,12 +19,11 @@ interface Props {
 }
 
 const CommentForm = ({ newsId, existingComment }: Props) => {
-const {clearParams}=useUpdateSearchParams()
-  console.log(existingComment);
+  const { clearParams } = useUpdateSearchParams();
+
   const [comment, setComment] = useState(existingComment?.comment || "");
 
-  const [addComment, { isLoading: isCommenting }] =
-    useAddNewsCommentMutation();
+  const [addComment, { isLoading: isCommenting }] = useAddNewsCommentMutation();
 
   const [editComment, { isLoading: editing }] = useEditNewsCommentMutation();
 
@@ -85,7 +84,7 @@ const {clearParams}=useUpdateSearchParams()
             {existingComment ? "Save" : "Send"} <SendHorizontal size={20} />
           </Button>
           <span className="text-xs text-muted-foreground">
-            {`${markupToPlainText(comment)?.length}/${maxLength}`}
+            {`${stripHTML(comment)?.length}/${maxLength}`}
           </span>
         </div>
       </form>

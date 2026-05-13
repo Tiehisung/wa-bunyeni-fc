@@ -145,6 +145,8 @@ export default function MasonryGallery({
         >
           <div className="group relative aspect-3/4 w-full overflow-hidden bg-muted">
             <Image
+              width={400}
+              height={400}
               src={getThumbnail(file) as string}
               alt={file?.original_filename ?? (file?.public_id as string)}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"

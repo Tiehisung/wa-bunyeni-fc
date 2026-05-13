@@ -10,7 +10,7 @@ import GalleryModel from '@/models/galleries';
 import { LoggerService } from '../../../shared/log.service';
 import { getApiErrorMessage } from '../../../lib/error-api';
 
-connectDB();
+ connectDB();
 
 // GET /api/galleries - List all galleries
 export async function GET(request: NextRequest) {

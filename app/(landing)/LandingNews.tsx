@@ -3,7 +3,7 @@
 import { H } from "@/components/Element";
 import { useGetNewsQuery } from "@/services/news.endpoints";
 import NewsCard from "../news/NewsCard";
-import { markupToPlainText } from "@/lib/dom";
+import {  stripHTML } from "@/lib/dom";
 import { ResponsiveSwiper } from "@/components/carousel/ResponsiveSwiper";
 import DataErrorAlert from "@/components/error/DataError";
 import { getErrorMessage } from "@/lib/error";
@@ -44,7 +44,7 @@ const LandingNewsHeadlines = () => {
               key={item?._id}
               id={item?.slug}
               title={item?.headline?.text}
-              summary={markupToPlainText(
+              summary={stripHTML(
                 item?.details?.find((d) => d.text)?.text as string,
               )}
               image={item?.headline?.image}

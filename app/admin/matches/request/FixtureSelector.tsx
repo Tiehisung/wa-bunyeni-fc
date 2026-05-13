@@ -24,7 +24,7 @@ const FixtureSelector = ({ fixtures }: IProps) => {
     );
   return (
     <div className=" py-6">
-      <h1 className="text-Orange border p-4 uppercase my-4 text-center border-Orange">
+      <h1 className="text-Orange p-4 uppercase my-4 text-center">
         Select a match to continue
       </h1>
 

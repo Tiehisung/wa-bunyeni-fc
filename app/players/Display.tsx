@@ -52,7 +52,7 @@ export default function OurPlayers() {
             {/* Fixed Image Container */}
             <section className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8">
               {/* Image Container - Fixed width on desktop, full on mobile */}
-              <div className="relative w-full md:w-80 lg:w-96 h-80 md:h-96 lg:h-[400px] flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
+              <div className="relative w-full md:w-80 lg:w-96 h-80 md:h-96 lg:h-100 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                 <Image
                   src={getImageSrc(player)}
                   alt={player?.lastName || "Player image"}

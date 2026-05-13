@@ -64,6 +64,13 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
             >
               {status.text}
             </span>
+
+           
+            <span
+              className={` text-sm font-semibold px-4 py-1 rounded-full uppercase tracking-wider`}
+            >
+              {match?.category}
+            </span>
           </div>
 
           {/* Scoreboard */}

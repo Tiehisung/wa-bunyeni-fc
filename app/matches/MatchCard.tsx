@@ -20,10 +20,9 @@ import { useRouter } from "next/navigation";
 export function MatchFixtureCard({ match }: { match?: IMatch }) {
   const router = useRouter();
   const { away, home } = checkTeams(match);
-   const metrics = checkMatchMetrics(match);
+  const metrics = checkMatchMetrics(match);
   const status = match?.status;
 
- 
   return (
     <div className="bg-card border p-4 space-y-2.5">
       <div className="flex justify-between gap-5">
@@ -38,6 +37,9 @@ export function MatchFixtureCard({ match }: { match?: IMatch }) {
         >
           {status}
         </Badge>
+
+
+        <Badge className="uppercase" variant={'outline'}>{match?.category}</Badge>
         <span>
           {formatDate(match?.date, "March 2, 2025")}(
           {getTimeLeftOrAgo(match?.date).formatted})

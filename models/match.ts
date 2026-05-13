@@ -1,7 +1,6 @@
 import { computeMatchResult } from "@/app/api/matches/helpers";
-import { EMatchStatus } from "@/types/match.interface";
+import { EMatchCategory, EMatchStatus } from "@/types/match.interface";
 import mongoose, { Schema } from "mongoose";
- 
 
 const matchSchema = new Schema(
   {
@@ -14,6 +13,11 @@ const matchSchema = new Schema(
       enum: [...Object.values(EMatchStatus)],
       default: () => EMatchStatus.UPCOMING,
     },
+    category: {
+      type: String,
+      enum: [...Object.values(EMatchCategory)],
+      default: () => EMatchCategory.U13,
+    },
     opponent: { type: Schema.Types.ObjectId, ref: "teams", required: true },
     goals: [{ type: Schema.Types.ObjectId, ref: "goals" }],
     squad: { type: Schema.Types.ObjectId, ref: "squad" },
@@ -22,23 +26,35 @@ const matchSchema = new Schema(
 
     sponsor: [{ type: Schema.Types.ObjectId, ref: "sponsors" }],
     broadcaster: {},
-    venue: { name: { type: String, default: () => 'Konjiehi Park' }, files: [{}] },
-    competition: { type: String, default: () => 'Friendly Match' },
+    venue: {
+      name: { type: String, default: () => "Konjiehi Park" },
+      files: [{}],
+    },
+    competition: { type: String, default: () => "Friendly Match" },
     isHome: Boolean,
-    events: [{ description: String, title: String, minute: String, modeOfScore: String }],
-    mvp: {},//iplayer preferred
+    events: [
+      {
+        description: String,
+        title: String,
+        minute: String,
+        modeOfScore: String,
+      },
+    ],
+    mvp: {}, //iplayer preferred
     fixtureFlier: String,
     resultFlier: String,
-    createdBy: { _id: String, name: String, avatar: String } //As IUser
+    createdBy: { _id: String, name: String, avatar: String }, //As IUser
   },
-  { timestamps: true, toJSON: { virtuals: true, }, toObject: { virtuals: true } }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 );
 
 matchSchema.virtual("computed").get(function () {
   return computeMatchResult(this as any);
 });
-
-
 
 const MatchModel =
   mongoose.models.matches || mongoose.model("matches", matchSchema);
@@ -46,4 +62,3 @@ const MatchModel =
 export default MatchModel;
 
 export type IPostMatch = mongoose.InferSchemaType<typeof matchSchema>;
-

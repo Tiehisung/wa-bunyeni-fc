@@ -14,7 +14,6 @@ import { sParamsToObject } from "@/lib/searchParams";
 
 const GalleryPage = () => {
   const searchParams = useSearchParams();
- 
 
   const {
     data: galleries,
@@ -32,7 +31,7 @@ const GalleryPage = () => {
     return <Loader message="Loading gallery..." />;
   }
 
-  if (galleriesError) {
+  if (galleriesError && !galleries) {
     return <DataErrorAlert message={galleriesError} />;
   }
 

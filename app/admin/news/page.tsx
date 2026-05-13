@@ -13,6 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { AdminTrendingNewsMenu } from "./trending/TrendingMenu";
 import TrendNews from "./trending/page";
 import { sParamsToObject } from "@/lib/searchParams";
+import { CategoryNews } from "./Category";
 
 const AdminNewsPage = () => {
   const searchParams = useSearchParams();
@@ -59,9 +60,11 @@ const AdminNewsPage = () => {
         </Button>
       </header>
 
-      <AdminNews news={news} />
+      {/* <AdminNews news={news} /> */}
 
       <TrendNews />
+      <CategoryNews category="latest" />
+      <CategoryNews category="trending" />
     </div>
   );
 };

@@ -1,13 +1,13 @@
 import OtherNews from "./RelatedNews";
 import { SearchAndFilterNews } from "./SearchAndFilter";
 import NewsItemClient from "./NewsClient";
-
 import { INewsProps } from "@/types/news.interface";
 import { Metadata } from "next";
 import { ENV } from "@/lib/env";
 import { shortText } from "@/lib";
 import { IPageProps, IQueryResponse } from "@/types";
 import { baseApiUrl } from "@/lib/configs";
+import { stripHTML } from "@/lib/dom";
 
 export const getNewsItem = async (slug: string) => {
   try {
@@ -24,7 +24,7 @@ export const getNewsItem = async (slug: string) => {
 export async function generateMetadata({
   params,
 }: IPageProps): Promise<Metadata> {
-  const {   slug } = await params;
+  const { slug } = await params;
   const articleData: IQueryResponse<INewsProps> = await getNewsItem(
     slug as string,
   );
@@ -40,9 +40,9 @@ export async function generateMetadata({
 
   const title = `${ENV.TEAM_NAME} - ${article?.headline?.text}`;
   const description = shortText(
-    article?.details?.find((d) => d?.text)?.text as string,
+    stripHTML(article?.details?.find((d) => d?.text)?.text as string),
     120,
-  );
+  ) as string;
 
   const image = article?.headline?.image || ENV.LOGO_URL;
   const url = `${ENV.APP_URL}/news/${slug}`;
@@ -60,6 +60,7 @@ export async function generateMetadata({
         height: 630,
         alt: article?.headline?.text,
       })) || [];
+  console.log({ image }, otherImages);
   return {
     title,
     description,
@@ -96,7 +97,6 @@ export async function generateMetadata({
     },
   };
 }
- 
 
 export default async function NewsItemPage() {
   return (
