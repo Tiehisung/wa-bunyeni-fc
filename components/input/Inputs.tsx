@@ -142,7 +142,7 @@ export function Input({
           htmlFor={name}
           className={cn(
             `absolute top-6 left-4 text-muted-foreground group-focus-within:top-2 group-focus-within:text-sm group-focus-within:text-primary transition-all duration-300 ease-out -translate-y-1/2 text-sm font-medium `,
-            value ? "top-2" : "",
+            value ? "top-2 font-light text-sm" : "",
           )}
         >
           {label}
