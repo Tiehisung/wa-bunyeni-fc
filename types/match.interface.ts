@@ -9,7 +9,13 @@ export enum EMatchStatus {
   LIVE = 'LIVE',
   UPCOMING = 'UPCOMING'
 }
-
+export enum EMatchCategory {
+  U13 = "u13",
+  U15 = "u15",
+  U17 = "u17",
+  U20 = "u20",
+  SENIOR = "senior",
+}
 export type TMatchType = "home" | "away";
 
 export interface IMatch {
@@ -31,6 +37,7 @@ export interface IMatch {
   cards: Array<ICard>;
   squad?: ISquad
   competition?: string
+  category?: EMatchCategory
 
   createdBy?: IMiniUser
 //Virtual field

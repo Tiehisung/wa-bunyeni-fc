@@ -40,6 +40,7 @@ export function AdminMatchCard({ match }: Props) {
         >
           {status}
         </Badge>
+        <span>{match?.category}</span>
         <div className="text-sm text-muted-foreground">
           {formatDate(match?.date, "March 2, 2025")}(
           {getTimeLeftOrAgo(match?.date).formatted})
