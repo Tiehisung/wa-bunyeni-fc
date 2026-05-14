@@ -3,6 +3,7 @@ import HEADER from "@/components/Element";
 import { Metadata } from "next";
 import { ENV } from "@/lib/env";
 import {   baseApiUrl } from "@/lib/configs";
+import { PrintMatchesBtn } from "./Export";
 
 export const metadata: Metadata = {
   title: `Matches & Fixtures | ${ENV.TEAM_NAME}`,
@@ -71,6 +72,7 @@ export default async function MatchesPage() {
     <div className="">
       <HEADER title="Scores & Fixtures" />
       <FixturesSection />
+      <PrintMatchesBtn options={{ title: "All Matches " }} />
     </div>
   );
 }

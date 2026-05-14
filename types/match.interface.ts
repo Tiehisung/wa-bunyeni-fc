@@ -5,9 +5,9 @@ import { ISquad } from "./squad.interface";
 import { IMiniUser } from "./user";
 
 export enum EMatchStatus {
-  FT = 'FT',
-  LIVE = 'LIVE',
-  UPCOMING = 'UPCOMING'
+  FT = "FT",
+  LIVE = "LIVE",
+  UPCOMING = "UPCOMING",
 }
 export enum EMatchCategory {
   U13 = "u13",
@@ -30,25 +30,25 @@ export interface IMatch {
   status: EMatchStatus;
   isHome: boolean;
   venue?: { name: string; files: IFileProps[] };
-  fixtureFlier?:string
-  resultFlier?:string
-  goals: Array<IGoal>
+  fixtureFlier?: string;
+  resultFlier?: string;
+  goals: Array<IGoal>;
   events: Array<IMatchEvent>;
   cards: Array<ICard>;
-  squad?: ISquad
-  competition?: string
-  category?: EMatchCategory
+  squad?: ISquad;
+  competition?: string;
+  category?: EMatchCategory;
 
-  createdBy?: IMiniUser
-//Virtual field
+  createdBy?: IMiniUser;
+  //Virtual field
   computed?: {
     teamGoals: IGoal[];
     opponentGoals: IGoal[];
     teamScore: number;
     opponentScore: number;
     scoreline: string;
-    result: 'win' | 'draw' | 'loss'
-  }
+    result: "win" | "draw" | "loss";
+  };
 }
 
 export enum EMatchResult {
@@ -67,14 +67,15 @@ export interface IMatchMetrics {
   teams: {
     home: ITeam | undefined;
     away: ITeam;
-  }
+  };
+  scoreline: string;
 }
 
 export interface IMatchEvent {
-  title: string,
+  title: string;
   description?: string;
-  minute: string | number,
-  type: 'goal' | 'card' | 'injury' | 'general'
+  minute: string | number;
+  type: "goal" | "card" | "injury" | "general";
 }
 
 export interface ITeam {
@@ -85,11 +86,11 @@ export interface ITeam {
   contact: string;
   contactName: string;
   logo: string;
-  images?:string[]
+  images?: string[];
   currentPlayers?: IPlayerMini[];
   createdAt: string;
   updatedAt: string;
-  createdBy?: IMiniUser
+  createdBy?: IMiniUser;
 }
 
 export interface IGoal {
@@ -98,20 +99,18 @@ export interface IGoal {
   minute: string | number;
   scorer?: IPlayerMini;
   assist?: IPlayerMini;
-  modeOfScore?: EGoalType
-  description?: string
-  match: string
-  teamId: string
+  modeOfScore?: EGoalType;
+  description?: string;
+  match: string;
+  teamId: string;
   videoUrl?: string;
-  createdBy?: IMiniUser
+  createdBy?: IMiniUser;
 }
 
-
 export interface IMatchHighlight extends IFileProps {
-  title: string
-  match: IMatch
-  tags?: string[]
-  
+  title: string;
+  match: IMatch;
+  tags?: string[];
 }
 
 export enum EGoalType {
@@ -124,5 +123,5 @@ export enum EGoalType {
   VOLLEY = "Volley Goal",
   TAP_IN = "Tap-In Goal",
   LONG_RANGE = "Long-Range Goal",
-  UNKNOWN = 'Unknown'
+  UNKNOWN = "Unknown",
 }

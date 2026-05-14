@@ -8,10 +8,8 @@ import {
   formatTimeToAmPm,
   getTimeLeftOrAgo,
 } from "@/lib/timeAndDate";
-
 import { DIALOG } from "@/components/Dialog";
 import { Users } from "lucide-react";
-
 import SquadCard from "../admin/squad/SquadCard";
 import { IMatch } from "@/types/match.interface";
 import { Button } from "@/components/buttons/Button";
@@ -38,8 +36,10 @@ export function MatchFixtureCard({ match }: { match?: IMatch }) {
           {status}
         </Badge>
 
+        <Badge className="uppercase" variant={"outline"}>
+          {match?.category}
+        </Badge>
 
-        <Badge className="uppercase" variant={'outline'}>{match?.category}</Badge>
         <span>
           {formatDate(match?.date, "March 2, 2025")}(
           {getTimeLeftOrAgo(match?.date).formatted})
