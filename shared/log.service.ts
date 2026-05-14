@@ -1,13 +1,7 @@
-// src/shared/log/logger.service.ts
-
-
 import LogModel from "@/models/logs";
 import { ELogSeverity } from "@/types/log.interface";
 import { getApiErrorMessage } from "../lib/error-api";
 import connectDB from "@/config/db.config";
-
-connectDB()
-
 export class LoggerService {
     static async info(title: string, description?: any, req?: Request, meta?: any) {
         return this.log(title, getApiErrorMessage(description), ELogSeverity.INFO, req, meta);
@@ -31,27 +25,9 @@ export class LoggerService {
         req?: Request,
         meta: any = {}
     ) {
+        await connectDB()
         try {
             let userData = null;
-
-            // if (req?.user) {
-            //     userData = {
-            //         _id: req.user._id,
-            //         name: req.user.name,
-            //         email: req.user.email,
-            //         role: req.user.role
-            //     };
-            // }
-
-            // if (req) {
-            //     meta = {
-            //         ...meta,
-            //         ip: req.ip,
-            //         userAgent: req.get('user-agent'),
-            //         method: req.method,
-            //         url: req.originalUrl
-            //     };
-            // }
 
             return await LogModel.create({
                 title,
@@ -68,9 +44,3 @@ export class LoggerService {
     }
 }
 
-
-
-
-// Usage:
-// LoggerService.info('User logged in', 'Successfully authenticated', req);
-// LoggerService.error('Payment failed', error.message, req, { orderId: '123' });
