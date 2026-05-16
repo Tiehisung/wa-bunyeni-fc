@@ -1,10 +1,10 @@
- 
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Target, Shield, Zap, MapPin, TrendingUp } from "lucide-react";
 import { getPositionAbbreviation, getPositionColor } from "./Header";
 import { EPlayerPosition, IPlayer } from "@/types/player.interface";
+import { getAgeFromDOB } from "@/lib/timeAndDate";
+import { getPlayerAgeCategory } from "./calc";
 
 interface PositionVisualizationProps {
   player?: IPlayer;
@@ -124,23 +124,20 @@ export function PositionVisualization({ player }: PositionVisualizationProps) {
           </InfoBlock>
 
           <InfoBlock icon={getCategoryIcon()} label="Category">
-            <div className="bg-gray-100 px-3 py-2 rounded-lg font-medium">
+            <div className="bg-secondary px-3 py-2 rounded-lg font-medium">
               {category}
             </div>
           </InfoBlock>
 
           <InfoBlock label="Number">
-            <div className="bg-gray-100 px-3 py-2 rounded-lg font-bold text-center">
+            <div className="bg-secondary px-3 py-2 rounded-lg font-bold text-center">
               #{player?.number}
             </div>
           </InfoBlock>
 
-          <InfoBlock
-            icon={<TrendingUp className="h-4 w-4" />}
-            label="Training Team"
-          >
+          <InfoBlock icon={<TrendingUp className="h-4 w-4" />} label="Category">
             <div className="bg-blue-50 text-blue-700 px-3 py-2 rounded-lg font-medium text-center">
-              Team {player?.training.team || "A"}
+              {getPlayerAgeCategory(player?.dob!)}
             </div>
           </InfoBlock>
         </div>

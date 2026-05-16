@@ -18,8 +18,6 @@ import {
   ChevronDown,
   ChevronUp,
   Eye,
-  Award as AwardIcon,
-  TrendingUp,
   Users,
 } from "lucide-react";
 import { EFanBadge } from "@/types/fan.interface";
@@ -43,7 +41,7 @@ export function AdminFanTable({
   const [selectedFan, setSelectedFan] = useState<any>(null);
 
   const { data: leaderboard, isLoading } = useGetFanLeaderboardQuery({
-    limit: showAll ? 100 : 20,
+    limit: showAll ? 1000 : 20,
     sortBy: sortField,
   });
 

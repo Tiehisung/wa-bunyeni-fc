@@ -22,7 +22,7 @@ export default function AuthErrorClient() {
   const message = errorMessages[error] ?? errorMessages.Default;
 
   useEffect(() => {
-    console.error("[AUTH ERROR]", {
+    console.log("[AUTH ERROR]", {
       error,
       message,
       timestamp: new Date().toISOString(),
