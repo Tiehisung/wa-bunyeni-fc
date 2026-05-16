@@ -8,7 +8,9 @@ import CountUp from "react-countup";
 import { useGetFanStatsQuery } from "@/services/fans.endpoints";
 
 export function AdminFanStats() {
-  const { data: stats, isLoading } = useGetFanStatsQuery();
+  const { data: statsData, isLoading } = useGetFanStatsQuery();
+
+  const stats = statsData?.data;
 
   if (isLoading) {
     return (
