@@ -194,6 +194,11 @@ export const sidebarLinks: ILinkItem[] = [
     path: "/admin/teams",
     icon: <Users className="w-4 h-4" />,
   },
+  {
+    title: "Fans",
+    path: "/admin/fans",
+    icon: <Users className="w-4 h-4" />,
+  },
   { title: "Squad", path: "/admin/squad", icon: <Users className="w-4 h-4" /> },
   {
     title: "Cards",

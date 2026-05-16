@@ -9,7 +9,7 @@ export const replayTemplates = (match: IMatch, official: { requester: IStaff }) 
     const homeName = home?.name ?? "Home Team";
     const awayName = away?.name ?? "Away Team";
     const opponentName = match?.opponent?.name ?? "Opponent Club";
-    const venue = match?.venue?.name
+    const venue = match?.venue 
     const date = formatDate(match?.date);
 
     return [
