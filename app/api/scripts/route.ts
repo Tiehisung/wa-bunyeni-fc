@@ -5,12 +5,12 @@ import { migrateUsersToFans } from "./migrate-users-to-fans";
 export async function GET() {
   try {
     // Run migration
-    // const fans = await migrateUsersToFans();
+    const fans = await migrateUsersToFans();
 
     return NextResponse.json({
       ok: true,
       message: "🎉 Migration complete!",
-    //   fans,
+      fans,
     });
   } catch (error: any) {
     console.error("❌ Migration failed:", error);
