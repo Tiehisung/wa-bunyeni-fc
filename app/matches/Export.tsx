@@ -6,6 +6,7 @@ import { formatDate, formatTimeToAmPm } from "@/lib/timeAndDate";
 import { IMatch, EMatchStatus, EMatchCategory } from "@/types/match.interface";
 import { checkMatchMetrics, checkTeams } from "@/lib/compute/match";
 import { useGetMatchesQuery } from "@/services/match.endpoints";
+import { ENV } from "@/lib/env";
 
 export const printMatchesList = (
   matches: IMatch[],
@@ -31,7 +32,7 @@ export const printMatchesList = (
           <td>${match.competition || "Friendly"}</td>
           <td>${formatDate(match.date, "dd/mm/yyyy")}</td>
           <td>${match.time ? formatTimeToAmPm(match.time) : "TBD"}</td>
-          <td>${match.venue?.name || "TBD"}</td>
+          <td>${match.venue || "TBD"}</td>
           <td>
             <span class="badge ${getStatusBadgeClass(match.status)}">
               ${match.status}
@@ -337,7 +338,7 @@ export const printMatchDetails = (
           <div class="info-row"><strong>Category:</strong> ${match.category?.toUpperCase()}</div>
           <div class="info-row"><strong>Date:</strong> ${formatDate(match.date)}</div>
           <div class="info-row"><strong>Time:</strong> ${match.time ? formatTimeToAmPm(match.time) : "TBD"}</div>
-          <div class="info-row"><strong>Venue:</strong> ${match.venue?.name || "TBD"}</div>
+          <div class="info-row"><strong>Venue:</strong> ${match.venue || "TBD"}</div>
           <div class="info-row"><strong>Status:</strong> ${match.status}</div>
         </div>
 
@@ -358,7 +359,7 @@ export const printMatchDetails = (
         }
 
         <div style="margin-top: 32px; font-size: 11px; text-align: center; color: #999;">
-          Generated on ${new Date().toLocaleString()} • Bunyeni FC
+          Generated on ${new Date().toLocaleString()} •${ENV.APP_NAME}
         </div>
 
         <script>
