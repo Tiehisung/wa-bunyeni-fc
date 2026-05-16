@@ -108,8 +108,6 @@ export async function migrateUsersToFans() {
   );
 
   await connectDB();
-    await FanModel.collection.dropIndex("userId_1");
-    console.log("✅ Dropped index: userId_1");
   // Find all users
   const users = await UserModel.find({});
   console.log(`📊 Found ${users.length} total users\n`);
