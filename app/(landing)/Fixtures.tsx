@@ -7,7 +7,7 @@ import ModernFixtureCard from "../matches/(cards)/Modern";
 import Link from "next/link";
 
 const LandingFixtures: React.FC = () => {
-  const { data: matchesData, isLoading } = useGetMatchesQuery({});
+  const { data: matchesData, isLoading } = useGetMatchesQuery({limit:3});
 
   if (isLoading) {
     return <Loader message="Loading fixtures..." />;

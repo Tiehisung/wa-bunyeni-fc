@@ -3,10 +3,10 @@ import NewsModel from '@/models/news';
 import { LoggerService } from '@/shared/log.service';
 import { getApiErrorMessage } from '@/lib/error-api';
 import connectDB from '@/config/db.config';
-import { updateFanPoints } from '@/lib/fan';
 import { slugIdFilters } from '@/lib/slug';
 import { auth } from '@/auth';
 import { getOrCreateVisitorId } from '@/lib/visitor';
+import { updateFanPoints } from '@/app/api/fans/helpers';
 
 connectDB();
 

@@ -1,7 +1,6 @@
 // app/api/matches/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/config/db.config';
-
 import { auth } from '@/auth';
 import { EMatchStatus } from '@/types/match.interface';
 import { removeEmptyKeys } from '@/lib';

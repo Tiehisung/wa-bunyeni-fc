@@ -75,9 +75,7 @@ export async function PUT(
     const filter = slugIdFilters(slug);
     const body = await request.json();
     delete body._id;
-
-    console.log(body.category)
-
+ 
     const updated = await MatchModel.findOneAndUpdate(
       filter,
       { $set: { ...body } },

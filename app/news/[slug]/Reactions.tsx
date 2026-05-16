@@ -93,7 +93,10 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
               className="font-light text-xs text-foreground"
               onClick={() => toggleClick("likes-trigger")}
             >
-              {newsItem?.stats?.likeCount ? newsItem?.stats?.likeCount : ""}
+              {Math.max(
+                newsItem?.likes?.length || 0,
+                newsItem?.stats?.likeCount || 0,
+              )}
             </span>
           </Button>
         </li>
@@ -101,7 +104,11 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
           <POPOVER
             trigger={
               <div className="flex items-center gap-2 font-light text-xs">
-                <IoShareSocial size={32} /> {newsItem?.stats?.shareCount ?? ""}
+                <IoShareSocial size={32} />{" "}
+                {Math.max(
+                  newsItem?.shares?.length || 0,
+                  newsItem?.stats?.shareCount || 0,
+                )}
               </div>
             }
             variant="ghost"
@@ -121,7 +128,10 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
                     size={24}
                     onClick={() => document.getElementById("comment")?.focus()}
                   />
-                  {newsItem?.stats?.commentCount ?? ""}
+                  {Math.max(
+                    newsItem?.comments?.length || 0,
+                    newsItem?.stats?.commentCount || 0,
+                  )}
                 </div>
               }
               description={
@@ -138,7 +148,10 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
                     size={24}
                     onClick={() => document.getElementById("comment")?.focus()}
                   />
-                  {newsItem?.stats?.commentCount ?? ""}
+                  {Math.max(
+                    newsItem?.comments?.length || 0,
+                    newsItem?.stats?.commentCount || 0,
+                  )}
                 </div>
               }
               triggerStyles="rounded-none"
@@ -155,7 +168,10 @@ export function NewsReactions({ newsItem }: { newsItem?: INewsProps }) {
           <div className="flex items-center justify-center gap-2">
             {<BsEye className="opacity-65" />}
             <span className="font-light text-xs">
-              {newsItem?.stats?.viewCount ?? ""}{" "}
+              {Math.max(
+                newsItem?.views?.length || 0,
+                newsItem?.stats?.viewCount || 0,
+              )}
             </span>
           </div>
         </li>

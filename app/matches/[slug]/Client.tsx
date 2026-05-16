@@ -136,7 +136,7 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
           <div className="bg-card rounded-lg p-4 text-center border">
             <MapPin className="w-5 h-5 mx-auto mb-2 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">Venue</p>
-            <p className="font-medium">{match?.venue?.name || "TBD"}</p>
+            <p className="font-medium">{match?.venue || "TBD"}</p>
           </div>
           <div className="bg-card rounded-lg p-4 text-center border">
             <Users className="w-5 h-5 mx-auto mb-2 text-muted-foreground" />

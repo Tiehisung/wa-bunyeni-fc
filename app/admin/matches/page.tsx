@@ -9,9 +9,11 @@ import { IMatch } from "@/types/match.interface";
 import DataErrorAlert from "@/components/error/DataError";
 import TableLoader from "@/components/loaders/Table";
 import { useGetMatchesQuery } from "@/services/match.endpoints";
+import useGetParam from "@/hooks/params";
 
 export default function AdminFixtures() {
-  const { data: fixtures, isLoading, error } = useGetMatchesQuery({});
+  const match_search=useGetParam('match_search')
+  const { data: fixtures, isLoading, error } = useGetMatchesQuery({match_search});
 
   if (isLoading) {
     return (
@@ -34,7 +36,7 @@ export default function AdminFixtures() {
   return (
     <section className="">
       <Header title="FIXTURES & SCORES" subtitle="Manage Fixtures" />
-      <main className="_page pb-6 pt-10">
+      <main className=" pb-6 pt-2">
         <DisplayFixtures fixtures={fixtures as IQueryResponse<IMatch[]>} />
 
         <Separator />

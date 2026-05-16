@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import TopFans from "./TopFans";
 import { TEAM } from "@/data/team";
+import FansClient from "./TopFans";
 
 export const metadata: Metadata = {
   title: `Top Fans | ${TEAM.name}`,
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 const FansPage = () => {
   return (
     <div>
-      <TopFans />
+      <FansClient />
     </div>
   );
 };

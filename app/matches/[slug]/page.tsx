@@ -19,7 +19,6 @@ export async function generateMetadata({
   const matchData = await getMatch(slug);
   const match = matchData?.data as IMatch;
 
-  console.log({ slug, match });
   if (!match) {
     return {
       title: `Match Not Found | ${ENV.TEAM_NAME}`,

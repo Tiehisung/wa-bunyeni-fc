@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { fireEscape } from "@/hooks/Esc";
 import { ISelectOptionLV } from "@/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EMatchCategory, IMatch } from "@/types/match.interface";
 import {
   useCreateMatchMutation,
@@ -46,6 +46,8 @@ const matchFormSchema = z.object({
   opponentId: z.string().min(11, "Please select an opponent team"),
   date: z.string().min(6, "Match date is required"),
   time: z.string().min(4, "Match time is required"),
+  venue: z.string().min(4, "Venue is required"),
+  competition: z.string().optional(),
   fixtureFlier: z.string().optional(),
 });
 
@@ -82,6 +84,8 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
+    setValue,
   } = useForm<MatchFormData>({
     resolver: zodResolver(matchFormSchema),
     defaultValues: {
@@ -95,13 +99,13 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
       time: isUpdateMode ? fixture?.time : "",
       fixtureFlier: isUpdateMode ? fixture?.fixtureFlier : "",
       category: isUpdateMode ? fixture?.category : EMatchCategory.U13,
+      venue: "",
+      competition: "Friendly",
     },
   });
 
   const onSubmit = async (data: MatchFormData) => {
     setWaiting(true);
-
-    console.log(data)
 
     const opponentTeam = teamsData?.data?.find(
       (t) => t._id === data.opponentId,
@@ -144,6 +148,14 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
     }
   };
 
+  const opponent = teamsData?.data?.find((t) => t._id == watch("opponentId"));
+
+  const suggestedParks = [`${TEAM.name} Park`, `${opponent?.name} Park`];
+
+  useEffect(() => {
+    setValue("venue", "");
+  }, [opponent]);
+
   if (isLocked) return null;
 
   // If no fixture, show create mode (full page)
@@ -157,7 +169,7 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
       <div className="grow">
         <Card>
           <CardHeader>
-            <CardTitle className="font-bold text-2xl">NEW FIXTURE</CardTitle>
+            <CardTitle className="font-bold text-2xl">{fixture?'UPDATE':'NEW'} FIXTURE</CardTitle>
             <CardDescription>Fill Out To Create Fixture</CardDescription>
           </CardHeader>
           <CardContent className="max-w-xl sm:min-w-sm">
@@ -172,7 +184,7 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
                     options={teamOptions}
                     {...field}
                     onChange={field.onChange}
-                    className="bg-popover rounded w-full"
+                    className="bg-popover w-full"
                     placeholder="Choose opponent..."
                     error={fieldState.error?.message}
                   />
@@ -213,7 +225,7 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
               />
               {/* Date Input */}
               <div>
-                <label className="_label mb-2 block text-sm font-medium ">
+                <label className="text-muted-foreground mb-2 block text-sm font-light ">
                   Date Of Play *
                 </label>
                 <Controller
@@ -232,7 +244,7 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
                 />
               </div>
               <div>
-                <label className="_label mb-2 block text-sm font-medium ">
+                <label className="text-muted-foreground mb-2 block text-sm font-light ">
                   Kick-off Time *
                 </label>
                 <Controller
@@ -250,6 +262,37 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
                   )}
                 />
               </div>
+
+              <Controller
+                name="venue"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Input
+                    {...field}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Venue"
+                    error={fieldState.error?.message}
+                    listId="ven"
+                    datalist={suggestedParks}
+                  />
+                )}
+              />
+              <Controller
+                name="competition"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Input
+                    {...field}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Competion"
+                    error={fieldState.error?.message}
+                    listId="compete"
+                    datalist={suggestedCompetitions}
+                  />
+                )}
+              />
 
               {/* Image Upload */}
 
@@ -283,3 +326,5 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
     </ContentShowcaseWrapper>
   );
 };
+
+const suggestedCompetitions = ["Friendly", "Galla", "League", "Tournament"];
