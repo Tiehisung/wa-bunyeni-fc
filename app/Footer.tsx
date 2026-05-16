@@ -72,7 +72,7 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-primary transition">
+                <Link href="/fans" className="hover:text-primary transition">
                   Fans
                 </Link>
               </li>

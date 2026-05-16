@@ -26,10 +26,8 @@ const matchSchema = new Schema(
 
     sponsor: [{ type: Schema.Types.ObjectId, ref: "sponsors" }],
     broadcaster: {},
-    venue: {
-      name: { type: String, default: () => "Konjiehi Park" },
-      files: [{}],
-    },
+    venue: { type: String, default: () => "Konjiehi Park" },
+    matchImages: { type: [String], default: () => [] },
     competition: { type: String, default: () => "Friendly Match" },
     isHome: Boolean,
     events: [

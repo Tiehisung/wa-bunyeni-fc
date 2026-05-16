@@ -183,7 +183,7 @@ export default function SELECT({
           hidden={!label}
           htmlFor={name}
           className={cn(
-            `absolute top-2 left-4 text-muted-foreground group-focus-within:top-2 group-focus-within:text-sm group-focus-within:text-primary transition-all duration-300 ease-out -translate-y-1/2 text-sm font-medium `,
+            `absolute top-2 left-4 text-muted-foreground group-focus-within:top-2 group-focus-within:text-sm group-focus-within:text-primary transition-all duration-300 ease-out -translate-y-1/2 text-sm font-light `,
           )}
         >
           {label}

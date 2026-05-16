@@ -106,6 +106,8 @@ interface IInput {
   others?: object;
   required?: boolean;
   wrapperStyles?: string;
+  datalist?: string[];
+  listId?: string;
 }
 
 interface IInputProps extends IInput {
@@ -133,10 +135,18 @@ export function Input({
   required = false,
   error,
   modern = true,
+  datalist,
+  listId,
 }: IInputProps) {
   if (modern)
     return (
-      <div className={cn("flex flex-col justify-start items-center group relative focus-within:ring-2 ring-primary border border-gray-300 rounded-lg h-13 ", wrapperStyles)} data-tip={dataTip}>
+      <div
+        className={cn(
+          "flex flex-col justify-start items-center group relative focus-within:ring-2 ring-primary border border-gray-300 rounded-lg h-13 ",
+          wrapperStyles,
+        )}
+        data-tip={dataTip}
+      >
         <label
           hidden={!label}
           htmlFor={name}
@@ -161,11 +171,22 @@ export function Input({
             "w-full h-full rounded-lg pb-0 px-4 focus:outline-none outline-0 font-[350]",
             label ? " pt-2" : "",
           )}
+          list={listId}
         />
         {error && (
-          <p className={`absolute -bottom-3 left-2 text-red-500 line-clamp-1 text-[9px] `}>
+          <p
+            className={`absolute -bottom-3 left-2 text-red-500 line-clamp-1 text-[9px] `}
+          >
             {error}
           </p>
+        )}
+
+        {datalist && listId && (
+          <datalist id={listId}>
+            {datalist?.map((item, i) => (
+              <option key={item + i} value={item} />
+            ))}
+          </datalist>
         )}
       </div>
     );
@@ -194,7 +215,15 @@ export function Input({
         className={`bg-input text-secondary-foreground outline-none border border-border focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring shadow-teal-100/50 h-9 rounded px-2 w-full placeholder:line-clamp-1 ${className}`}
         {...others}
         required={required}
-      />
+        list={listId}
+      />{" "}
+      {datalist && listId && (
+        <datalist id={listId}>
+          {datalist?.map((item, i) => (
+            <option key={item + i} value={item} />
+          ))}
+        </datalist>
+      )}
       {error && <p className={` text-red-500  text-sm mt-1`}>{error}</p>}
     </div>
   );

@@ -9,6 +9,8 @@ import { AdminMatchCard } from "./MatchCard";
 import { IMatch } from "@/types/match.interface";
 import { useUpdateMatchStatusMutation } from "@/services/match.endpoints";
 import { showToast } from "@/utils/toast";
+import { PrimarySearch } from "@/components/Search";
+import { PrintMatchesBtn } from "@/app/matches/Export";
 
 interface DisplayFixturesProps {
   fixtures: IQueryResponse<IMatch[]>;
@@ -18,11 +20,21 @@ interface DisplayFixturesProps {
 export function DisplayFixtures({ fixtures }: DisplayFixturesProps) {
   return (
     <div>
-      <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-5">
+      <div className="flex items-center gap-6">
+      <PrimarySearch searchKey="match_search" />
+        <PrintMatchesBtn options={{ title: " Fixtures" }} />
+      </div>
+      <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-5 mt-3">
         {fixtures?.data?.map((fx) => (
           <AdminMatchCard key={fx?._id} match={fx} />
         ))}
       </div>
+
+      {fixtures?.data?.length == 0 ? (
+        <p className="text-muted-foreground text-sm">No matches found</p>
+      ) : (
+        ""
+      )}
 
       <div className="p-2 flex items-center text-sm gap-3 text-muted-foreground py-4">
         <div>

@@ -30,6 +30,7 @@ import Link from "next/link";
 import { LogoutBtn } from "./auth/Auth";
 import { cn } from "@/lib/utils";
 import { isActiveLink } from "@/lib";
+import { GiDarkSquad } from "react-icons/gi";
 
 interface ILink {
   label: string;
@@ -73,6 +74,11 @@ export default function MainNavbar() {
       label: "Highlights",
       href: "/highlights",
       icon: <Clapperboard size={18} />,
+    },
+    {
+      label: "Fans",
+      href: "/fans",
+      icon: <GiDarkSquad size={18} />,
     },
     { label: "Gallery", href: "/gallery", icon: <Images size={18} /> },
     { label: "Contact", href: "/contact", icon: <Mail size={18} /> },

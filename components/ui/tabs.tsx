@@ -27,7 +27,7 @@ function TabsList({
       data-slot="tabs-list"
       className={cn(
         "bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-0.75",
-        className
+        className,
       )}
       {...props}
     />
@@ -42,8 +42,8 @@ function TabsTrigger({
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "data-[state=active]:bg-background dark:data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        className
+        "data-[state=active]:bg-background data-[state=active]:text-primary dark:data-[state=active]:text-primary focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        className,
       )}
       {...props}
     />
@@ -73,43 +73,51 @@ export interface TabConfig {
 
 interface ReusableTabsProps {
   tabs: TabConfig[];
-  children: React.ReactNode[];
+  children?: React.ReactNode[];
   defaultValue?: string;
   className?: string;
   listClassName?: string;
   contentClassName?: string;
-triggerClassName?: string;
+  triggerClassName?: string;
   hideLabelOnMobile?: boolean;
+  onChange?: ((value: string) => void) | undefined;
 }
 
 export function TABS({
   tabs,
   defaultValue,
   className = "w-full",
-  listClassName = "",
+  listClassName = "grow w-full",
   contentClassName = "space-y-4",
   children,
-  hideLabelOnMobile,triggerClassName=''
+  hideLabelOnMobile,
+  triggerClassName = "",
+  onChange,
 }: ReusableTabsProps) {
   const defaultTab = defaultValue || tabs[0]?.value;
 
-  // const resolvedTabs=tabs?.map(t=>({...t,value:t?.value??t?.label}))//Value is optional
-
   return (
-    <Tabs defaultValue={defaultTab} className={className}>
-      <TabsList className={cn(`flex px-3 border-b pb-0 bg-background`, listClassName)}>
+    <Tabs
+      defaultValue={defaultTab}
+      className={className}
+      onValueChange={onChange}
+    >
+      <TabsList className={cn(`flex `, listClassName)}>
         {tabs?.map((tab) => (
           <TabsTrigger
             key={tab.value}
             value={tab.value}
             className={cn("flex items-center gap-2", triggerClassName)}
+            title={tab.value.toUpperCase()}
           >
             {tab?.icon ?? ""}
-            {hideLabelOnMobile ? (
-              <span className="hidden sm:inline">{tab.label}</span>
-            ) : (
-              <span className="inline">{tab.label}</span>
-            )}
+            <span
+              className={
+                `inline ${hideLabelOnMobile}` ? "hidden sm:inline" : ""
+              }
+            >
+              {tab.label}
+            </span>
           </TabsTrigger>
         ))}
       </TabsList>
@@ -118,7 +126,7 @@ export function TABS({
         <TabsContent
           key={i}
           value={tabs?.[i]?.value}
-          className={cn('p-4', contentClassName)}
+          className={cn("p-4", contentClassName)}
         >
           {cont}
         </TabsContent>

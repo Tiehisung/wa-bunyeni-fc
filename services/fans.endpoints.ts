@@ -1,37 +1,93 @@
-// services/fans.endpoints.ts
-import { IFan } from "@/types/user";
+// services/fan.endpoints.ts
+import { IMiniUser } from "@/types/user";
 import { api } from "./api";
- 
+import { EFanBadge, IFan } from "@/types/fan.interface";
+import { IQueryResponse } from "@/types";
 
-export const fansApi = api.injectEndpoints({
-    endpoints: (builder) => ({
-        getFanLeaderboard: builder.query<IFan[], { limit?: number; sortBy?: string }>({
-            query: ({ limit = 50, sortBy = "fanPoints" }) =>
-                `/fans/leaderboard?limit=${limit}&sortBy=${sortBy}`,
-            providesTags: ["Fans"]
-        }),
+export interface IFanLeaderboardEntry {
+  rank: number;
+  user: IMiniUser;
+  points: number;
+  engagementScore: number;
+  badges: EFanBadge[];
+  contributions: IFan["contributions"];
+  fanSince: string;
+}
 
-        getFanStats: builder.query<{
-            totalFans: number;
-            totalPoints: number;
-            averageEngagement: number;
-        }, void>({
-            query: () => "/fans/stats",
-            providesTags: ["FanStats"]
-        }),
+export interface IFanStats {
+  totalFans: number;
+  totalPoints: number;
+  averageEngagement: number;
+  topFans: Array<{
+    _id: string;
+    user: IMiniUser;
+    points: number;
+  }>;
+}
 
-        registerAsFan: builder.mutation<void, string>({
-            query: (userId) => ({
-                url: `/fans/register/${userId}`,
-                method: "POST"
-            }),
-            invalidatesTags: ["Fans", "FanStats"]
-        })
-    })
+export const fanApi = api.injectEndpoints({
+  endpoints: (builder) => ({
+    // Get current user's fan profile
+    getMyFanProfile: builder.query<IQueryResponse<IFan>, void>({
+      query: () => "/fans/me",
+      providesTags: ["Fan"],
+    }),
+
+    // Get fan profile by user ID
+    getFanByUserId: builder.query<IQueryResponse<IFan>, string>({
+      query: (userId) => `/fans/user/${userId}`,
+      providesTags: (_result, _error, userId) => [{ type: "Fan", id: userId }],
+    }),
+
+    // Get fan leaderboard
+    getFanLeaderboard: builder.query<
+      IQueryResponse<IFanLeaderboardEntry[]>,
+      { limit?: number; sortBy?: "points" | "engagementScore" }
+    >({
+      query: (params = { limit: 50, sortBy: "points" }) => ({
+        url: `/fans/leaderboard`,
+        params,
+      }),
+      providesTags: ["FanLeaderboard"],
+    }),
+
+    // Get fan statistics
+    getFanStats: builder.query<IQueryResponse<IFanStats>, void>({
+      query: () => "/fans/stats",
+      providesTags: ["FanStats"],
+    }),
+
+    // Update fan preferences
+    updateFanPreferences: builder.mutation<
+      IQueryResponse<IFan>,
+      Partial<IFan["preferences"]>
+    >({
+      query: (preferences) => ({
+        url: "/fans/preferences",
+        method: "PATCH",
+        body: { preferences },
+      }),
+      invalidatesTags: ["Fan"],
+    }),
+
+    // Get fan points history (optional - for activity feed)
+    getFanPointsHistory: builder.query<
+      IQueryResponse<
+        Array<{ action: string; points: number; date: string; newsId?: string }>
+      >,
+      { limit?: number }
+    >({
+      query: ({ limit = 20 }) => `/fans/history?limit=${limit}`,
+      providesTags: ["FanHistory"],
+    }),
+  }),
 });
 
 export const {
-    useGetFanLeaderboardQuery,
-    useGetFanStatsQuery,
-    useRegisterAsFanMutation
-} = fansApi;
+  useGetMyFanProfileQuery,
+  useGetFanByUserIdQuery,
+  useGetFanLeaderboardQuery,
+  useGetFanStatsQuery,
+  useUpdateFanPreferencesMutation,
+  useGetFanPointsHistoryQuery,
+} = fanApi;

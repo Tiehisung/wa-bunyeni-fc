@@ -9,11 +9,12 @@ import {
   getTimeLeftOrAgo,
 } from "@/lib/timeAndDate";
 import { DIALOG } from "@/components/Dialog";
-import { Users } from "lucide-react";
 import SquadCard from "../admin/squad/SquadCard";
 import { IMatch } from "@/types/match.interface";
 import { Button } from "@/components/buttons/Button";
 import { useRouter } from "next/navigation";
+import { GiDarkSquad } from "react-icons/gi";
+import { CiCircleInfo } from "react-icons/ci";
 
 export function MatchFixtureCard({ match }: { match?: IMatch }) {
   const router = useRouter();
@@ -23,7 +24,7 @@ export function MatchFixtureCard({ match }: { match?: IMatch }) {
 
   return (
     <div className="bg-card border p-4 space-y-2.5">
-      <div className="flex justify-between gap-5">
+      <header className="flex justify-between gap-5 font-light text-sm">
         <Badge
           variant={
             status == "LIVE"
@@ -32,11 +33,15 @@ export function MatchFixtureCard({ match }: { match?: IMatch }) {
                 ? "secondary"
                 : "outline"
           }
+          className=" font-light text-sm"
         >
           {status}
         </Badge>
 
-        <Badge className="uppercase" variant={"outline"}>
+        <Badge
+          className="uppercase font-light text-sm"
+          variant={match?.category == "u13" ? "secondary" : "outline"}
+        >
           {match?.category}
         </Badge>
 
@@ -44,7 +49,7 @@ export function MatchFixtureCard({ match }: { match?: IMatch }) {
           {formatDate(match?.date, "March 2, 2025")}(
           {getTimeLeftOrAgo(match?.date).formatted})
         </span>
-      </div>
+      </header>
       <div className=" flex items-center justify-between">
         <ul>
           <li className="flex items-center gap-1.5 mb-2">
@@ -84,12 +89,7 @@ export function MatchFixtureCard({ match }: { match?: IMatch }) {
       <footer className="flex items-center justify-between text-sm gap-5">
         {match?.squad && (
           <DIALOG
-            trigger={
-              <>
-                <Users size={16} />
-                Squad
-              </>
-            }
+            trigger={<GiDarkSquad />}
             title=""
             className="min-w-[80vw]"
             variant={"ghost"}
@@ -100,10 +100,13 @@ export function MatchFixtureCard({ match }: { match?: IMatch }) {
 
         <Button
           onClick={() => router.push("/matches/" + (match?.slug || match?._id))}
-          primaryText="Details"
-          variant="secondary"
+          primaryText=""
+          variant="ghost"
           className="rounded-full px-4 "
-        />
+        >
+          {" "}
+          <CiCircleInfo />
+        </Button>
       </footer>
     </div>
   );

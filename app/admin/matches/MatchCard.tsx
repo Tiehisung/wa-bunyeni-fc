@@ -13,10 +13,13 @@ import SquadCard from "../squad/SquadCard";
 import SquadForm from "../squad/SquadForm";
 import { IMatch } from "@/types/match.interface";
 import { ResizableContent } from "@/components/resizables/ResizableContent";
- 
+
 import { MatchForm } from "./FixtureForm";
 import { StackModal } from "@/components/modals/StackModal";
 import Link from "next/link";
+import { Edit } from "lucide-react";
+import { CiCircleInfo, CiEdit } from "react-icons/ci";
+import { GiDarkSquad } from "react-icons/gi";
 
 interface Props {
   match?: IMatch;
@@ -28,7 +31,7 @@ export function AdminMatchCard({ match }: Props) {
 
   return (
     <div className="bg-card border p-4 space-y-2.5 max-w-[90vw]">
-      <header className="flex justify-between gap-5">
+      <header className="flex justify-between gap-5 text-muted-foreground text-sm font-light">
         <Badge
           variant={
             status === "LIVE"
@@ -37,10 +40,16 @@ export function AdminMatchCard({ match }: Props) {
                 ? "secondary"
                 : "outline"
           }
+          className="text-sm font-light"
         >
           {status}
         </Badge>
-        <span>{match?.category}</span>
+        <Badge
+          variant={match?.category == "u13" ? "secondary" : "outline"}
+          className="text-sm uppercase font-light"
+        >
+          {match?.category}
+        </Badge>
         <div className="text-sm text-muted-foreground">
           {formatDate(match?.date, "March 2, 2025")}(
           {getTimeLeftOrAgo(match?.date).formatted})
@@ -85,16 +94,18 @@ export function AdminMatchCard({ match }: Props) {
 
       <ResizableContent className="max-w-full text-sm">
         <StackModal
-          trigger={"Edit"}
+          trigger={<CiEdit />}
           id={`edit-m-${match?._id}`}
           variant={"ghost"}
         >
           <MatchForm fixture={match} />
         </StackModal>
 
+       
+
         {match?.squad ? (
           <DIALOG
-            trigger="Squad"
+            trigger={ <GiDarkSquad />}
             triggerStyles="justify-start"
             title=""
             className="min-w-[80vw]"
@@ -104,7 +115,7 @@ export function AdminMatchCard({ match }: Props) {
           </DIALOG>
         ) : (
           <DIALOG
-            trigger="Squad"
+            trigger={ <GiDarkSquad />}
             variant="ghost"
             triggerStyles="justify-start"
             title={` Squad for ${match?.title}`}
@@ -118,7 +129,7 @@ export function AdminMatchCard({ match }: Props) {
           href={`/admin/matches/${match?.slug ?? match?._id}`}
           className="_hover _link p-2 px-4"
         >
-          View
+          <CiCircleInfo />
         </Link>
       </ResizableContent>
     </div>

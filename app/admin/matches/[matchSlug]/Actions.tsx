@@ -15,6 +15,8 @@ import { smartToast } from "@/utils/toast";
 import { fireEscape } from "@/hooks/Esc";
 import { StackModal } from "@/components/modals/StackModal";
 import { MatchForm } from "../FixtureForm";
+import { Button } from "@/components/buttons/Button";
+import { printMatchDetails } from "@/app/matches/Export";
 
 interface Props {
   match?: IMatch;
@@ -62,7 +64,6 @@ const MatchActions = ({ match }: Props) => {
           >
             <MatchForm fixture={match} />
           </StackModal>
-
           {match?.squad ? (
             <DIALOG
               trigger="Squad"
@@ -83,7 +84,6 @@ const MatchActions = ({ match }: Props) => {
               <SquadForm defaultMatch={match} />
             </DIALOG>
           )}
-
           {status === "UPCOMING" && (
             <ConfirmDialog
               description={`Are you sure you want this match to go live? \n <i>${
@@ -96,7 +96,6 @@ const MatchActions = ({ match }: Props) => {
               title={`Start ${match?.title}`}
             />
           )}
-
           {status === "LIVE" && (
             <ConfirmDialog
               description={`Do you want to finish this match? \n <i>${
@@ -109,7 +108,6 @@ const MatchActions = ({ match }: Props) => {
               title={`End | ${match?.title}`}
             />
           )}
-
           <ConfirmDialog
             trigger="Delete"
             onConfirm={handleDelete}
@@ -120,6 +118,11 @@ const MatchActions = ({ match }: Props) => {
               40,
             )}</b>"?`}
           />
+          <Button
+            onClick={() => printMatchDetails(match!, { title: "Match Report" })}
+          >
+            Print Report
+          </Button>
         </div>{" "}
       </fieldset>
     </div>

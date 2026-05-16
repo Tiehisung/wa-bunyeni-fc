@@ -7,9 +7,9 @@ import connectDB from "@/config/db.config";
 import NewsModel from "@/models/news";
 
 import { slugIdFilters } from "@/lib/slug";
-import { updateFanPoints } from "@/lib/fan";
 import { auth } from "@/auth";
 import { getOrCreateVisitorId } from "@/lib/visitor";
+import { updateFanPoints } from "@/app/api/fans/helpers";
 
 connectDB();
 

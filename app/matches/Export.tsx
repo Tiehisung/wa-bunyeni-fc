@@ -1,5 +1,5 @@
-// utils/printMatch.ts
-import { symbols } from "@/data";
+"use client";
+
 import { Button } from "@/components/buttons/Button";
 import { Printer } from "lucide-react";
 import { formatDate, formatTimeToAmPm } from "@/lib/timeAndDate";
@@ -23,9 +23,6 @@ export const printMatchesList = (
       const { home, away } = checkTeams(match);
       const metrics = checkMatchMetrics(match);
       const isUpcoming = match.status === EMatchStatus.UPCOMING;
-      const isLive = match.status === EMatchStatus.LIVE;
-      const isFinished = match.status === EMatchStatus.FT;
-
       return `
         <tr>
           <td>${index + 1}</td>
@@ -46,7 +43,8 @@ export const printMatchesList = (
             <td class="text-center font-bold">${metrics?.scoreline}</td>
             <td class="text-center">${metrics?.winStatus?.toUpperCase()}</td>
           `
-              : ""
+              : `<td></td>
+                <td></td>`
           }
           <td>${match.opponent?.name || "N/A"}</td>
           <td>${match.isHome ? "Home 🏠" : "Away ✈️"}</td>

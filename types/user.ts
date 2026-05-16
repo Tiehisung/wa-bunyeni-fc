@@ -38,22 +38,7 @@ export enum EUserAccount {
   GOOGLE = 'google',
 }
 
-export interface IFan extends IUser {
-  fanPoints: number;
-  fanBadges: string[];
-  fanRank?: number;
-  engagementScore: number;
-  contributions: {
-    comments: number;
-    shares: number;
-    reactions: number;
-    matchAttendance: number;
-    galleries: number;
-    newsViews: number;
-  };
-  fanSince: string;
-  lastActive?: Date|string;
-}
+ 
 
 export interface ISession {
   user: IMiniUser;

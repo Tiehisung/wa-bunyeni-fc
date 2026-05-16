@@ -29,7 +29,8 @@ export interface IMatch {
   broadcaster?: IFileProps;
   status: EMatchStatus;
   isHome: boolean;
-  venue?: { name: string; files: IFileProps[] };
+  venue?: string;
+  matchImages?: string[];
   fixtureFlier?: string;
   resultFlier?: string;
   goals: Array<IGoal>;
