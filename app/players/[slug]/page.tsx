@@ -1,4 +1,3 @@
-import PlayerProfile from "./Profile";
 import { PlayerHeadList } from "./PlayerHeadList";
 import { baseApiUrl } from "@/lib/configs";
 import { IPlayer } from "@/types/player.interface";
@@ -6,6 +5,7 @@ import { IPageProps, IQueryResponse } from "@/types";
 import { Metadata } from "next";
 import { ENV } from "@/lib/env";
 import { TEAM } from "@/data/team";
+import PlayerProfile from "../dashboard/Profile";
 
 export const getPlayer = async (slugOrIdOrEmail: string) => {
   try {
@@ -84,7 +84,7 @@ export default async function PlayerProfilePage({ params }: IPageProps) {
   return (
     <>
       <main className="pl-2">
-        <PlayerProfile />
+        <PlayerProfile slug={slug} />
         <PlayerHeadList />
       </main>
     </>

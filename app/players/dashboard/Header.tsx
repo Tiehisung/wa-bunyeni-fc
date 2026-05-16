@@ -1,27 +1,18 @@
- 
-
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AVATAR, Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  Share2,
-  Printer,
-  Edit,
-  Mail,
-  Phone,
-  Award,
-  Tag,
-} from "lucide-react";
+import { Share2, Printer, Edit, Mail, Phone, Award, Tag } from "lucide-react";
 import { EPlayerAvailability, IPlayer } from "@/types/player.interface";
 import { EPlayerPosition } from "@/types/player.interface";
 import { POPOVER } from "@/components/ui/popover";
 import { SocialShare } from "@/components/SocialShare";
+import { Button } from "@/components/buttons/Button";
 
 interface PlayerHeaderProps {
   player?: IPlayer;
+  isAuthorized?: boolean;
 }
 
-export function PlayerHeader({ player }: PlayerHeaderProps) {
+export function PlayerHeader({ player, isAuthorized }: PlayerHeaderProps) {
   // Early return if no player
   if (!player) {
     return (
@@ -67,13 +58,8 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
   return (
     <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
       <div className="flex items-center gap-4">
-        <div className="relative">
-          <AVATAR
-            src={player?.avatar}
-            alt={fullName}
-          
-            size={"2xl"}
-          />
+        <div className="relative ">
+          <AVATAR src={player?.avatar} alt={fullName} size={"2xl"} />
           <div className="absolute -top-2 -right-2">
             <div
               className={`h-7 w-7 rounded-full flex items-center justify-center text-white font-bold text-sm bg-modalOverlay shadow-md`}
@@ -85,7 +71,7 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
 
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-3xl font-bold truncate">{fullName}</h1>
+            <h1 className="text-3xl font-bold ">{fullName}</h1>
             <Badge
               variant={isCurrentPlayer ? "default" : "destructive"}
               className="shrink-0"
@@ -113,20 +99,22 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
             )}
           </div>
 
-          <div className="flex items-center gap-4 mt-4 text-sm text-muted-foreground flex-wrap">
-            <div className="flex items-center gap-1 min-w-0">
-              <Mail className="h-4 w-4 shrink-0" />
-              <span className="truncate">{email}</span>
+          {isAuthorized && (
+            <div className="flex items-center gap-4 mt-4 text-sm text-muted-foreground flex-wrap">
+              <div className="flex items-center gap-1 min-w-0">
+                <Mail className="h-4 w-4 shrink-0" />
+                <span className="truncate">{email}</span>
+              </div>
+              <div className="flex items-center gap-1 min-w-0">
+                <Phone className="h-4 w-4 shrink-0" />
+                <span className="truncate">{phone}</span>
+              </div>
+              <div className="flex items-center gap-1 min-w-0">
+                <Tag className="h-4 w-4 shrink-0" />
+                <span className="truncate">{player?.code}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1 min-w-0">
-              <Phone className="h-4 w-4 shrink-0" />
-              <span className="truncate">{phone}</span>
-            </div>
-            <div className="flex items-center gap-1 min-w-0">
-              <Tag className="h-4 w-4 shrink-0" />
-              <span className="truncate">{player?.code}</span>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -148,10 +136,12 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
         >
           <Printer className="h-4 w-4" />
         </Button>
-        <Button className="gap-2" size="sm">
-          <Edit className="h-4 w-4" />
-          Edit Player
-        </Button>
+        {isAuthorized && (
+          <Button className="gap-2" size="sm">
+            <Edit className="h-4 w-4" />
+            Edit Player
+          </Button>
+        )}
       </div>
     </div>
   );

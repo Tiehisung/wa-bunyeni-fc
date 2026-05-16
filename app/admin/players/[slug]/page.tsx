@@ -135,7 +135,7 @@ export default function PlayerProfilePage() {
           <NotifierWrapper
             message="Unconfirmed player"
             className="text-Red"
-            inDismissible
+            isDismissible
           >
             <p>{fullname} is not visible to the public</p>
           </NotifierWrapper>

@@ -6,7 +6,7 @@ const FanSchema = new Schema(
   {
     user: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "users",
       required: true,
       unique: true,
     },
@@ -65,4 +65,4 @@ FanSchema.index({ points: -1 });
 FanSchema.index({ engagementScore: -1 });
 // FanSchema.index({ user: 1 }, { unique: true });
 
-export const FanModel = mongoose.models.Fan || mongoose.model("Fan", FanSchema);
+export const FanModel = mongoose.models.fans || mongoose.model("fans", FanSchema);

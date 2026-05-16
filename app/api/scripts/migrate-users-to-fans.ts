@@ -103,10 +103,6 @@ function determineBadges(user: any): EFanBadge[] {
 
 // Main migration function
 export async function migrateUsersToFans() {
-  console.log(
-    "🚀 Starting migration: Creating fan profiles for all users...\n",
-  );
-
   await connectDB();
   // Find all users
   const users = await UserModel.find({});

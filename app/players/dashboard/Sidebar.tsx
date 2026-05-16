@@ -16,9 +16,10 @@ import { Progress } from "@/components/ui/progress";
 
 interface PlayerSidebarProps {
   player?: IPlayer;
+  isAuthorized?: boolean;
 }
 
-export function PlayerSidebar({ player }: PlayerSidebarProps) {
+export function PlayerSidebar({ player, isAuthorized }: PlayerSidebarProps) {
   // Safe manager data extraction
   const manager = player?.manager;
   const managerName = manager?.fullname || "Not Assigned";
@@ -62,17 +63,19 @@ export function PlayerSidebar({ player }: PlayerSidebarProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">
-                Date of Birth
-              </span>
-              <div className="flex items-center gap-2">
-                <Cake className="h-4 w-4" />
-                <span className="font-medium">
-                  {getFormattedDate(player?.dob)}
+            {isAuthorized && (
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">
+                  Date of Birth
                 </span>
+                <div className="flex items-center gap-2">
+                  <Cake className="h-4 w-4" />
+                  <span className="font-medium">
+                    {getFormattedDate(player?.dob)}
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Height</span>
               <span className="font-medium">{getHeightDisplay()}</span>
@@ -162,10 +165,11 @@ export function PlayerSidebar({ player }: PlayerSidebarProps) {
             />
             <div className="min-w-0 flex-1">
               <h4 className="font-semibold truncate">{managerName}</h4>
-
-              <p className="text-sm text-muted-foreground truncate">
-                {manager?.phone || "No phone provided"}
-              </p>
+              {isAuthorized && (
+                <p className="text-sm text-muted-foreground truncate">
+                  {manager?.phone || "No phone provided"}
+                </p>
+              )}
             </div>
           </div>
 

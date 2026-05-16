@@ -54,20 +54,19 @@ interface TrendingProps {
   // data: INewsSectionProps;
 }
 
-const LandingTrendingNews: React.FC<TrendingProps> = async ({ className = "" }) => {
- 
+const LandingTrendingNews: React.FC<TrendingProps> = async ({
+  className = "",
+}) => {
   // const { data: newsData, isLoading: loadingTrending } =
   //   useGetTrendingNewsQuery({ limit: 4 });
   // const { data: allNewsData, isLoading: loadingAll } = useGetNewsQuery("", {
   //   skip: (newsData?.data?.length || 0) > 0,
   // });
- const news = await getTrendingNews();
+  const news = await getTrendingNews();
   const isLoading = !news;
 
-  console.log({news})
   const newsItems = news?.data && news.data.length > 0 ? news.data : [];
 
- 
   if (isLoading) {
     return (
       <div className=" space-y-8 flex justify-center items-center ">

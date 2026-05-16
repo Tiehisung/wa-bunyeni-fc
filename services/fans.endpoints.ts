@@ -30,13 +30,13 @@ export const fanApi = api.injectEndpoints({
     // Get current user's fan profile
     getMyFanProfile: builder.query<IQueryResponse<IFan>, void>({
       query: () => "/fans/me",
-      providesTags: ["Fan"],
+      providesTags: ["Fans"],
     }),
 
     // Get fan profile by user ID
     getFanByUserId: builder.query<IQueryResponse<IFan>, string>({
       query: (userId) => `/fans/user/${userId}`,
-      providesTags: (_result, _error, userId) => [{ type: "Fan", id: userId }],
+      providesTags: (_result, _error, userId) => [{ type: "Fans", id: userId }],
     }),
 
     // Get fan leaderboard
@@ -48,7 +48,7 @@ export const fanApi = api.injectEndpoints({
         url: `/fans/leaderboard`,
         params,
       }),
-      providesTags: ["FanLeaderboard"],
+      providesTags: ["Fans"],
     }),
 
     // Get fan statistics
@@ -67,7 +67,7 @@ export const fanApi = api.injectEndpoints({
         method: "PATCH",
         body: { preferences },
       }),
-      invalidatesTags: ["Fan"],
+      invalidatesTags: ["Fans"],
     }),
 
     // Get fan points history (optional - for activity feed)

@@ -44,8 +44,7 @@ export const api = createApi({
     "Squads",
     "Users",
     "Uploads",
-    "Fan",
-    "FanLeaderboard",
+    "Fans",
     "FanStats",
     "FanHistory",
 

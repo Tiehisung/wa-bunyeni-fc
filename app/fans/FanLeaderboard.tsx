@@ -14,7 +14,10 @@ import { useGetFanLeaderboardQuery } from "@/services/fans.endpoints";
 
 export function FanLeaderboard() {
   const [sortBy, setSortBy] = useState<"points" | "engagementScore">("points");
-  const { data: leaderboard, isLoading } = useGetFanLeaderboardQuery({});
+  const { data: leaderboard, isLoading } = useGetFanLeaderboardQuery({
+    limit: 50,
+    sortBy: sortBy,
+  });
 
   console.log({ leaderboard });
 

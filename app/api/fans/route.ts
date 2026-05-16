@@ -18,19 +18,9 @@ export async function GET(request: NextRequest) {
       .populate("user", "name email avatar")
       .lean();
 
-    const leaderboard = fans.map((fan, index) => ({
-      rank: index + 1,
-      user: fan.user as any,
-      points: fan.points,
-      engagementScore: fan.engagementScore,
-      badges: fan.badges,
-      contributions: fan.contributions,
-      fanSince: fan.fanSince,
-    }));
-
     return NextResponse.json({
       success: true,
-      data: leaderboard,
+      data: fans,
     });
   } catch (error) {
     return NextResponse.json(
