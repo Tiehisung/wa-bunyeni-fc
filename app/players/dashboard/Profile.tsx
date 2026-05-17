@@ -16,6 +16,7 @@ import { useSession } from "next-auth/react";
 import { useGetPlayerQuery } from "@/services/player.endpoints";
 import NotifierWrapper from "@/components/Notifier";
 import LoginModal from "@/components/auth/Login";
+import { useGetShortUrlQuery } from "@/services/app.endpoints";
 
 export default function PlayerProfile({ slug }: { slug?: string }) {
   const { data: session } = useSession();
@@ -29,6 +30,12 @@ export default function PlayerProfile({ slug }: { slug?: string }) {
 
   const isAuthorized =
     user?.email == player?.email || user?.role.includes("admin");
+
+  const { data: shorturl } = useGetShortUrlQuery(
+    "https://wa-bunyeni-fc.vercel.app",
+  );
+
+  console.log(shorturl);
 
   if (isLoading) {
     return <PageLoader />;

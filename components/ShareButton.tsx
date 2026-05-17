@@ -1,8 +1,9 @@
-'use client'
+"use client";
 
 import { useState } from "react";
-import { Share2, Check,   } from "lucide-react";
+import { Share2, Check } from "lucide-react";
 import { toast } from "sonner";
+import { shortenUrlWithBitly } from "@/lib/url";
 
 interface ShareButtonProps {
   shareUrl: string;
@@ -40,6 +41,35 @@ export function ShareButton({ shareUrl, title, text }: ShareButtonProps) {
     >
       {copied ? <Check size={18} /> : <Share2 size={18} />}
       {copied ? "Copied!" : "Share"}
+    </button>
+  );
+}
+
+export default function CopyShortButton({ originalUrl }: { originalUrl: string }) {
+  const [shortUrl, setShortUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleShare = async () => {
+    if (shortUrl) {
+      // If already shortened, just copy to clipboard
+      navigator.clipboard.writeText(shortUrl);
+      alert("Link copied to clipboard!");
+      return;
+    }
+
+    setIsLoading(true);
+    const shortened = await shortenUrlWithBitly(originalUrl);
+    setShortUrl(shortened);
+    setIsLoading(false);
+
+    // Copy the newly created short link
+    navigator.clipboard.writeText(shortened);
+    alert(`Link shortened and copied: ${shortened}`);
+  };
+
+  return (
+    <button onClick={handleShare} disabled={isLoading}>
+      {isLoading ? "Shortening..." : shortUrl ? "Copy Short Link" : "Share"}
     </button>
   );
 }
