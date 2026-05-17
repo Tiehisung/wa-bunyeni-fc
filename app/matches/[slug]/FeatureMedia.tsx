@@ -14,6 +14,7 @@ import {
 } from "@/services/match.endpoints";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
+import { downloadFile } from "@/lib/file";
 
 interface Props {
   slug?: string;
@@ -123,6 +124,16 @@ export function MatchFeaturedImages({ slug }: Props) {
                 <Button
                   onClick={() => handleDeleteMedia(f?.secure_url)}
                   primaryText="Delete"
+                  waitingText="Wait..."
+                  variant="secondary"
+                  className="w-full justify-start"
+                  disabled={isLoading}
+                />
+                <Button
+                  onClick={() =>
+                    downloadFile(f?.secure_url, `${match.title} feature file`)
+                  }
+                  primaryText="Download"
                   waitingText="Wait..."
                   variant="secondary"
                   className="w-full justify-start"
