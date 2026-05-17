@@ -93,7 +93,18 @@ export default function MatchDetailsClient({ slug }: MatchDetailsClientProps) {
           {/* Share Button - Top Right */}
           <div className="flex justify-end mb-4">
             {currentUrl && (
-              <ShareButton shareUrl={currentUrl} title={match?.title} />
+              <ShareButton
+                shareUrl={currentUrl}
+                title={match?.title}
+                files={
+                  [
+                    ...(match?.matchImages ?? []),
+                    match?.fixtureFlier,
+                    match?.resultFlier,
+                    match?.opponent?.logo,
+                  ]?.filter(Boolean) as string[]
+                }
+              />
             )}
           </div>
 
