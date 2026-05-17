@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
 import { Loader2 } from "lucide-react";
 import {
   useLazyGlobalSearchQuery,
@@ -23,7 +22,7 @@ export function GlobalSearch() {
   const router = useRouter();
 
   const searchTerm = useGetParam("search");
-  const q_types = useGetParam("s_source");
+  const q_sources = useGetParam("s_source");
 
   const [isOpen, setIsOpen] = useState(false);
   const [showRecent, setShowRecent] = useState(true);
@@ -39,7 +38,7 @@ export function GlobalSearch() {
   // Debounced search
   const debouncedSearch = debounce((term: string) => {
     if (term.length >= 2) {
-      triggerSearch({ q: term, limit: 10, types: q_types });
+      triggerSearch({ q: term, limit: 10, sources: q_sources });
       setShowRecent(false);
     } else {
       setShowRecent(true);

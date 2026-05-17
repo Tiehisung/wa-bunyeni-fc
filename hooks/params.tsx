@@ -1,20 +1,15 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useSearchParams } from 'next/navigation';
+import { useMemo } from 'react';
 
-// Custom hook to get a query parameter value
 const useGetParam = (queryKey: string): string => {
- 
-  const [paramValue, setParamValue] = useState<string | null | undefined>("");
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const pv = searchParams.get(queryKey);
-    setParamValue(pv);
-  }, [window.location.search, queryKey]);
-
-  return paramValue ?? "";
+    const searchParams = useSearchParams();
+    
+    return useMemo(() => {
+        return searchParams?.get(queryKey) ?? '';
+    }, [searchParams, queryKey]);
 };
 
 export default useGetParam;
