@@ -67,7 +67,9 @@ async function searchPlayers(
         type: "player",
         id: player._id.toString(),
         title: `${player.firstName} ${player.lastName}`,
-        description: `${player.position} | #${player.number} | ${player.category }`,
+        description: [player.position, player.number, player.category]
+          .filter(Boolean)
+          .join(" | "),
         image: player.avatar,
         url: isAdmin
           ? `/admin/players/${player.slug}`
@@ -87,7 +89,6 @@ async function searchPlayers(
     return [];
   }
 }
- 
 
 // Search Matches
 async function searchMatches(
@@ -268,6 +269,7 @@ async function searchGalleries(
       $or: [{ title: regex }, { description: regex }, { tags: regex }],
     })
       .select("title description files tags")
+      .populate("files", "secure_url resource_type original_filename")
       .limit(30)
       .lean();
 
@@ -276,7 +278,9 @@ async function searchGalleries(
       id: gallery._id.toString(),
       title: gallery.title,
       description: gallery.description?.substring(0, 200) || "",
-      image: gallery.files?.[0]?.secure_url,
+      image: gallery.files?.find(
+        (gf: { resource_type: string }) => gf.resource_type == "image",
+      )?.secure_url,
       url: `${isAdmin ? "/admin" : ""}/gallery?gallery_search=${encodeURIComponent(gallery.title)}`,
       relevance: gallery.title
         ?.toLowerCase()

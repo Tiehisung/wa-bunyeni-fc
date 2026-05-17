@@ -19,7 +19,7 @@ export function FanLeaderboard() {
     sortBy: sortBy,
   });
 
-  console.log({ leaderboard });
+  // console.log({ leaderboard });
 
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Trophy className="h-5 w-5 text-yellow-500" />;
