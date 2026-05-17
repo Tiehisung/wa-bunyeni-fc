@@ -1,8 +1,8 @@
 // app/api/fans/user/[userId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getApiErrorMessage } from "@/lib/error-api";
-import { FanModel } from "@/models/fans";
 import UserModel from "@/models/user";
+import  FanModel  from "@/models/fans";
 import { slugIdFilters } from "@/lib/slug";
 import dbConnect from "@/config/db.config";
 
