@@ -94,7 +94,7 @@ export const PrimarySearchWithSelect = ({
   searchKey = "search",
   datalist,
   listId = "search-datalist",
-  sources = ["players", "matches", "news"],
+  sources = ["players", "matches", "news", "galleries"],
 }: ISearchProps & { sources?: string[] }) => {
   const { setParam } = useUpdateSearchParams();
   const searchSource = useGetParam("s_source");
@@ -112,7 +112,10 @@ export const PrimarySearchWithSelect = ({
     <div
       className={`group bg-card flex items-center gap-2 border border-1.5 border-primary/30 focus-within:ring ring-primary focus-within:border-teal-ring-primary/80 rounded-md px-2 text-sm ${className}`}
     >
-      <CgSearch size={20} className="h-4 w-auto text-primary/30 group-focus-within:text-primary" />
+      <CgSearch
+        size={20}
+        className="h-4 w-auto text-primary/30 group-focus-within:text-primary"
+      />
 
       <input
         onChange={handleOnChange}
@@ -140,7 +143,6 @@ export const PrimarySearchWithSelect = ({
         className="border rounded-full bg-Blue/5 max-h-8"
         selectStyles="border-none outline-none bg-transparents ring-0 focus:ring-0 capitalize"
         modern={false}
-
       />
       {/* 📋 Datalist */}
       {datalist && listId && (

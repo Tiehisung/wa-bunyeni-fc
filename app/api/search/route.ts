@@ -10,6 +10,8 @@ import SponsorModel from "@/models/sponsor";
 import GalleryModel from "@/models/galleries";
 import { getApiErrorMessage } from "../../../lib/error-api";
 import { ISearchResult } from "@/services/search.endpoints";
+import { IMatch } from "@/types/match.interface";
+import "@/models/teams";
 
 connectDB();
 
@@ -114,36 +116,43 @@ async function searchMatches(
       if (toDate) query.date.$lte = new Date(toDate);
     }
 
-    const matches = await MatchModel.find(query)
+    
+    const matches: IMatch[] = await MatchModel.find(query)
       .select("title opponent date time status venue isHome slug")
       .populate("opponent")
       .limit(50)
-      .lean({ virtuals: true });
+      .lean();
 
+    
     return matches.map((match) => {
       let relevance = 0;
       if (match.title.toLowerCase().includes(regex.source.toLowerCase()))
         relevance += 10;
       if (
-        match.opponent?.name?.toLowerCase().includes(regex.source.toLowerCase())
+        match?.opponent?.name
+          ?.toLowerCase()
+          .includes(regex.source.toLowerCase())
       )
         relevance += 8;
 
       return {
         type: "match",
-        id: match._id.toString(),
-        title: match.title,
-        description: `${match.opponent?.name} | ${match.venue} | ${match.status}`,
-        image: match.opponent?.logo,
-        url: `${isAdmin ? "/admin" : ""}/matches/${match.slug || match._id}`,
-        date: match.date,
+        id: match?._id.toString(),
+        title: match?.title,
+        description: [match.opponent?.name, match?.venue, match?.status]
+          .filter(Boolean)
+          .join(" | "),
+        image:
+          match?.fixtureFlier || match?.resultFlier || match?.opponent?.logo,
+        url: `${isAdmin ? "/admin" : ""}/matches/${match?.slug || match?._id}`,
+        date: match?.date,
         relevance,
         metadata: {
-          opponent: match.opponent?.name,
-          venue: match.venue,
-          status: match.status,
-          isHome: match.isHome,
-          time: match.time,
+          opponent: match?.opponent?.name,
+          venue: match?.venue,
+          status: match?.status,
+          isHome: match?.isHome,
+          time: match?.time,
         },
       };
     });
@@ -281,7 +290,7 @@ async function searchGalleries(
       image: gallery.files?.find(
         (gf: { resource_type: string }) => gf.resource_type == "image",
       )?.secure_url,
-      url: `${isAdmin ? "/admin" : ""}/gallery?gallery_search=${encodeURIComponent(gallery.title)}`,
+      url: `${isAdmin ? "/admin" : ""}/gallery?gallery_search=${encodeURIComponent(gallery.title)}&stackModal=${gallery?._id}`,
       relevance: gallery.title
         ?.toLowerCase()
         .includes(regex.source.toLowerCase())
@@ -347,8 +356,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const q = searchParams.get("q");
     const sources =
-      searchParams.get("sources") ||
-      "players,matches,news,sponsors,galleries,docs";
+      searchParams.get("sources") || "players,matches,news,galleries,docs";
     const limit = parseInt(searchParams.get("limit") || "20");
     const page = parseInt(searchParams.get("page") || "1");
     const fromDate = getQueryString(searchParams.get("fromDate") || undefined);
