@@ -15,6 +15,7 @@ import { Calendar, Clock, MapPin, Medal, Trophy, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { MatchFeaturedImages } from "./FeatureMedia";
 
 interface MatchDetailsClientProps {
   slug: string;
@@ -98,7 +99,9 @@ export default function MatchDetailsClient({ slug }: MatchDetailsClientProps) {
 
           {/* Status Badges */}
           <div className="flex justify-center gap-3 mb-6">
-            <span className="uppercase text-2xl font-light">{match.category}</span>
+            <span className="uppercase text-2xl font-light">
+              {match.category}
+            </span>
             <span
               className={`${status.className} text-white text-sm font-semibold px-4 py-1 rounded-full uppercase tracking-wider`}
             >
@@ -347,6 +350,7 @@ export default function MatchDetailsClient({ slug }: MatchDetailsClientProps) {
 
         {/* Match Fliers / Events */}
         <MatchFliers match={match} />
+        <MatchFeaturedImages slug={slug} />
 
         {/* Back Navigation */}
         <div className="text-center mt-8">

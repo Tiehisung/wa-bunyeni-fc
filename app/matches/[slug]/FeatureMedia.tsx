@@ -3,31 +3,38 @@
 import MasonryGallery from "@/components/Gallery/Masonry";
 import { IPlayer } from "@/types/player.interface";
 import { ICloudinaryFile, IFileProps } from "@/types/file.interface";
-import { useUpdatePlayerMutation } from "@/services/player.endpoints";
 
 import { Button } from "@/components/buttons/Button";
 import { CloudinaryWidget } from "@/components/cloudinary/Cloudinary";
 import { smartToast } from "@/utils/toast";
 import { useRouter } from "next/navigation";
+import {
+  useGetMatchQuery,
+  useUpdateMatchMutation,
+} from "@/services/match.endpoints";
+import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
 interface Props {
-  player?: IPlayer;
-  isAuthorized?: boolean;
+  slug?: string;
 }
 
-export function PlayerFeatureMedia({ player, isAuthorized }: Props) {
+export function MatchFeaturedImages({ slug }: Props) {
+  const { data: matchData, isLoading, error } = useGetMatchQuery(slug!);
+  const match = matchData?.data;
   const router = useRouter();
-  const [updatePlayer, { isLoading }] = useUpdatePlayerMutation();
 
-  const handleSaveMedia = async (imageFile: ICloudinaryFile) => {
-    if (!imageFile || !player?._id) return;
+  const { data: session } = useSession();
+  const isAuthorized = session?.user?.role?.includes("admin");
+  const [updateMatch, { isLoading: updatingMatch }] = useUpdateMatchMutation();
+
+  const handleSaveMedia = async (imageFile: string) => {
+    if (!imageFile || !match?._id) return;
 
     try {
-      const result = await updatePlayer({
-        _id: player._id,
-        featureMedia: [imageFile, ...(player?.featureMedia ?? [])].filter(
-          Boolean,
-        ),
+      const result = await updateMatch({
+        _id: match._id,
+        matchImages: [imageFile, ...(match?.matchImages ?? [])].filter(Boolean),
       }).unwrap();
 
       smartToast(result);
@@ -38,17 +45,15 @@ export function PlayerFeatureMedia({ player, isAuthorized }: Props) {
     }
   };
 
-  const handleSetWallpaper = async (file: ICloudinaryFile) => {
-    if (!player?._id) return;
+  const handleSetWallpaper = async (file: string) => {
+    if (!match?._id) return;
 
     try {
-      const result = await updatePlayer({
-        _id: player._id,
-        featureMedia: [
+      const result = await updateMatch({
+        _id: match._id,
+        matchImages: [
           file,
-          ...(player?.featureMedia?.filter(
-            (m) => m.public_id !== file.public_id,
-          ) ?? []),
+          ...(match?.matchImages?.filter((m) => m !== file) ?? []),
         ],
       }).unwrap();
 
@@ -58,15 +63,13 @@ export function PlayerFeatureMedia({ player, isAuthorized }: Props) {
     }
   };
 
-  const handleDeleteMedia = async (file: ICloudinaryFile) => {
-    if (!player?._id) return;
+  const handleDeleteMedia = async (file: string) => {
+    if (!match?._id) return;
 
     try {
-      const result = await updatePlayer({
-        _id: player._id,
-        featureMedia:
-          player?.featureMedia?.filter((m) => m.public_id !== file.public_id) ??
-          [],
+      const result = await updateMatch({
+        _id: match._id,
+        matchImages: match?.matchImages?.filter((m) => m !== file) ?? [],
       }).unwrap();
 
       smartToast(result);
@@ -80,9 +83,14 @@ export function PlayerFeatureMedia({ player, isAuthorized }: Props) {
       {isAuthorized && (
         <>
           <h3 className="text-lg font-semibold mb-4">Featured Media</h3>
-          <div className="flex flex-col items-center justify-center gap-6 my-6 border-t pt-3">
+          <div
+            className={cn(
+              " flex flex-col items-center justify-center gap-6 my-6 border-t pt-3",
+              updatingMatch ? "pointer-events-none hidden" : "",
+            )}
+          >
             <CloudinaryWidget
-              onUploadSuccess={(fs) => handleSaveMedia(fs?.[0])}
+              onUploadSuccess={(fs) => handleSaveMedia(fs?.[0]?.secure_url)}
               maxFiles={1}
               multiple={false}
               trigger={"Add Feature Media"}
@@ -92,15 +100,20 @@ export function PlayerFeatureMedia({ player, isAuthorized }: Props) {
         </>
       )}
 
-      {player?.featureMedia?.length ? (
+      {match?.matchImages?.length ? (
         <MasonryGallery
-          files={(player?.featureMedia as IFileProps[]) ?? []}
+          files={
+            (match?.matchImages?.map((mi) => ({
+              secure_url: mi,
+              resource_type: "image",
+            })) as IFileProps[]) ?? []
+          }
           // useSize
           action={(f) =>
             isAuthorized ? (
               <div className="space-y-1.5">
                 <Button
-                  onClick={() => handleSetWallpaper(f)}
+                  onClick={() => handleSetWallpaper(f?.secure_url)}
                   primaryText="Set as Wallpaper"
                   waitingText="Finalizing..."
                   variant="secondary"
@@ -108,7 +121,7 @@ export function PlayerFeatureMedia({ player, isAuthorized }: Props) {
                   disabled={isLoading}
                 />
                 <Button
-                  onClick={() => handleDeleteMedia(f)}
+                  onClick={() => handleDeleteMedia(f?.secure_url)}
                   primaryText="Delete"
                   waitingText="Wait..."
                   variant="secondary"
