@@ -49,6 +49,16 @@ export async function generateMetadata({
       type: "article",
       publishedTime: match.date,
       images: [
+        ...([
+          match?.fixtureFlier,
+          match?.resultFlier,
+          ...(match?.matchImages ?? []),
+        ]?.map((i) => ({
+          url: i as string,
+          width: 1200,
+          height: 630,
+          alt: `${homeTeam} vs ${awayTeam}`,
+        })) ?? []),
         {
           url: (match.opponent?.logo || ENV.LOGO_URL) as string,
           width: 1200,
