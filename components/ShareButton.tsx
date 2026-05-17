@@ -30,7 +30,7 @@ export function ShareButton({
       try {
         await navigator.share({
           title,
-          text: text || `${title} | ${ENV.APP_URL}`,
+          text: text || `${title} | ${ENV.APP_NAME}`,
           url: url,
           files: [],
         });

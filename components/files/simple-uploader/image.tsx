@@ -99,14 +99,15 @@ export function SimpleImageUploader({
     if (!files || files.length === 0) return;
 
     const file = files[0];
-
     // Validate
     const validationError = validateImage(file);
     if (validationError) {
+      console.log(validationError)
       onUploadError?.(validationError);
       return;
     }
-
+    
+    console.log(file);
     // Upload immediately
     await uploadSingleFile(file);
 
@@ -128,6 +129,7 @@ export function SimpleImageUploader({
       formData.append("fileExtension", getFileExtension(file.name));
 
       const result = await uploadImage(formData).unwrap();
+      console.log(result);
       onUploadSuccess?.(result?.data as ICloudinaryFile);
     } catch (err: any) {
       onUploadError?.(err?.data?.message || "Upload failed");
@@ -160,7 +162,7 @@ export function SimpleImageUploader({
         onClick={() => fileInputRef.current?.click()}
         disabled={disabled || isLoading || showCropper}
         className={className}
-        title={`Accepted files: ${acceptedFileText} (Max: ${(maxSize / 1024 / 1024).toFixed(0)}MB)`}
+        title={`Accepted files: ${acceptedFileText} (Max: ${(maxSize / (1024 * 1024)).toFixed(0)}MB)`}
         waiting={isLoading}
       >
         {trigger}

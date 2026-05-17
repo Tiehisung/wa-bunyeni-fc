@@ -75,12 +75,12 @@ export async function PUT(
     const filter = slugIdFilters(slug);
     const body = await request.json();
     delete body._id;
- 
-    const updated = await MatchModel.findOneAndUpdate(
-      filter,
-      { $set: { ...body } },
-      {  runValidators: true },
-    );
+    
+    console.log("📥 Received update for match:", slug);
+    console.log("📥 Update body:", body);
+    const updated = await MatchModel.findOneAndUpdate(filter, {
+      $set: { ...body },
+    });
 
     if (!updated) {
       return NextResponse.json(

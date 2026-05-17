@@ -16,15 +16,18 @@ import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { downloadFile } from "@/lib/file";
 import { Download, Trash, Wallpaper } from "lucide-react";
+import { SimpleImageUploader } from "@/components/files/simple-uploader/image";
 
 interface Props {
   slug?: string;
 }
 
 export function MatchFeaturedImages({ slug }: Props) {
-  const { data: matchData, isLoading, error } = useGetMatchQuery(slug!);
+  const { data: matchData, isLoading, refetch } = useGetMatchQuery(slug!);
   const match = matchData?.data;
   const router = useRouter();
+
+  console.log(matchData);
 
   const { data: session } = useSession();
   const isAuthorized = session?.user?.role?.includes("admin");
@@ -39,7 +42,10 @@ export function MatchFeaturedImages({ slug }: Props) {
         matchImages: [imageFile, ...(match?.matchImages ?? [])].filter(Boolean),
       }).unwrap();
 
+      console.log("uploaded", result);
+
       smartToast(result);
+      refetch();
     } catch (error) {
       smartToast({ error });
     } finally {
@@ -82,14 +88,19 @@ export function MatchFeaturedImages({ slug }: Props) {
 
   return (
     <div className=" grow min-h-44 my-10 w-full">
-      {isAuthorized && (
-        <>
-          <h3 className="text-lg font-semibold mb-4">Featured Media</h3>
+      {/* <SimpleImageUploader
+        onUploadSuccess={(file) => {
+          console.log("📸 Uploader returned:", file);
+          // Make sure file.secure_url exists
+          handleSaveMedia(file?.secure_url as string);
+        }}
+        folder="/matches"
+      /> */}
+      <div className="flex items-center gap6 justify-between border-b pb-4 mb-5 ">
+        <h3 className="text-lg font-semibold mb-4">Featured Media</h3>
+        {isAuthorized && (
           <div
-            className={cn(
-              " flex flex-col items-center justify-center gap-6 my-6 border-t pt-3",
-              updatingMatch ? "pointer-events-none hidden" : "",
-            )}
+            className={cn(updatingMatch ? "pointer-events-none hidden" : "")}
           >
             <CloudinaryWidget
               onUploadSuccess={(fs) => handleSaveMedia(fs?.[0]?.secure_url)}
@@ -99,8 +110,8 @@ export function MatchFeaturedImages({ slug }: Props) {
               cropping
             />
           </div>
-        </>
-      )}
+        )}
+      </div>
 
       {match?.matchImages?.length ? (
         <MasonryGallery
