@@ -4,6 +4,8 @@ import MatchFliers from "@/app/admin/matches/[matchSlug]/Fliers";
 import HEADER from "@/components/Element";
 import DataErrorAlert from "@/components/error/DataError";
 import PageLoader from "@/components/loaders/Page";
+import { ShareButton } from "@/components/ShareButton";
+import { Badge } from "@/components/ui/badge";
 import { checkMatchMetrics } from "@/lib/compute/match";
 import { ENV } from "@/lib/env";
 import { getErrorMessage } from "@/lib/error";
@@ -12,9 +14,19 @@ import { useGetMatchQuery } from "@/services/match.endpoints";
 import { Calendar, Clock, MapPin, Medal, Trophy, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
-export default function MatchDetailsClient({ slug }: { slug: string }) {
+interface MatchDetailsClientProps {
+  slug: string;
+}
+
+export default function MatchDetailsClient({ slug }: MatchDetailsClientProps) {
   const { data, isLoading, error } = useGetMatchQuery(slug);
+  const [currentUrl, setCurrentUrl] = useState("");
+
+  useEffect(() => {
+    setCurrentUrl(window.location.href);
+  }, []);
 
   const match = data?.data;
 
@@ -30,7 +42,6 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
   const awayScore = matchMetrics.goals?.away || 0;
 
   const teamGoals = matchMetrics.goals.teamGoals;
-
   const opponentGoals = matchMetrics.goals.opponentGoals || [];
 
   const getStatusBadge = () => {
@@ -40,6 +51,7 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
   };
 
   const status = getStatusBadge();
+
   if (isLoading) {
     return <PageLoader />;
   }
@@ -52,25 +64,52 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
       </div>
     );
   }
+
+  if (!match) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2">Match Not Found</h2>
+          <p className="text-muted-foreground">
+            The match you're looking for doesn't exist.
+          </p>
+          <Link
+            href="/matches"
+            className="text-primary hover:underline mt-4 inline-block"
+          >
+            ← Back to Fixtures
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <main className="min-h-screen bg-linear-to-b from-background to-muted/20">
+    <div className="min-h-screen bg-linear-to-b from-background to-muted/20">
       {/* Hero Section */}
-      <div className="relative bg-primary/5 border-b">
+      <header className="relative bg-primary/5 border-b">
         <div className="container mx-auto px-4 py-12 md:py-16">
-          {/* Status Badge */}
-          <div className="flex justify-center mb-6">
+          {/* Share Button - Top Right */}
+          <div className="flex justify-end mb-4">
+            {currentUrl && (
+              <ShareButton shareUrl={currentUrl} title={match?.title} />
+            )}
+          </div>
+
+          {/* Status Badges */}
+          <div className="flex justify-center gap-3 mb-6">
+            <span className="uppercase text-2xl font-light">{match.category}</span>
             <span
               className={`${status.className} text-white text-sm font-semibold px-4 py-1 rounded-full uppercase tracking-wider`}
             >
               {status.text}
             </span>
 
-           
-            <span
-              className={` text-sm font-semibold px-4 py-1 rounded-full uppercase tracking-wider`}
-            >
-              {match?.category}
-            </span>
+            {match?.competition && (
+              <Badge className="text-sm font-semibold px-4 py-1 rounded-full uppercase tracking-wider">
+                {match.competition}
+              </Badge>
+            )}
           </div>
 
           {/* Scoreboard */}
@@ -78,14 +117,22 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
             {/* Home Team */}
             <div className="flex-1 text-center">
               <div className="relative w-24 h-24 mx-auto mb-4">
-                <Image
-                  src={homeTeam?.logo as string}
-                  alt={homeTeam?.name || "Home Team"}
-                  fill
-                  className="object-contain"
-                />
+                {homeTeam?.logo ? (
+                  <Image
+                    src={homeTeam.logo}
+                    alt={homeTeam?.name || "Home Team"}
+                    fill
+                    className="object-contain"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-muted rounded-full flex items-center justify-center">
+                    <span className="text-2xl font-bold">?</span>
+                  </div>
+                )}
               </div>
-              <h2 className="text-xl font-semibold">{homeTeam?.name}</h2>
+              <h2 className="text-xl font-semibold">
+                {homeTeam?.name || "Home Team"}
+              </h2>
             </div>
 
             {/* Score */}
@@ -96,10 +143,10 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
               {isFinished && (
                 <div className="mt-2 text-sm text-muted-foreground">
                   {match?.computed?.result === "win"
-                    ? `${ENV.TEAM_NAME} Victory`
+                    ? `${ENV.TEAM_NAME} Victory 🎉`
                     : match?.computed?.result === "loss"
                       ? `${ENV.TEAM_NAME} Defeat`
-                      : "Draw"}
+                      : "Draw 🤝"}
                 </div>
               )}
             </div>
@@ -107,22 +154,30 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
             {/* Away Team */}
             <div className="flex-1 text-center">
               <div className="relative w-24 h-24 mx-auto mb-4">
-                <Image
-                  src={awayTeam.logo as string}
-                  alt={awayTeam?.name || "Away Team"}
-                  fill
-                  className="object-contain"
-                />
+                {awayTeam?.logo ? (
+                  <Image
+                    src={awayTeam.logo}
+                    alt={awayTeam?.name || "Away Team"}
+                    fill
+                    className="object-contain"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-muted rounded-full flex items-center justify-center">
+                    <span className="text-2xl font-bold">?</span>
+                  </div>
+                )}
               </div>
-              <h2 className="text-xl font-semibold">{awayTeam?.name}</h2>
+              <h2 className="text-xl font-semibold">
+                {awayTeam?.name || "Away Team"}
+              </h2>
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Match Info Cards */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+      <main className="container mx-auto px-4 py-8">
+        {/* Match Info Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8">
           <div className="bg-card rounded-lg p-4 text-center border">
             <Calendar className="w-5 h-5 mx-auto mb-2 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">Date</p>
@@ -136,7 +191,9 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
           <div className="bg-card rounded-lg p-4 text-center border">
             <MapPin className="w-5 h-5 mx-auto mb-2 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">Venue</p>
-            <p className="font-medium">{match?.venue || "TBD"}</p>
+            <p className="font-medium">
+              {match?.venue || match?.venue || "TBD"}
+            </p>
           </div>
           <div className="bg-card rounded-lg p-4 text-center border">
             <Users className="w-5 h-5 mx-auto mb-2 text-muted-foreground" />
@@ -144,12 +201,10 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
             <p className="font-medium">{match?.competition || "Friendly"}</p>
           </div>
         </div>
-      </div>
 
-      {/* Goalscorers Section */}
-      {((teamGoals?.length || 0) > 0 || opponentGoals?.length > 0) && (
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-4xl mx-auto">
+        {/* Goalscorers Section */}
+        {((teamGoals?.length || 0) > 0 || opponentGoals?.length > 0) && (
+          <div className="max-w-4xl mx-auto mb-8">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <Trophy className="w-5 h-5 text-yellow-500" />
               Goalscorers
@@ -166,7 +221,7 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
                   {teamGoals?.map((goal, idx) => (
                     <div
                       key={goal._id || idx}
-                      className="px-4 py-2 flex justify-between items-center"
+                      className="px-4 py-2 flex flex-wrap justify-between items-center gap-2"
                     >
                       <div className="flex items-center gap-3">
                         {goal.scorer?.avatar && (
@@ -194,7 +249,7 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
                       </div>
                     </div>
                   ))}
-                  {teamGoals?.length === 0 && (
+                  {(!teamGoals || teamGoals.length === 0) && (
                     <div className="px-4 py-3 text-center text-muted-foreground text-sm">
                       No goals scored
                     </div>
@@ -213,7 +268,7 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
                   {opponentGoals.map((goal, idx) => (
                     <div
                       key={goal._id || idx}
-                      className="px-4 py-2 flex justify-between items-center"
+                      className="px-4 py-2 flex flex-wrap justify-between items-center gap-2"
                     >
                       <div className="flex items-center gap-3">
                         {goal.scorer?.avatar && (
@@ -250,59 +305,90 @@ export default function MatchDetailsClient({ slug }: { slug: string }) {
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Cards Section */}
-      {match?.cards && match?.cards.length > 0 && (
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-4xl mx-auto">
+        {/* Cards Section */}
+        {match?.cards && match.cards.length > 0 && (
+          <div className="max-w-4xl mx-auto mb-8">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <Medal className="w-5 h-5" />
-              Cards
+              Disciplinary
             </h3>
             <div className="bg-card rounded-lg border overflow-hidden">
-              {match?.cards.map((card, idx) => (
-                <div
-                  key={card._id || idx}
-                  className="px-4 py-2 border-b last:border-0 flex justify-between items-center"
-                >
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`text-sm font-semibold ${card.type === "red" ? "text-red-500" : "text-yellow-500"}`}
-                    >
-                      {card.type === "red" ? "🟥" : "🟨"}{" "}
-                      {card.type.toUpperCase()}
-                    </span>
-                    <span>{card.player?.name || "Unknown"}</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    {card.description && (
-                      <span className="text-xs text-muted-foreground">
-                        {card.description}
+              <div className="divide-y">
+                {match.cards.map((card, idx) => (
+                  <div
+                    key={card._id || idx}
+                    className="px-4 py-2 flex flex-wrap justify-between items-center gap-2"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`text-sm font-semibold ${card.type === "red" ? "text-red-500" : "text-yellow-500"}`}
+                      >
+                        {card.type === "red" ? "🟥" : "🟨"}{" "}
+                        {card.type.toUpperCase()}
                       </span>
-                    )}
-                    <span className="text-sm font-mono">{card.minute}'</span>
+                      <span>{card.player?.name || "Unknown"}</span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      {card.description && (
+                        <span className="text-xs text-muted-foreground">
+                          {card.description}
+                        </span>
+                      )}
+                      <span className="text-sm font-mono">{card.minute}'</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <div className="container mx-auto ">
+        {/* Match Fliers / Events */}
         <MatchFliers match={match} />
-      </div>
 
-      <div className="container mx-auto px-4 py-8 text-center">
-        <Link
-          href="/matches"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          ← Back to Fixtures
-        </Link>
-      </div>
-    </main>
+        {/* Back Navigation */}
+        <div className="text-center mt-8">
+          <Link
+            href="/matches"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            ← Back to Fixtures
+          </Link>
+        </div>
+      </main>
+
+      {/* Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SportsEvent",
+            name: match.title,
+            startDate: match.date,
+            location: {
+              "@type": "Place",
+              name: match.venue || "TBD",
+            },
+            homeTeam: {
+              "@type": "SportsTeam",
+              name: homeTeam?.name,
+            },
+            awayTeam: {
+              "@type": "SportsTeam",
+              name: awayTeam?.name,
+            },
+            score: isFinished ? `${homeScore} - ${awayScore}` : undefined,
+            eventStatus: isLive
+              ? "https://schema.org/EventStatus"
+              : isFinished
+                ? "https://schema.org/EventPostponed"
+                : "https://schema.org/EventScheduled",
+          }),
+        }}
+      />
+    </div>
   );
 }

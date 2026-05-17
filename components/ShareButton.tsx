@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Share2, Check } from "lucide-react";
 import { toast } from "sonner";
 import { shortenUrlWithBitly } from "@/lib/url";
+import { Button } from "./buttons/Button";
 
 interface ShareButtonProps {
   shareUrl: string;
@@ -35,13 +36,14 @@ export function ShareButton({ shareUrl, title, text }: ShareButtonProps) {
   };
 
   return (
-    <button
+    <Button
       onClick={handleShare}
+      size={'lg'}
       className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
     >
       {copied ? <Check size={18} /> : <Share2 size={18} />}
       {copied ? "Copied!" : "Share"}
-    </button>
+    </Button>
   );
 }
 

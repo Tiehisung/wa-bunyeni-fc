@@ -120,8 +120,8 @@ export default function ImageUploadComponent({
   };
 
   return (
-    <div className={cn("space-y-3 relative", className)}>
-      {label && <Label className="text-sm font-medium _label">{label}</Label>}
+    <div className={cn(" relative", className)}>
+      {label && <Label className="text-sm font-medium text-Red mb-5 text-left">{label}</Label>}
 
       <input
         ref={inputRef}
