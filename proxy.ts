@@ -51,7 +51,7 @@ export async function proxy(request: NextRequest) {
     if (role === EUserRole.PLAYER || role?.includes(EUserRole.ADMIN)) {
       if (role?.includes(EUserRole.ADMIN)) {
         return NextResponse.redirect(
-          new URL("/players", request.url),
+          new URL("/admin", request.url),
         );
       }
       return NextResponse.next(); // ✅ Player can access player dashboard
