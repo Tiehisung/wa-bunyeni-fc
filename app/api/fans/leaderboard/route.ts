@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getApiErrorMessage } from "@/lib/error-api";
 import dbConnect from "@/config/db.config";
-import { FanModel } from "@/models/fans";
+import FanModel  from "@/models/fans";
 import "@/models/user";
 
 export async function GET(request: NextRequest) {

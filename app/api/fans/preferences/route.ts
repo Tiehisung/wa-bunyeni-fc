@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { getApiErrorMessage } from "@/lib/error-api";
-import { FanModel } from "@/models/fans";
+import  FanModel  from "@/models/fans";
 import UserModel from "@/models/user";
 import { slugIdFilters } from "@/lib/slug";
 

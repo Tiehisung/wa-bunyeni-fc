@@ -1,6 +1,6 @@
 // scripts/migrate-users-to-fans.ts
 import connectDB from "@/config/db.config";
-import { FanModel } from "@/models/fans";
+import  FanModel  from "@/models/fans";
 import UserModel from "@/models/user";
 import { EFanBadge } from "@/types/fan.interface";
 

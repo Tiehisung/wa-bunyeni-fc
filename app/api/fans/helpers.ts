@@ -1,8 +1,8 @@
 // lib/fan.service.ts
 import connectDB from "@/config/db.config";
 import { slugIdFilters } from "@/lib/slug";
-import { FanModel } from "@/models/fans";
 import UserModel from "@/models/user";
+import  FanModel  from "@/models/fans";
 import { IFanLeaderboardEntry } from "@/services/fans.endpoints";
 
 import { EFanBadge, IFan } from "@/types/fan.interface";

@@ -8,8 +8,6 @@ export async function GET(request: NextRequest) {
   try {
     const session = await auth();
 
-    console.log("session", session);
-
     console.log(session);
     if (!session?.user) {
       return NextResponse.json(
