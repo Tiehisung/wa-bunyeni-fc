@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
 import { Loader2 } from "lucide-react";
 import {
   useLazyGlobalSearchQuery,
@@ -9,7 +8,7 @@ import {
 } from "@/services/search.endpoints";
 import { useRecentSearches } from "@/hooks/useRecentSearches";
 import { Card } from "@/components/ui/card";
-import { Avatar } from "@/components/ui/avatar";
+import { AVATAR, Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { PrimarySearchWithSelect } from "./Search";
 import RecentSearches from "./RecentSearches";
@@ -23,7 +22,7 @@ export function GlobalSearch() {
   const router = useRouter();
 
   const searchTerm = useGetParam("search");
-  const q_types = useGetParam("s_source");
+  const q_sources = useGetParam("s_source");
 
   const [isOpen, setIsOpen] = useState(false);
   const [showRecent, setShowRecent] = useState(true);
@@ -34,12 +33,14 @@ export function GlobalSearch() {
 
   const [triggerQuickSearch, { data: quickResults }] =
     useLazyQuickSearchQuery();
+
+    console.log({searchResults,quickResults})
   const { addSearch } = useRecentSearches();
 
   // Debounced search
   const debouncedSearch = debounce((term: string) => {
     if (term.length >= 2) {
-      triggerSearch({ q: term, limit: 10, types: q_types });
+      triggerSearch({ q: term, limit: 10, sources: q_sources });
       setShowRecent(false);
     } else {
       setShowRecent(true);
@@ -99,9 +100,7 @@ export function GlobalSearch() {
       {/* Search Results Dropdown */}
       {isOpen && searchTerm && (
         <Card
-          className={` top-full left-0 right-0 mt-2  overflow-y-auto z-50 shadow-xl 
-                     absolute max-h-96
-                     `}
+          className={` top-full left-0 right-0 mt-2  overflow-y-auto z-50 shadow-xl absolute max-h-96 `}
         >
           {/* Loading State */}
           {isLoading && (
@@ -126,9 +125,13 @@ export function GlobalSearch() {
                     className="w-full text-left px-4 py-2 hover:bg-muted transition-colors flex items-center gap-3"
                   >
                     {result.image && (
-                      <Avatar className="h-8 w-8">
-                        <img src={result.image} alt={result.label} />
-                      </Avatar>
+                      <AVATAR
+                        src={result.image}
+                        alt={result.label}
+                        className=" object-cover"
+                        shape="rounded"
+                        size={"sm"}
+                      />
                     )}
                     <div className="flex-1">
                       <p className="font-medium text-sm">{result.label}</p>
@@ -161,14 +164,16 @@ export function GlobalSearch() {
                   >
                     <div className="flex gap-3">
                       {result.image && (
-                        <img
+                        <AVATAR
                           src={result.image}
                           alt={result.title}
-                          className="h-12 w-12 rounded object-cover"
+                          className=" object-cover"
+                          shape="rounded"
+                          size={"lg"}
                         />
                       )}
                       <div className="flex-1">
-                        <p className="font-medium line-clamp-1">
+                        <p className="font-medium line-clamp-1 text-base">
                           {result.title}
                         </p>
 
@@ -178,7 +183,7 @@ export function GlobalSearch() {
                             __html: result.description || "",
                           }}
                         />
-                        <div className="flex items-center gap-2 mt-1">
+                        <div className="flex items-center gap-2 mt-1 font-light">
                           <Badge className={getTypeColor(result.type)}>
                             {result.type}
                           </Badge>

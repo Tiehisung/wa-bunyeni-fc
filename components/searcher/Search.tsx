@@ -80,6 +80,83 @@ export const PrimarySearch = ({
   );
 };
 
+
+
+export const PrimarySearchWithSelect = ({
+  className,
+  name,
+  type = "search",
+  onChange,
+  placeholder = "Search",
+  inputStyles,
+  others,
+  value,
+  searchKey = "search",
+  datalist,
+  listId = "search-datalist",
+  sources = ["players", "matches", "news", "galleries"],
+}: ISearchProps & { sources?: string[] }) => {
+  const { setParam } = useUpdateSearchParams();
+  const searchSource = useGetParam("s_source");
+  const defaultValue = useGetParam(searchKey);
+
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (onChange) {
+      onChange(e);
+    } else {
+      setParam(searchKey, e.target.value);
+    }
+  };
+
+  return (
+    <div
+      className={`group bg-card flex items-center gap-2 border border-1.5 border-primary/30 focus-within:ring ring-primary focus-within:border-teal-ring-primary/80 rounded-md px-2 text-sm ${className}`}
+    >
+      <CgSearch
+        size={20}
+        className="h-4 w-auto text-primary/30 group-focus-within:text-primary"
+      />
+
+      <input
+        onChange={handleOnChange}
+        id={name}
+        name={name}
+        type={type ?? "text"}
+        className={`outline-none h-9 grow rounded-md pl-1 bg-transparent ${inputStyles} ${
+          datalist ? "_hideBrowserUI" : ""
+        }`}
+        placeholder={`${placeholder} ${searchSource !== "all" ? searchSource : ""}...`}
+        value={value}
+        defaultValue={defaultValue}
+        {...others}
+        autoComplete="off"
+        list={listId}
+      />
+      <SELECT
+        paramKey="s_source"
+        placeholder="Source"
+        options={[
+          { label: "All", value: sources.toString() },
+          ...stringArrayToOptions(sources),
+        ]}
+        value={searchSource}
+        className="border rounded-full bg-Blue/5 max-h-8"
+        selectStyles="border-none outline-none bg-transparents ring-0 focus:ring-0 capitalize"
+        modern={false}
+      />
+      {/* 📋 Datalist */}
+      {datalist && listId && (
+        <datalist id={listId}>
+          {datalist?.map((item, i) => (
+            <option key={item + i} value={item} />
+          ))}
+        </datalist>
+      )}
+    </div>
+  );
+};
+
+// Submit search
 interface ISearchB {
   label?: string;
   name?: string;
@@ -157,76 +234,5 @@ export const SearchWithSubmit = ({
         </datalist>
       )}
     </form>
-  );
-};
-
-export const PrimarySearchWithSelect = ({
-  className,
-  name,
-  type = "search",
-  onChange,
-  placeholder = "Search",
-  inputStyles,
-  others,
-  value,
-  searchKey = "search",
-  datalist,
-  listId = "search-datalist",
-  sources = ["players", "matches", "news"],
-}: ISearchProps & { sources?: string[] }) => {
-  const { setParam } = useUpdateSearchParams();
-  const searchSource = useGetParam("s_source");
-  const defaultValue = useGetParam(searchKey);
-
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (onChange) {
-      onChange(e);
-    } else {
-      setParam(searchKey, e.target.value);
-    }
-  };
-
-  return (
-    <div
-      className={`group bg-card flex items-center gap-2 border border-1.5 border-primary/30 focus-within:ring ring-primary focus-within:border-teal-ring-primary/80 rounded-md px-2 text-sm ${className}`}
-    >
-      <CgSearch size={20} className="h-4 w-auto text-primary/30 group-focus-within:text-primary" />
-
-      <input
-        onChange={handleOnChange}
-        id={name}
-        name={name}
-        type={type ?? "text"}
-        className={`outline-none h-9 grow rounded-md pl-1 bg-transparent ${inputStyles} ${
-          datalist ? "_hideBrowserUI" : ""
-        }`}
-        placeholder={`${placeholder} ${searchSource !== "all" ? searchSource : ""}...`}
-        value={value}
-        defaultValue={defaultValue}
-        {...others}
-        autoComplete="off"
-        list={listId}
-      />
-      <SELECT
-        paramKey="s_source"
-        placeholder="Source"
-        options={[
-          { label: "All", value: sources.toString() },
-          ...stringArrayToOptions(sources),
-        ]}
-        value={searchSource}
-        className=""
-        selectStyles="border-none outline-none bg-transparents ring-0 focus:ring-0 capitalize"
-        modern={false}
-      />
-      {/* 📋 Datalist */}
-      {datalist && listId && (
-        <datalist id={listId}>
-          {datalist?.map((item, i) => (
-            <option key={item + i} value={item} />
-          ))}
-        </datalist>
-      )}
-    </div>
   );
 };
