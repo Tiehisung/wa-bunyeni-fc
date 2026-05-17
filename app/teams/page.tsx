@@ -1,4 +1,3 @@
-
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,6 +9,7 @@ import { ITeam } from "@/types/match.interface";
 import { IQueryResponse } from "@/types";
 import { GlassmorphicGradient } from "@/components/Glasmorphic/Gradient";
 import { auth } from "@/auth";
+import { AVATAR } from "@/components/ui/avatar";
 
 interface TeamsPageProps {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -49,8 +49,6 @@ async function getTeams(): Promise<IQueryResponse<ITeam[]>> {
 }
 
 export default async function TeamsPage({ searchParams }: TeamsPageProps) {
-
-
   const teamsData: IQueryResponse<ITeam[]> = await getTeams();
   const teams = teamsData?.data;
 
@@ -109,19 +107,26 @@ export default async function TeamsPage({ searchParams }: TeamsPageProps) {
 
 // Team Card Component
 export async function TeamCard({ team }: { team: ITeam }) {
-  const session = await auth()
-  const isAdmin = session?.user?.role?.includes('admin')
+  const session = await auth();
+  const isAdmin = session?.user?.role?.includes("admin");
   return (
     <Link href={`/teams/${team._id}`}>
       <GlassmorphicGradient className="group bg-card rounded-xl border hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer">
         {/* Team Logo/Image */}
-        <div className="relative h-48 bg-linear-to-br from-primary/10 to-primary/5 overflow-hidden">
+        <div
+          style={{
+            backgroundImage: `url(${team.logo})`,
+            backgroundRepeat: "no-repeat",
+          }}
+          className="relative h-48 bg-linear-to-br from-primary/10 to-primary/5 overflow-hidden bg-cover bg-no-repeat"
+        >
           {team.logo ? (
-            <Image
+            <AVATAR
               src={team.logo}
               alt={team.name}
-              fill
-              className="object-contain p-6 group-hover:scale-105 transition-transform duration-300"
+              border
+              size={'2xl'}
+              className="object-cover bg-accent m-4 p-6 group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
