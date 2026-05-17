@@ -49,6 +49,11 @@ export async function proxy(request: NextRequest) {
   if (isPlayerDashboardPath) {
     // Allow only players
     if (role === EUserRole.PLAYER || role?.includes(EUserRole.ADMIN)) {
+      if (role?.includes(EUserRole.ADMIN)) {
+        return NextResponse.redirect(
+          new URL("/players", request.url),
+        );
+      }
       return NextResponse.next(); // ✅ Player can access player dashboard
     }
     // Redirect non-players
