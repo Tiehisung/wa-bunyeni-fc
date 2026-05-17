@@ -17,9 +17,9 @@ const MatchFliers = ({ match }: IProps) => {
 
   if (!pathname.startsWith("/admin"))
     return (
-      <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="my-6 flex flex-wrap gap-5 justify-center items-center ">
         <section>
-          <h1 className="text-center">FIXTURE FLIER</h1>
+          <h1 className="text-center w-fit mb-4">FIXTURE FLIER</h1>
 
           <div className="h-72 w-80">
             <Image
@@ -33,7 +33,7 @@ const MatchFliers = ({ match }: IProps) => {
         </section>
 
         <section>
-          <h1 className="text-center">RESULT FLIER</h1>
+          <h1 className="text-center w-fit mb-4">RESULT FLIER</h1>
 
           <div className="h-72 w-80">
             {match?.resultFlier ? (
@@ -45,7 +45,7 @@ const MatchFliers = ({ match }: IProps) => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <p className="p-5 text-center">Not available</p>
+              <p className="p-5 text-center w-full h-full bg-Arsh">Not available</p>
             )}
           </div>
         </section>
