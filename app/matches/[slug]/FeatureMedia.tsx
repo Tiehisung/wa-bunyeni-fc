@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { downloadFile } from "@/lib/file";
+import { Download, Trash, Wallpaper } from "lucide-react";
 
 interface Props {
   slug?: string;
@@ -110,38 +111,46 @@ export function MatchFeaturedImages({ slug }: Props) {
             })) as IFileProps[]) ?? []
           }
           // useSize
-          action={(f) =>
-            isAuthorized ? (
-              <div className="space-y-1.5">
+          action={(f) => (
+            <div className="space-y-1.5">
+              {isAuthorized && (
                 <Button
                   onClick={() => handleSetWallpaper(f?.secure_url)}
-                  primaryText="Set as Wallpaper"
                   waitingText="Finalizing..."
                   variant="secondary"
                   className="w-full justify-start"
                   disabled={isLoading}
-                />
+                >
+                  <Wallpaper />
+                  Set as Wallpaper
+                </Button>
+              )}
+              {isAuthorized && (
                 <Button
                   onClick={() => handleDeleteMedia(f?.secure_url)}
-                  primaryText="Delete"
                   waitingText="Wait..."
                   variant="secondary"
                   className="w-full justify-start"
                   disabled={isLoading}
-                />
-                <Button
-                  onClick={() =>
-                    downloadFile(f?.secure_url, `${match.title} feature file`)
-                  }
-                  primaryText="Download"
-                  waitingText="Wait..."
-                  variant="secondary"
-                  className="w-full justify-start"
-                  disabled={isLoading}
-                />
-              </div>
-            ) : undefined
-          }
+                >
+                  <Trash />
+                  Delete
+                </Button>
+              )}
+              <Button
+                onClick={() =>
+                  downloadFile(f?.secure_url, `${match.title} feature file`)
+                }
+                waitingText="Wait..."
+                variant="secondary"
+                className="w-full justify-start"
+                disabled={isLoading}
+              >
+                <Download />
+                Download
+              </Button>
+            </div>
+          )}
         />
       ) : null}
     </div>
