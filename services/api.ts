@@ -45,6 +45,7 @@ export const api = createApi({
     "Users",
     "Uploads",
     "Fans",
+    "App",
     "FanStats",
     "FanHistory",
 

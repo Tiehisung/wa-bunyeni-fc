@@ -6,6 +6,8 @@ import { Metadata } from "next";
 import { ENV } from "@/lib/env";
 import { TEAM } from "@/data/team";
 import PlayerProfile from "../dashboard/Profile";
+import { stripHTML } from "@/lib/dom";
+import { shortenUrlWithBitly } from "@/lib/url";
 
 export const getPlayer = async (slugOrIdOrEmail: string) => {
   try {
@@ -37,13 +39,18 @@ export async function generateMetadata({
   }
 
   const title = `${TEAM.name} - ${player?.firstName} ${player?.lastName} `;
-  const description =
+  const description = stripHTML(
     player?.about ||
-    player?.description ||
-    `Player profile for ${player?.firstName} ${player?.lastName}`;
+      player?.description ||
+      `Player profile for ${player?.firstName} ${player?.lastName}`,
+  );
 
   const image = player?.avatar;
-  const url = `${ENV.API_URL}/players/${slug}`;
+  const url = `${ENV.APP_URL}/players/${slug}`;
+
+  const shorturl = await shortenUrlWithBitly(url);
+
+  console.log("shorturl,", shorturl);
 
   return {
     title,
@@ -79,7 +86,7 @@ export async function generateMetadata({
 }
 export default async function PlayerProfilePage({ params }: IPageProps) {
   const slug = (await params).slug;
-  const player: IQueryResponse<IPlayer> = await getPlayer(slug as string);
+  // const player: IQueryResponse<IPlayer> = await getPlayer(slug as string);
 
   return (
     <>
