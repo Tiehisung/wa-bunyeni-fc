@@ -71,7 +71,11 @@ export async function generateMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: [(match.opponent?.logo || ENV.LOGO_URL) as string],
+      images: [
+        match?.fixtureFlier as string,
+        match?.resultFlier as string,
+        (match.opponent?.logo || ENV.LOGO_URL) as string,
+      ],
     },
   };
 }

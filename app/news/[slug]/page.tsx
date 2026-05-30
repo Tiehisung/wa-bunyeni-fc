@@ -60,7 +60,6 @@ export async function generateMetadata({
         height: 630,
         alt: article?.headline?.text,
       })) || [];
-  console.log({ image }, otherImages);
   return {
     title,
     description,

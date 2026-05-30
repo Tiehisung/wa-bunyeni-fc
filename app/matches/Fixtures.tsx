@@ -1,16 +1,17 @@
-'use client'
+"use client";
 
 import { SearchQueryUpdator } from "./Headers";
 import { IQueryResponse } from "@/types";
 import { MotionWrapper } from "@/components/Animate/MotionWrapper";
 import { MatchFixtureCard } from "./MatchCard";
-import InfiniteLimitScroller from "@/components/InfiniteScroll";
+// import InfiniteLimitScroller from "@/components/InfiniteScroll";
 import { IMatch } from "@/types/match.interface";
 import { useGetMatchesQuery } from "@/services/match.endpoints";
 import TableLoader from "@/components/loaders/Table";
 import HEADER from "@/components/Element";
 import DataErrorAlert from "@/components/error/DataError";
 import { getErrorMessage } from "@/lib/error";
+import { Pagination } from "@/components/pagination/Pagination";
 
 interface IProps {
   fixtures?: IQueryResponse<IMatch[]>;
@@ -25,7 +26,7 @@ const FixturesSection = ({}: IProps) => {
   ];
 
   if (isLoading) {
-    return <TableLoader size="xl" className='rounded-xl'/>;
+    return <TableLoader size="xl" className="rounded-xl" />;
   }
 
   if (error) {
@@ -60,12 +61,12 @@ const FixturesSection = ({}: IProps) => {
             <MatchFixtureCard match={f} />
           </MotionWrapper>
         ))}
-
-        <InfiniteLimitScroller
-          pagination={fixtures?.pagination}
-          endDataText="No more matches"
-        />
       </main>
+      {/* <InfiniteLimitScroller
+        pagination={fixtures?.pagination}
+        endDataText="No more matches"
+      /> */}
+      <Pagination pagination={fixtures?.pagination} />
     </div>
   );
 };

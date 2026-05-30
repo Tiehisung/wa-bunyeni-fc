@@ -63,7 +63,7 @@ export default function MainNavbar() {
       icon: <User size={18} />,
     },
     {
-      label: "Fixtures",
+      label: "Matches",
       // id: "fixtures",
       href: "/matches",
       icon: <CalendarDays size={18} />,
