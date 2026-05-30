@@ -48,7 +48,7 @@ export const printMatchesList = (
                 <td></td>`
           }
           <td>${match.opponent?.name || "N/A"}</td>
-          <td>${match.isHome ? "Home 🏠" : "Away ✈️"}</td>
+          <td>${match.location == "home" ? "Home 🏠" : "Away ✈️"}</td>
         </tr>
       `;
     })

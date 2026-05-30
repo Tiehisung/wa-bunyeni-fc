@@ -29,7 +29,7 @@ const SquadPage = () => {
       <div className="flex items-center gap-4 justify-between">
         <div>
           <p>{match?.title}</p>
-          <p className="font-light italic">{match?.isHome ? "HOME" : "AWAY"}</p>
+          <p className="font-light italic">{match?.location?.toUpperCase()}</p>
         </div>
         <div className="text-sm font-light">
           <p>{formatDate(match?.date, "March 2, 2025")}</p>
@@ -47,7 +47,7 @@ const SquadPage = () => {
         <HEADER title="SQUAD" />
         <Loader message="Loading squads..." />
       </div>
-    )
+    );
   }
 
   return (

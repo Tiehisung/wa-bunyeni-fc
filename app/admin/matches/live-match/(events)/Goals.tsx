@@ -109,7 +109,7 @@ export function ScoreEventsTab({ match }: ScoreEventsTabProps) {
           <SELECT
             label="Team"
             options={
-              (match.isHome ? teams : teams.reverse()) as ISelectOptionLV[]
+              (match.location=='home' ? teams : teams.reverse()) as ISelectOptionLV[]
             }
             placeholder="Select Team"
             className="grid mb-3"
