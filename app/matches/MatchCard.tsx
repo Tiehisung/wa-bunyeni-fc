@@ -14,7 +14,6 @@ import { IMatch } from "@/types/match.interface";
 import { Button } from "@/components/buttons/Button";
 import { useRouter } from "next/navigation";
 import { GiDarkSquad } from "react-icons/gi";
-import { CiCircleInfo } from "react-icons/ci";
 
 export function MatchFixtureCard({ match }: { match?: IMatch }) {
   const router = useRouter();
@@ -99,13 +98,12 @@ export function MatchFixtureCard({ match }: { match?: IMatch }) {
         )}
 
         <Button
-          onClick={() => router.push("/matches/" + (match?.slug || match?._id))}
+          onClick={() => router.push(`/matches/${match?.slug || match?._id}`)}
           primaryText=""
           variant="ghost"
           className="rounded-full px-4 "
         >
-          {" "}
-          <CiCircleInfo />
+          Details
         </Button>
       </footer>
     </div>
