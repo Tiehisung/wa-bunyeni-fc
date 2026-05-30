@@ -179,15 +179,17 @@ export default function SELECT({
           className,
         )}
       >
-        <label
-          hidden={!label}
-          htmlFor={name}
-          className={cn(
-            `absolute top-2 left-4 text-muted-foreground group-focus-within:top-2 group-focus-within:text-sm group-focus-within:text-primary transition-all duration-300 ease-out -translate-y-1/2 text-sm font-light `,
-          )}
-        >
-          {label}
-        </label>
+        {label && (
+          <label
+            hidden={!label}
+            htmlFor={name}
+            className={cn(
+              `absolute top-2 left-4 text-muted-foreground group-focus-within:top-2 group-focus-within:text-sm group-focus-within:text-primary transition-all duration-300 ease-out -translate-y-1/2 text-sm font-light `,
+            )}
+          >
+            {label}
+          </label>
+        )}
 
         <select
           value={getDisplayValue()}
@@ -195,8 +197,9 @@ export default function SELECT({
           id={name}
           onChange={(e) => handleOnChange?.(e.target.value)}
           className={cn(
-            `w-full h-full rounded-lg pb-0 pt-2 px-4 focus:outline-none outline-0 font-[350]`,
+            `w-full h-full rounded-lg pb-0 px-4 focus:outline-none outline-0 font-[350] disabled:text-muted-foreground/50`,
             selectStyles,
+            label? "pt-2" : "pt-0",
           )}
           {...props}
         >
@@ -238,7 +241,7 @@ export default function SELECT({
           className={cn(
             `bg-input text-sm border px-2 h-9 border-input rounded py-2
     focus:outline-none focus:ring-2 focus:ring-primary
-    disabled:cursor-not-allowed disabled:opacity-50`,
+    disabled:cursor-not-allowed disabled:opacity-50 disabled:text-muted-foreground`,
             selectStyles,
           )}
           {...props}

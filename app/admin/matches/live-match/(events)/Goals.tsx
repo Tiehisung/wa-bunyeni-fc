@@ -32,8 +32,8 @@ export function ScoreEventsTab({ match }: ScoreEventsTabProps) {
   const players = playersData?.data || [];
   const [addGoal, { isLoading }] = useCreateGoalMutation();
   const [form, setForm] = useState({
-    scorer: "",
-    assist: "",
+    scorer: null as any,
+    assist: null as any,
     minute: "",
     description: "",
     modeOfScore: EGoalType.OPEN_PLAY,
@@ -49,62 +49,43 @@ export function ScoreEventsTab({ match }: ScoreEventsTabProps) {
     try {
       e.preventDefault();
 
-      console.log(ENV.TEAM_ID, form.teamId);
-
       if (!form.minute)
         return smartToast({
           message: "Please specify the time in minutes, and description",
         });
 
-      const scorer = players.find((p) => p._id === form.scorer);
-      const assistBy = form.assist
-        ? players.find((p) => p._id === form.assist)
-        : undefined;
-
-      const assist = assistBy
-        ? {
-            _id: assistBy?._id,
-            name: [assistBy?.lastName, assistBy?.firstName]
-              .filter(Boolean)
-              .join(" "),
-            avatar: assistBy?.avatar,
-            number: assistBy?.number,
-          }
-        : undefined;
-
       let newGoal: any = {
+        ...form,
         minute: Number.parseInt(form.minute),
         description: `⚽ ${form.description}`,
         modeOfScore: "Open Play Goal",
         match: match?._id,
         teamId: form.teamId,
+        scorer: form.scorer
+          ? {
+              name: `${form.scorer.firstName} ${form.scorer.lastName}`,
+              _id: form.scorer._id,
+              avatar: form.scorer.avatar,
+              number: form.scorer.number,
+            }
+          : null,
+        assist: form.assist
+          ? {
+              name: `${form.assist.firstName} ${form.assist.lastName}`,
+              _id: form.assist._id,
+              avatar: form.assist.avatar,
+              number: form.assist.number,
+            }
+          : null,
       };
 
-      if (form.teamId == ENV.TEAM_ID && scorer) {
-        newGoal = {
-          ...newGoal,
-          scorer: {
-            _id: scorer?._id,
-            name: `${scorer?.lastName} ${scorer?.firstName}`,
-            avatar: scorer?.avatar,
-            number: scorer?.number,
-          },
-        };
-
-        if (form.assist) {
-          newGoal = {
-            ...newGoal,
-            assist,
-          };
-        }
-      }
-
+      console.log("Adding Goal:", newGoal);
       const results = await addGoal(newGoal).unwrap();
 
       if (results.success)
         setForm({
-          scorer: "",
-          assist: "",
+          scorer: null as any,
+          assist: null as any,
           minute: "",
           description: "",
           modeOfScore: EGoalType.OPEN_PLAY,
@@ -127,7 +108,9 @@ export function ScoreEventsTab({ match }: ScoreEventsTabProps) {
           </h2>
           <SELECT
             label="Team"
-            options={(match.isHome ? teams : teams.reverse()) as ISelectOptionLV[]}
+            options={
+              (match.isHome ? teams : teams.reverse()) as ISelectOptionLV[]
+            }
             placeholder="Select Team"
             className="grid mb-3"
             onChange={(id) => setForm((prev) => ({ ...prev, teamId: id }))}
@@ -161,6 +144,24 @@ export function ScoreEventsTab({ match }: ScoreEventsTabProps) {
             label="Comment"
           />
 
+          {form.teamId !== ENV.TEAM_ID && (
+            <Input
+              placeholder="Scorer Name (Optional)"
+              value={form.scorer?.name || ""}
+              onChange={(e) =>
+                setForm((prev) => ({
+                  ...prev,
+                  scorer: {
+                    firstName: e.target.value,
+                    lastName: "",
+                  } as any,
+                }))
+              }
+              name={"scorer"}
+              label="Player Name (Optional)"
+            />
+          )}
+
           {form.teamId === ENV.TEAM_ID && (
             <div className="grid grid-cols-1 gap-4 ">
               <SELECT
@@ -173,8 +174,13 @@ export function ScoreEventsTab({ match }: ScoreEventsTabProps) {
                 }))}
                 placeholder="Scored by"
                 className="grid"
-                onChange={(id) => setForm((prev) => ({ ...prev, scorer: id }))}
-                value={form.scorer}
+                onChange={(id) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    scorer: players.find((p) => p._id === id),
+                  }))
+                }
+                value={form.scorer?._id}
               />
 
               <SELECT
@@ -187,8 +193,13 @@ export function ScoreEventsTab({ match }: ScoreEventsTabProps) {
                 }))}
                 placeholder="Assisted by"
                 className="grid"
-                onChange={(id) => setForm((prev) => ({ ...prev, assist: id }))}
-                value={form.assist}
+                onChange={(id) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    assist: players.find((p) => p._id === id),
+                  }))
+                }
+                value={form.assist?._id}
                 disabled={!form.scorer}
               />
             </div>
@@ -274,7 +285,11 @@ function Goal({ goal }: { goal: IGoal }) {
       )}
       key={goal._id}
     >
-      {`${goal.minute}' ${isTeamGoal ? goal.scorer?.name || `${ENV.TEAM_ALIAS} Player` : "Opponent"}`}
+      {`${goal.minute}' ${
+        isTeamGoal
+          ? goal.scorer?.name || `${ENV.TEAM_ALIAS} Player`
+          : goal.scorer?.name || "Opponent"
+      }`}
       <Button
         onClick={() => handleRemoveGoal(goal)}
         size="sm"

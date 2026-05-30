@@ -5,7 +5,7 @@ import { checkTeams, checkMatchMetrics } from "@/lib/compute/match";
 import { MatchEventsAdmin } from "../live-match/EventsUpdator";
 import MatchActions from "./Actions";
 import { Badge } from "@/components/ui/badge";
- 
+
 import { useGetMatchQuery } from "@/services/match.endpoints";
 import { AVATAR } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -19,7 +19,11 @@ import { useParams } from "next/navigation";
 export default function MatchPage() {
   const slug = useParams().matchSlug;
 
-  const { data: matchData, isLoading, error } = useGetMatchQuery(slug?.toString() || "");
+  const {
+    data: matchData,
+    isLoading,
+    error,
+  } = useGetMatchQuery(slug?.toString() || "");
 
   const match = matchData?.data;
 
@@ -37,11 +41,14 @@ export default function MatchPage() {
   }
 
   return (
-    <div className="container mx-auto p-4 _page">
+    <div className="container mx-auto">
       <header className="mb-4">
-        <h1 className="text-2xl font-bold text-primaryRed">
-          {match?.title} <Badge className="ml-auto">{match?.status}</Badge>
-        </h1>
+        <h1 className="text-2xl font-bold text-primaryRed">{match?.title}</h1>
+
+        <div className="flex items-center gap-4 justify-end">
+          <Badge >{match?.status}</Badge>
+          <Badge variant={'destructive'}>{match?.category?.toUpperCase()}</Badge>
+        </div>
         <p className="text-muted-foreground">{formatDate(match?.date)}</p>
       </header>
 
