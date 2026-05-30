@@ -20,7 +20,7 @@ interface DisplayFixturesProps {
 export function DisplayFixtures({ fixtures }: DisplayFixturesProps) {
   return (
     <div>
-      <div className="flex items-center gap-6">
+      <div className="flex flex-wrap items-center gap-3">
       <PrimarySearch searchKey="match_search" />
         <PrintMatchesBtn options={{ title: " Fixtures" }} />
       </div>

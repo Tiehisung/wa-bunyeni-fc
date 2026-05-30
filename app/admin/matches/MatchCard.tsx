@@ -17,9 +17,9 @@ import { ResizableContent } from "@/components/resizables/ResizableContent";
 import { MatchForm } from "./FixtureForm";
 import { StackModal } from "@/components/modals/StackModal";
 import Link from "next/link";
-import { Edit } from "lucide-react";
 import { CiCircleInfo, CiEdit } from "react-icons/ci";
 import { GiDarkSquad } from "react-icons/gi";
+import { MoreHorizontal } from "lucide-react";
 
 interface Props {
   match?: IMatch;
@@ -127,9 +127,9 @@ export function AdminMatchCard({ match }: Props) {
 
         <Link
           href={`/admin/matches/${match?.slug ?? match?._id}`}
-          className="_hover _link p-2 px-4"
+          className="_hover p-2 font-light text-sm"
         >
-          <CiCircleInfo />
+         Details
         </Link>
       </ResizableContent>
     </div>

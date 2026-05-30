@@ -4,7 +4,7 @@ import { TABS } from "@/components/ui/tabs";
 import { GeneralEventsTab } from "./(events)/General";
 import { ScoreEventsTab } from "./(events)/Goals";
 import { Button } from "@/components/buttons/Button";
-import { Trash2, Bandage, Info, Crown } from "lucide-react";
+import { Trash2, Bandage, Info, Crown, CardSim } from "lucide-react";
 
 import { IMatch, IMatchEvent, ITeam } from "@/types/match.interface";
 import { CardForm } from "../../cards/CardForm";
@@ -13,17 +13,18 @@ import { MVPForm } from "../mvps/MvpForm";
 import { Separator } from "@/components/ui/separator";
 import { smartToast } from "@/utils/toast";
 import { useUpdateMatchMutation } from "@/services/match.endpoints";
- 
+
 import { getDeadlineInfo } from "@/lib/timeAndDate";
 import { useSession } from "next-auth/react";
+import { BiBall, BiFootball } from "react-icons/bi";
 
 interface IProps {
   opponent?: ITeam;
   match: IMatch;
 }
 export function MatchEventsAdmin({ opponent, match }: IProps) {
-const { data: session,   } = useSession();
-   const user=session?.user
+  const { data: session } = useSession();
+  const user = session?.user;
   const sortedEvents = match?.events
     ? [...match.events].sort(
         (a, b) => Number(b.minute ?? 0) - Number(a.minute ?? 0),
@@ -37,17 +38,19 @@ const { data: session,   } = useSession();
       icon: <Info className="h-5 w-5 text-blue-500" />,
     },
     {
-      label: "⚽ Goal",
+      label: " Goal",
       value: " Goal",
+      icon: "⚽",
     },
     {
-      label: "🟨🟥 Card",
+      label: "Card",
       value: " Card",
+      icon: "🟨",
     },
     {
       label: " Injury",
       value: " injury",
-      icon: <Bandage className="h-5 w-5 text-red-500" />,
+      icon: "🩹",
     },
     {
       label: " MoTM",
@@ -75,6 +78,7 @@ const { data: session,   } = useSession();
           listClassName="flex w-full overflow-x-auto h-12 rounded-none"
           triggerClassName={` whitespace-nowrap data-[state=active]:border-primary data-[state=active]:text-primary rounded-none`}
           className="border"
+          contentClassName="px-0"
         >
           <GeneralEventsTab match={match} />
 

@@ -77,7 +77,6 @@ const MatchActions = ({ match }: Props) => {
             <DIALOG
               trigger="Choose Squad"
               variant="ghost"
-              size="sm"
               title={`SQUAD for ${match?.title}`}
               className="min-w-[80vw]"
             >
