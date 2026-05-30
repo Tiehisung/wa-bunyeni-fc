@@ -151,7 +151,7 @@ async function searchMatches(
           opponent: match?.opponent?.name,
           venue: match?.venue,
           status: match?.status,
-          isHome: match?.isHome,
+          location: match?.location,
           time: match?.time,
         },
       };

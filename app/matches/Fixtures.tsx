@@ -12,14 +12,25 @@ import HEADER from "@/components/Element";
 import DataErrorAlert from "@/components/error/DataError";
 import { getErrorMessage } from "@/lib/error";
 import { Pagination } from "@/components/pagination/Pagination";
+import { buildQueryObject } from "@/lib/searchParams";
+import { PrimarySearch } from "@/components/Search";
 
 interface IProps {
   fixtures?: IQueryResponse<IMatch[]>;
 }
 
 const FixturesSection = ({}: IProps) => {
-  const { data: fixtures, isLoading, error } = useGetMatchesQuery({});
-  const filters = [
+  const filters = buildQueryObject();
+  console.log(filters);
+
+  const {
+    data: fixtures,
+    isLoading,
+    error,
+  } = useGetMatchesQuery({ ...filters });
+
+  console.log(fixtures)
+  const filtersOptions = [
     { label: "All", value: "" },
     { label: "Home", value: "home" },
     { label: "Away", value: "away" },
@@ -41,13 +52,9 @@ const FixturesSection = ({}: IProps) => {
   return (
     <div id="fixtures" className="">
       <header className="flex justify-between items-center gap-4 mb-6">
-        <SearchQueryUpdator query="fixture" options={filters} />
+        <PrimarySearch searchKey="match_search" />
 
-        <div className="p-2 flex items-center text-sm gap-1 text-muted-foreground py-4">
-          <span>{fixtures?.pagination?.page}</span> of
-          <span>{fixtures?.pagination?.pages}</span>{" "}
-          <div className="ml-1">Total: {fixtures?.pagination?.total}</div>
-        </div>
+        <SearchQueryUpdator query="fixture" options={filtersOptions} />
       </header>
 
       <main className="grid md:grid-cols-2 gap-y-3.5 gap-x-5">

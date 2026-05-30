@@ -2,7 +2,7 @@
 
 import { logos } from "@/assets/images";
 import { Button } from "@/components/buttons/Button";
-import { DateTimeInput, Input } from "@/components/input/Inputs";
+import { Input } from "@/components/input/Inputs";
 import RadioButtons from "@/components/input/Radio";
 import ContentShowcaseWrapper from "@/components/ShowcaseWrapper";
 import {
@@ -15,7 +15,11 @@ import {
 import { fireEscape } from "@/hooks/Esc";
 import { ISelectOptionLV } from "@/types";
 import { useEffect, useState } from "react";
-import { EMatchCategory, IMatch } from "@/types/match.interface";
+import {
+  EMatchCategory,
+  EMatchLocation,
+  IMatch,
+} from "@/types/match.interface";
 import {
   useCreateMatchMutation,
   useUpdateMatchMutation,
@@ -35,13 +39,8 @@ import { enumToOptions } from "@/lib/select";
 
 // Zod schema for form validation
 
-enum EMatchType {
-  HOME = "home",
-  AWAY = "away",
-}
-
 const matchFormSchema = z.object({
-  matchType: z.enum([EMatchType.HOME, EMatchType.AWAY]),
+  location: z.enum(Object.values(EMatchLocation)),
   category: z.enum(EMatchCategory),
   opponentId: z.string().min(11, "Please select an opponent team"),
   date: z.string().min(6, "Match date is required"),
@@ -89,11 +88,7 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
   } = useForm<MatchFormData>({
     resolver: zodResolver(matchFormSchema),
     defaultValues: {
-      matchType: isUpdateMode
-        ? fixture?.isHome
-          ? EMatchType.HOME
-          : EMatchType.AWAY
-        : undefined,
+      location: isUpdateMode ? fixture?.location : undefined,
       opponentId: isUpdateMode ? fixture?.opponent?._id : "",
       date: isUpdateMode ? fixture?.date?.split("T")?.[0] : "",
       time: isUpdateMode ? fixture?.time : "",
@@ -114,10 +109,10 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
     const matchData = {
       ...(isUpdateMode && fixture && { ...fixture }),
       ...data,
-      isHome: data.matchType === EMatchType.HOME,
+      location: data.location,
       opponent: opponentTeam || null,
       title:
-        data.matchType === EMatchType.HOME
+        data.location === EMatchLocation.HOME
           ? `${TEAM.name} VS ${opponentTeam?.name}`
           : `${opponentTeam?.name} VS ${TEAM.name}`,
     } as Partial<IMatch>;
@@ -131,7 +126,7 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
         fireEscape();
         if (!isUpdateMode) {
           reset({
-            matchType: undefined,
+            location: undefined,
             opponentId: "",
             date: "",
             time: "",
@@ -169,12 +164,13 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
       <div className="grow">
         <Card>
           <CardHeader>
-            <CardTitle className="font-bold text-2xl">{fixture?'UPDATE':'NEW'} FIXTURE</CardTitle>
+            <CardTitle className="font-bold text-2xl">
+              {fixture ? "UPDATE" : "NEW"} FIXTURE
+            </CardTitle>
             <CardDescription>Fill Out To Create Fixture</CardDescription>
           </CardHeader>
           <CardContent className="max-w-xl sm:min-w-sm">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Opponent Selection */}
               <Controller
                 name="opponentId"
                 control={control}
@@ -191,23 +187,22 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
                 )}
               />
 
-              {/* Match Type Radio */}
               <Controller
-                name="matchType"
+                name="location"
                 control={control}
                 render={({ field }) => (
                   <RadioButtons
                     defaultValue={field.value}
                     setSelectedValue={field.onChange}
-                    values={Object.values(EMatchType)}
-                    label="Match Type *"
+                    values={Object.values(EMatchLocation)}
+                    label="Match Location *"
                     wrapperStyles="flex gap-3 items-center"
                   />
                 )}
               />
-              {errors.matchType && (
+              {errors.location && (
                 <p className="text-sm text-red-600 -mt-4">
-                  {errors.matchType.message}
+                  {errors.location.message}
                 </p>
               )}
               <Controller
@@ -223,7 +218,6 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
                   />
                 )}
               />
-              {/* Date Input */}
               <div>
                 <label className="text-muted-foreground mb-2 block text-sm font-light ">
                   Date Of Play *
@@ -294,8 +288,6 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
                 )}
               />
 
-              {/* Image Upload */}
-
               <Controller
                 name="fixtureFlier"
                 control={control}
@@ -310,7 +302,6 @@ export const MatchForm = ({ fixture }: MatchFormProps) => {
                   />
                 )}
               />
-              {/* Submit Button */}
               <Button
                 type="submit"
                 waiting={waiting}

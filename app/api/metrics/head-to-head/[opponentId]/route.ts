@@ -41,7 +41,7 @@ export async function GET(
                 goalsScored,
                 goalsConceded,
                 goalDifference: goalsScored - goalsConceded,
-                matches: matches.map(m => ({ ...m.computed, date: m.date, isHome: m.isHome })),
+                matches: matches.map(m => ({ ...m.computed, date: m.date, location: m.location })),
             },
         });
     } catch (error) {

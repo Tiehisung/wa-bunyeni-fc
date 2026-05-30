@@ -3,7 +3,7 @@
 import { ISelectOptionLV } from "@/types";
  
 import { useEffect, useState } from "react";
-import { useSearchParams } from "@/lib/searchParams";
+import { useSParams } from "@/lib/searchParams";
 
 interface HeaderLinksProps {
   query: string;
@@ -20,7 +20,7 @@ export const SearchQueryUpdator = ({
 }: HeaderLinksProps) => {
   const [selectedKey, setSelectedKey] = useState<string>("");
  
-  const { setSearchParams } = useSearchParams();
+  const { setSearchParams } = useSParams();
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);

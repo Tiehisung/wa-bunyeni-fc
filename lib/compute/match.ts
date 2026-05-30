@@ -2,7 +2,7 @@ import { TEAM } from "@/data/team";
 import { IGoal, IMatch, IMatchMetrics } from "@/types/match.interface";
 
 export const checkTeams = (match?: IMatch) => {
-  if (match?.isHome) {
+  if (match?.location=='home') {
     return { home: TEAM, away: match?.opponent };
   }
   return {
@@ -27,7 +27,7 @@ export const checkMatchMetrics = (match?: IMatch): IMatchMetrics => {
         : "draw";
   const { home, away } = checkTeams(match);
 
-  const goals = match?.isHome
+  const goals = match?.location=='home'
     ? { home: teamGoals.length, away: opponentGoals.length }
     : { home: opponentGoals.length, away: teamGoals.length };
 

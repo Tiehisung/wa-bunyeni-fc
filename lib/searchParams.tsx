@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 /**
  * Adds a searchparams and returns new pathname containing the searchParams with it's value
@@ -44,7 +44,7 @@ export const deleteSearchParams = (key: string) => {
  */
 
 // Create a custom hook instead of a standalone function
-export const useSearchParams = () => {
+export const useSParams = () => {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -102,6 +102,19 @@ export function buildQueryString(
       string,
     ][],
   ).toString();
+
+  return query;
+}
+
+export function buildQueryObject(
+  searchParams?: Record<string, string | string[] | undefined>,
+) {
+  const sp = useSearchParams();
+
+  // Filter out undefined or empty values
+  const query = sParamsToObject(
+    searchParams ? new URLSearchParams(searchParams as any) : sp,
+  );
 
   return query;
 }

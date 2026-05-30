@@ -28,12 +28,12 @@ import {
   useDeleteSquadMutation,
   useGetSquadByMatchQuery,
 } from "@/services/squad.endpoints";
- 
+
 import { smartToast } from "@/utils/toast";
 import { fireEscape } from "@/hooks/Esc";
 import PageLoader from "@/components/loaders/Page";
 import { Button } from "@/components/buttons/Button";
-import { useSearchParams } from "@/lib/searchParams";
+import { useSParams } from "@/lib/searchParams";
 import SquadForm from "./SquadForm";
 import { useSession } from "next-auth/react";
 
@@ -42,10 +42,10 @@ interface SquadDisplayProps {
 }
 
 const SquadCard = ({ match }: SquadDisplayProps) => {
- const { data: session,   } = useSession();
-    const user=session?.user
+  const { data: session } = useSession();
+  const user = session?.user;
 
-  const { getSearchParam, setSearchParams } = useSearchParams();
+  const { getSearchParam, setSearchParams } = useSParams();
 
   const { data: squadData, isLoading: loadingSquad } = useGetSquadByMatchQuery(
     match?._id as string,
@@ -92,9 +92,8 @@ const SquadCard = ({ match }: SquadDisplayProps) => {
               {squad?.title ?? "Unknown"}
             </CardTitle>
             <CardDescription className="flex flex-wrap items-center gap-3 mt-1 text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <MapPin size={16} />{" "}
-                {(squad?.match?.isHome ?? match?.isHome) ? "Home" : "Away"}
+              <span className="flex items-center gap-1 capitalize">
+                <MapPin size={16} /> {squad?.match?.location}
               </span>
               <span className="flex items-center gap-1">
                 <CalendarDays size={16} />{" "}

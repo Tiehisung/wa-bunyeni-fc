@@ -36,7 +36,7 @@ export async function generateMetadata({
     winStatus === "win" ? "✅" : winStatus === "loss" ? "❌" : "🤝";
 
   const title = `${homeTeam?.name} ${scoreText} ${awayTeam?.name} | ${ENV.TEAM_NAME}`;
-  const description = `${ENV.TEAM_NAME} ${match.isHome ? "host" : "visit"} ${match.opponent?.name} on ${formatDate(match.date)}. ${match.computed?.result ? `${resultEmoji} Result: ${match.computed?.result.toUpperCase()}. ` : ""}Score: ${match.computed?.teamScore || 0} - ${match.computed?.opponentScore || 0}.`;
+  const description = `${ENV.TEAM_NAME} ${match.location==='home' ? "host" : "visit"} ${match.opponent?.name} on ${formatDate(match.date)}. ${match.computed?.result ? `${resultEmoji} Result: ${match.computed?.result.toUpperCase()}. ` : ""}Score: ${match.computed?.teamScore || 0} - ${match.computed?.opponentScore || 0}.`;
 
   return {
     title,

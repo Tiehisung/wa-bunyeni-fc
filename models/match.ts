@@ -1,5 +1,9 @@
 import { computeMatchResult } from "@/app/api/matches/helpers";
-import { EMatchCategory, EMatchStatus } from "@/types/match.interface";
+import {
+  EMatchCategory,
+  EMatchLocation,
+  EMatchStatus,
+} from "@/types/match.interface";
 import mongoose, { Schema } from "mongoose";
 
 const matchSchema = new Schema(
@@ -12,6 +16,11 @@ const matchSchema = new Schema(
       type: String,
       enum: [...Object.values(EMatchStatus)],
       default: () => EMatchStatus.UPCOMING,
+    },
+    location: {
+      type: String,
+      enum: [...Object.values(EMatchLocation)],
+      default: () => EMatchLocation.HOME,
     },
     category: {
       type: String,

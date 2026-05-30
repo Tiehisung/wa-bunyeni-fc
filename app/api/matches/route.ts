@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status") as EMatchStatus;
     const search = searchParams.get("match_search") || "";
     const fixtureType = searchParams.get("fixture") || "";
+    const location = searchParams.get("location") || "";
     const competition = searchParams.get("competition") || "";
     const season = searchParams.get("season") || "";
     const teamId = searchParams.get("teamId") || "";
@@ -40,7 +41,7 @@ export async function GET(request: NextRequest) {
     if (status) query.status = status;
     if (competition) query.competition = competition;
     if (season) query.season = season;
-
+    if (location) query.location = location;
     if (teamId) {
       query.$or = [{ opponent: teamId }, { "squad.team": teamId }];
     }

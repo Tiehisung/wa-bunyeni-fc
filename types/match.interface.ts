@@ -9,6 +9,10 @@ export enum EMatchStatus {
   LIVE = "LIVE",
   UPCOMING = "UPCOMING",
 }
+export enum EMatchLocation {
+  HOME = "home",
+  AWAY = "away",
+}
 export enum EMatchCategory {
   U13 = "u13",
   U15 = "u15",
@@ -29,6 +33,7 @@ export interface IMatch {
   broadcaster?: IFileProps;
   status: EMatchStatus;
   isHome: boolean;
+  location?: EMatchLocation;
   venue?: string;
   matchImages?: string[];
   fixtureFlier?: string;
