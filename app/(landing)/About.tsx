@@ -2,6 +2,7 @@
 
 import { AnimateOnView } from "@/components/Animate/AnimateOnView";
 import { GlassmorphicGradient } from "@/components/Glasmorphic/Gradient";
+import Image from "next/image";
 import React from "react";
 
 const About: React.FC = () => {
@@ -13,10 +14,10 @@ const About: React.FC = () => {
   ];
 
   const images = [
-    {
-      src: "https://res.cloudinary.com/djzfztrig/image/upload/v1774595311/assets-storage/k2ettykinlreegktkcth.jpg",
-      alt: "Football action",
-    },
+    // {
+    //   src: "https://res.cloudinary.com/djzfztrig/image/upload/v1774595311/assets-storage/k2ettykinlreegktkcth.jpg",
+    //   alt: "Football action",
+    // },
 
     {
       src: "https://res.cloudinary.com/djzfztrig/image/upload/v1774595622/assets-storage/wt34apgcmz6rq04popyo.jpg",
@@ -27,10 +28,10 @@ const About: React.FC = () => {
       src: "https://res.cloudinary.com/djzfztrig/image/upload/v1774595643/assets-storage/obhaffhmsy4ssjmbw2e2.jpg",
       alt: "Stadium",
     },
-    {
-      src: "https://res.cloudinary.com/djzfztrig/image/upload/v1774595545/assets-storage/r3rjmb1fao5q5xz4by4u.jpg",
-      alt: "Team celebration",
-    },
+    // {
+    //   src: "https://res.cloudinary.com/djzfztrig/image/upload/v1774595545/assets-storage/r3rjmb1fao5q5xz4by4u.jpg",
+    //   alt: "Team celebration",
+    // },
   ];
   return (
     <GlassmorphicGradient className="py-24" gradient="accent">
@@ -75,7 +76,9 @@ const About: React.FC = () => {
             {images.map((image, index) => (
               <AnimateOnView key={index} index={index * 1.2} once={false}>
                 {
-                  <img
+                  <Image
+                    width={320}
+                    height={300}
                     src={image.src}
                     alt={image.alt}
                     className={`rounded-2xl w-full h-48 object-cover shadow-md ${index % 2 == 1 ? "mt-8" : ""}`}

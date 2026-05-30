@@ -18,6 +18,7 @@ import { LoggerService } from "../../../shared/log.service";
 import { getApiErrorMessage } from "../../../lib/error-api";
 import { slugify } from "@/lib/slugging";
 import { authorizeOrResponse } from "../auth/authorization";
+import { generatePlayerCode } from "./code";
 
 connectDB();
 
@@ -113,7 +114,7 @@ export async function POST(request: NextRequest) {
     const pf = await request.json() as IPostPlayer;
 
     // Ensure unique code
-    let playerCode = generatePlayerID(pf.firstName, pf.lastName, pf.dob);
+    let playerCode = await generatePlayerCode(pf.firstName, pf.lastName);
 
     const existingPlayerByCode = await PlayerModel.findOne({ code: playerCode });
 

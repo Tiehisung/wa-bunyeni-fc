@@ -1,28 +1,31 @@
 import { NextResponse } from "next/server";
-import { EMatchLocation } from "@/types/match.interface";
 import dbConnect from "@/config/db.config";
-import MatchModel from "@/models/match";
-
-// Run the migration
+import PlayerModel from "@/models/player";
+import { generatePlayerCode } from "../players/code";
+import { slugify } from "@/lib/slugging";
+import UserModel from "@/models/user";
 
 export async function GET() {
   try {
     await dbConnect();
-    await MatchModel.updateMany(
-      { isHome: true },
-      { $set: { location: EMatchLocation.HOME } },
-    );
-    await MatchModel.updateMany(
-      { isHome: false },
-      { $set: { location: EMatchLocation.AWAY } },
-    );
+    const players = await PlayerModel.find({});
 
-    const matches = await MatchModel.find({});
+    for (const p of players) {
+      const code = await generatePlayerCode(p.firstName, p.lastName);
+      const slug = slugify(`${p.firstName}-${p.lastName}-${code}`);
+      const email = `${code}@bfc.com`.toLowerCase();
+      await UserModel.findOneAndUpdate({ email: p.email }, { email });
+      await PlayerModel.findByIdAndUpdate(p._id, {
+        email: email,
+        slug,
+        code,
+      });
+    }
+    const pls = await PlayerModel.find({});
     return NextResponse.json({
       ok: true,
       message: "🎉 Migration complete!",
-      data: matches,
-      //   fans,
+      data: pls,
     });
   } catch (error: any) {
     console.error("❌ Migration failed:", error);
