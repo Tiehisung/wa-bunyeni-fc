@@ -59,7 +59,7 @@ export async function PATCH(
       });
 
       if (session?.user) {
-        await updateFanPoints(session?.user?._id as string, "newsView");
+        await updateFanPoints(session?.user as IMiniUser, "newsView");
       }
 
       return NextResponse.json({

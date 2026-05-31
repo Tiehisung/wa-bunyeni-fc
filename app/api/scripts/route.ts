@@ -11,17 +11,12 @@ export async function GET() {
     const players = await PlayerModel.find({});
 
     for (const p of players) {
-      const code = await generatePlayerCode(p.firstName, p.lastName);
-      const slug = slugify(`${p.firstName}-${p.lastName}-${code}`);
-      const email = `${code}@bfc.com`.toLowerCase();
-      await UserModel.findOneAndUpdate({ email: p.email }, { email });
-      await PlayerModel.findByIdAndUpdate(p._id, {
-        email: email,
-        slug,
-        code,
-      });
+      await UserModel.findOneAndUpdate(
+        { email: p.email },
+        { avatar: p.avatar },
+      );
     }
-    const pls = await PlayerModel.find({});
+    const pls = await UserModel.find({});
     return NextResponse.json({
       ok: true,
       message: "🎉 Migration complete!",

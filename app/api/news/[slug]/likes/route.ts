@@ -58,7 +58,7 @@ export async function PATCH(
 
       // Remove fan points (if they had earned any)
       if (user?._id) {
-        await updateFanPoints(user._id, "reaction", true);
+        await updateFanPoints(user as IMiniUser, "reaction", true);
       }
 
       return NextResponse.json({
@@ -80,7 +80,7 @@ export async function PATCH(
       });
 
       if (user?._id) {
-        await updateFanPoints(user._id as string, "reaction");
+        await updateFanPoints(user as IMiniUser, "reaction");
       }
 
       return NextResponse.json({

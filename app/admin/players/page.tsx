@@ -6,17 +6,19 @@ import { PrimarySearch } from "@/components/Search";
 import { DisplayAdminPlayers } from "./DisplayPlayers";
 import Loader from "@/components/loaders/Loader";
 import { useGetPlayersQuery } from "@/services/player.endpoints";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import DataErrorAlert from "@/components/error/DataError";
 import { H } from "@/components/Element";
 import { Separator } from "@/components/ui/separator";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { sParamsToObject } from "@/lib/searchParams";
+import { Button } from "@/components/buttons/Button";
+import { PrintPlayersBtn } from "./Export";
 
 export default function AdminPlayers() {
   const searchParams = useSearchParams();
-  
+  const router = useRouter();
 
   const {
     data: playersData,
@@ -46,13 +48,17 @@ export default function AdminPlayers() {
       <header className="mb-6 mx-auto">
         <H>KFC PLAYERS</H>
 
-        <Link
-          href="/admin/players/new"
-          className="flex items-center gap-2 border _borderColor hover:ring rounded px-2 py-1 w-max mt-4"
-        >
-          Add Player
-          <Plus />
-        </Link>
+        <div className="flex flex-wrap items-center justify-between gap-4 mt-4">
+          <Button
+            onClick={() => router.push("/admin/players/new")}
+            className="flex items-center gap-2 border hover:ring rounded px-2 py-1 w-max mt-4"
+          >
+            Add Player
+            <Plus />
+          </Button>
+
+          <PrintPlayersBtn />
+        </div>
 
         <div className="mt-4 mb-2 flex flex-wrap items-center justify-center gap-6">
           <PrimarySearch
