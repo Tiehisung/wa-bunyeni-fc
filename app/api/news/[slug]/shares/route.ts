@@ -9,13 +9,14 @@ import { getOrCreateVisitorId } from '@/lib/visitor';
 import { updateFanPoints } from '@/app/api/fans/helpers';
 import { IMiniUser } from '@/types/user';
 
-connectDB();
+ 
 
 export async function PATCH(
     request: NextRequest,
     { params }: { params: Promise<{ slug: string }> }
 ) {
-    try {
+    try { 
+        await connectDB();
         const session = await auth();
         const { slug } = await params;
         const filter = slugIdFilters(slug);

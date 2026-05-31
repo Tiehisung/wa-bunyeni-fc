@@ -3,9 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { LoggerService } from "@/shared/log.service";
 import { getApiErrorMessage } from "@/lib/error-api";
 import connectDB from "@/config/db.config";
-
 import NewsModel from "@/models/news";
-
 import { slugIdFilters } from "@/lib/slug";
 import { auth } from "@/auth";
 import { getOrCreateVisitorId } from "@/lib/visitor";
@@ -19,6 +17,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> },
 ) {
+  await connectDB();
   try {
     const session = await auth();
     const { slug } = await params;
