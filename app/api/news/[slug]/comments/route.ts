@@ -63,7 +63,6 @@ export async function POST(
       message: "Comment added successfully",
     });
   } catch (error) {
-    LoggerService.error("Failed to add comment", error);
     return NextResponse.json(
       {
         success: false,
@@ -73,6 +72,7 @@ export async function POST(
     );
   }
 }
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> },
@@ -162,6 +162,7 @@ export async function PUT(
     );
   }
 }
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> },
@@ -223,7 +224,6 @@ export async function DELETE(
       data: { totalComments: updated.comments.length },
     });
   } catch (error) {
-    LoggerService.error("Failed to delete comment", error);
     return NextResponse.json(
       {
         success: false,

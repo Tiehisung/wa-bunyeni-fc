@@ -7,6 +7,7 @@ import connectDB from "@/config/db.config";
 import { auth } from "@/auth";
 import { getOrCreateVisitorId } from "@/lib/visitor";
 import { updateFanPoints } from "@/app/api/fans/helpers";
+import { IMiniUser } from "@/types/user";
 
 connectDB();
 

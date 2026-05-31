@@ -7,6 +7,7 @@ import { slugIdFilters } from '@/lib/slug';
 import { auth } from '@/auth';
 import { getOrCreateVisitorId } from '@/lib/visitor';
 import { updateFanPoints } from '@/app/api/fans/helpers';
+import { IMiniUser } from '@/types/user';
 
 connectDB();
 
