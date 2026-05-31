@@ -13,7 +13,7 @@ export function MyFanProfile() {
   const { data: fanData, isLoading } = useGetMyFanProfileQuery();
   const fan = fanData?.data;
 
-  console.log(fanData)
+  console.log({fanData})
 
   if (isLoading) {
     return <MyFanProfileSkeleton />;

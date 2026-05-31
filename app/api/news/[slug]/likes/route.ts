@@ -7,6 +7,7 @@ import connectDB from "@/config/db.config";
 import { auth } from "@/auth";
 import { getOrCreateVisitorId } from "@/lib/visitor";
 import { updateFanPoints } from "@/app/api/fans/helpers";
+import { IMiniUser } from "@/types/user";
 
 connectDB();
 
@@ -58,7 +59,7 @@ export async function PATCH(
 
       // Remove fan points (if they had earned any)
       if (user?._id) {
-        await updateFanPoints(user._id, "reaction", true);
+        await updateFanPoints(user as IMiniUser, "reaction", true);
       }
 
       return NextResponse.json({
@@ -80,7 +81,7 @@ export async function PATCH(
       });
 
       if (user?._id) {
-        await updateFanPoints(user._id as string, "reaction");
+        await updateFanPoints(user as IMiniUser, "reaction");
       }
 
       return NextResponse.json({

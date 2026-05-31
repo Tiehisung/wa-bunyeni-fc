@@ -10,6 +10,7 @@ import { slugIdFilters } from "@/lib/slug";
 import { auth } from "@/auth";
 import { getOrCreateVisitorId } from "@/lib/visitor";
 import { updateFanPoints } from "@/app/api/fans/helpers";
+import { IMiniUser } from "@/types/user";
 
 connectDB();
 
@@ -59,7 +60,7 @@ export async function PATCH(
       });
 
       if (session?.user) {
-        await updateFanPoints(session?.user?._id as string, "newsView");
+        await updateFanPoints(session?.user as IMiniUser, "newsView");
       }
 
       return NextResponse.json({

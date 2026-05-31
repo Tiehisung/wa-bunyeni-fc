@@ -1,9 +1,8 @@
-
 "use client";
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AVATAR } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Medal, Heart } from "lucide-react";
@@ -19,7 +18,7 @@ export function FanLeaderboard() {
     sortBy: sortBy,
   });
 
-  // console.log({ leaderboard });
+  console.log(leaderboard?.data);
 
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Trophy className="h-5 w-5 text-yellow-500" />;
@@ -81,7 +80,7 @@ export function FanLeaderboard() {
           <div className="divide-y">
             {leaderboard?.data?.map((entry, index) => (
               <motion.div
-                key={entry.user._id}
+                key={entry.user?._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
@@ -93,17 +92,15 @@ export function FanLeaderboard() {
                 </div>
 
                 {/* Avatar */}
-                <Avatar className="h-12 w-12 ring-2 ring-background">
-                  <AvatarImage src={entry.user.avatar} />
-                  <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                    {entry.user.name?.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+                <AVATAR
+                  src={entry.user?.avatar as string}
+                  alt={entry.user?.name}
+                />
 
                 {/* User Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-semibold truncate">{entry.user.name}</p>
+                    <p className="font-semibold truncate">{entry.user?.name}</p>
                     {entry.rank <= 3 && (
                       <Badge
                         variant="secondary"

@@ -2,7 +2,7 @@
 import connectDB from "@/config/db.config";
 import { slugIdFilters } from "@/lib/slug";
 import UserModel from "@/models/user";
-import  FanModel  from "@/models/fans";
+import FanModel from "@/models/fans";
 import { IFanLeaderboardEntry } from "@/services/fans.endpoints";
 
 import { EFanBadge, IFan } from "@/types/fan.interface";
@@ -55,7 +55,6 @@ export async function getOrCreateFanProfile(emailOrId: string): Promise<IFan> {
     "name email avatar",
   );
 
-  console.log(fan)
   if (!fan) {
     // Create new fan profile
     fan = await FanModel.create({
@@ -100,13 +99,14 @@ export async function getFanById(fanId: string): Promise<IFan | null> {
  * Update fan points based on action
  */
 export async function updateFanPoints(
-  emailOrId: string,
+  user: Partial<{ _id: string; email: string }>,
   action: FanAction,
   isRemoval: boolean = false,
 ): Promise<IFan | null> {
   await connectDB();
+  const userSlug = (user?._id || user?.email) as string;
 
-  const fan = await getOrCreateFanProfile(emailOrId);
+  const fan = await getOrCreateFanProfile(userSlug);
   const points = POINTS_MAP[action];
   const pointsChange = isRemoval ? -points : points;
 
@@ -537,18 +537,21 @@ export async function getUserFanProgress(userEmailOrId: string): Promise<{
  * Bulk update points for multiple users (e.g., after a match)
  */
 export async function bulkUpdateFanPoints(
-  updates: Array<{ userEmailOrId: string; action: FanAction }>,
+  updates: Array<{
+    user: Partial<{ _id: string; email: string }>;
+    action: FanAction;
+  }>,
 ): Promise<{ successful: number; failed: number }> {
   let successful = 0;
   let failed = 0;
 
   for (const update of updates) {
     try {
-      await updateFanPoints(update.userEmailOrId, update.action);
+      await updateFanPoints(update.user, update.action);
       successful++;
     } catch (error) {
       console.error(
-        `Failed to update points for user ${update.userEmailOrId}:`,
+        `Failed to update points for user ${update.user._id || update.user.email}:`,
         error,
       );
       failed++;
@@ -583,15 +586,16 @@ export async function deactivateInactiveFans(
 /**
  * Reset fan points (admin only - use with caution)
  */
-export async function resetFanPoints(emailOrId: string): Promise<IFan | null> {
+export async function resetFanPoints(user: Partial<{ _id: string; email: string }>): Promise<IFan | null> {
   await connectDB();
 
-  const filter = slugIdFilters(emailOrId);
+  const userSlug = user._id || user.email;
+  const filter = slugIdFilters(userSlug as string);
 
-  const user = await UserModel.findOne(filter);
+  const userDoc = await UserModel.findOne(filter);
 
   const fan = await FanModel.findOneAndUpdate(
-    { user: user?._id },
+    { user: userDoc?._id },
     {
       $set: {
         points: 0,
