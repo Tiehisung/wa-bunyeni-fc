@@ -35,7 +35,7 @@ export interface IMatch {
   isHome: boolean;
   location?: EMatchLocation;
   venue?: string;
-  matchImages?: string[];
+  images?: string[];
   fixtureFlier?: string;
   resultFlier?: string;
   goals: Array<IGoal>;

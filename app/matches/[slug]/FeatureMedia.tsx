@@ -24,8 +24,6 @@ export function MatchFeaturedImages({ slug }: Props) {
   const match = matchData?.data;
   const router = useRouter();
 
-  console.log(matchData);
-
   const { data: session } = useSession();
   const isAuthorized = session?.user?.role?.includes("admin");
   const [updateMatch, { isLoading: updatingMatch }] = useUpdateMatchMutation();
@@ -36,7 +34,7 @@ export function MatchFeaturedImages({ slug }: Props) {
     try {
       const result = await updateMatch({
         _id: match._id,
-        matchImages: [imageFile, ...(match?.matchImages ?? [])].filter(Boolean),
+        images: [imageFile, ...(match?.images ?? [])].filter(Boolean),
       }).unwrap();
 
       console.log("uploaded", result);
@@ -56,10 +54,7 @@ export function MatchFeaturedImages({ slug }: Props) {
     try {
       const result = await updateMatch({
         _id: match._id,
-        matchImages: [
-          file,
-          ...(match?.matchImages?.filter((m) => m !== file) ?? []),
-        ],
+        images: [file, ...(match?.images?.filter((m) => m !== file) ?? [])],
       }).unwrap();
 
       smartToast(result);
@@ -74,7 +69,7 @@ export function MatchFeaturedImages({ slug }: Props) {
     try {
       const result = await updateMatch({
         _id: match._id,
-        matchImages: match?.matchImages?.filter((m) => m !== file) ?? [],
+        images: match?.images?.filter((m) => m !== file) ?? [],
       }).unwrap();
 
       smartToast(result);
@@ -102,10 +97,10 @@ export function MatchFeaturedImages({ slug }: Props) {
         )}
       </div>
 
-      {match?.matchImages?.length ? (
+      {match?.images?.length ? (
         <MasonryGallery
           files={
-            (match?.matchImages?.map((mi) => ({
+            (match?.images?.map((mi) => ({
               secure_url: mi,
               resource_type: "image",
             })) as IFileProps[]) ?? []
