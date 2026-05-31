@@ -5,7 +5,6 @@ import { auth } from "@/auth";
 import { ELogSeverity } from "@/types/log.interface";
 import { EArchivesCollection } from "@/types/archive.interface";
 import MatchModel from "@/models/match";
-
 import { saveToArchive } from "../../archives/helper";
 import { logAction } from "../../logs/helper";
 import { formatDate } from "@/lib/timeAndDate";
@@ -14,6 +13,7 @@ import { getApiErrorMessage } from "../../../../lib/error-api";
 import "@/shared/models.imports";
 import { authorizeOrResponse } from "../../auth/authorization";
 import { EUserRole } from "@/types/user";
+
 connectDB();
 
 // GET /api/matches/[slug] - Get single match by slug or ID
