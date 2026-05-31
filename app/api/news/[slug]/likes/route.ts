@@ -16,7 +16,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> },
 ) {
-  try {
+  try { await connectDB();
     const session = await auth();
     const user = session?.user;
     const { slug } = await params;
