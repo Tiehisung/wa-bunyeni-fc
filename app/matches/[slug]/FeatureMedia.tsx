@@ -24,6 +24,8 @@ export function MatchFeaturedImages({ slug }: Props) {
   const match = matchData?.data;
   const router = useRouter();
 
+  console.log({match})
+
   const { data: session } = useSession();
   const isAuthorized = session?.user?.role?.includes("admin");
   const [updateMatch, { isLoading: updatingMatch }] = useUpdateMatchMutation();
@@ -36,8 +38,6 @@ export function MatchFeaturedImages({ slug }: Props) {
         _id: match._id,
         images: [imageFile, ...(match?.images ?? [])].filter(Boolean),
       }).unwrap();
-
-      console.log("uploaded", result);
 
       smartToast(result);
       refetch();

@@ -36,7 +36,7 @@ export async function generateMetadata({
     winStatus === "win" ? "✅" : winStatus === "loss" ? "❌" : "🤝";
 
   const title = `${homeTeam?.name} ${scoreText} ${awayTeam?.name} | ${ENV.TEAM_NAME}`;
-  const description = `${ENV.TEAM_NAME} ${match.location==='home' ? "host" : "visit"} ${match.opponent?.name} on ${formatDate(match.date)}. ${match.computed?.result ? `${resultEmoji} Result: ${match.computed?.result.toUpperCase()}. ` : ""}Score: ${match.computed?.teamScore || 0} - ${match.computed?.opponentScore || 0}.`;
+  const description = `${ENV.TEAM_NAME} ${match.location === "home" ? "host" : "visit"} ${match.opponent?.name} on ${formatDate(match.date)}. ${match.computed?.result ? `${resultEmoji} Result: ${match.computed?.result.toUpperCase()}. ` : ""}Score: ${match.computed?.teamScore || 0} - ${match.computed?.opponentScore || 0}.`;
 
   return {
     title,
@@ -49,16 +49,14 @@ export async function generateMetadata({
       type: "article",
       publishedTime: match.date,
       images: [
-        ...([
-          match?.fixtureFlier,
-          match?.resultFlier,
-          ...(match?.matchImages ?? []),
-        ]?.map((i) => ({
-          url: i as string,
-          width: 1200,
-          height: 630,
-          alt: `${homeTeam} vs ${awayTeam}`,
-        })) ?? []),
+        ...([match?.fixtureFlier, match?.resultFlier, ...(match?.images ?? [])]
+          ?.filter(Boolean)
+          ?.map((i) => ({
+            url: i as string,
+            width: 1200,
+            height: 630,
+            alt: `${homeTeam} vs ${awayTeam}`,
+          })) ?? []),
         {
           url: (match.opponent?.logo || ENV.LOGO_URL) as string,
           width: 1200,
@@ -74,8 +72,8 @@ export async function generateMetadata({
       images: [
         match?.fixtureFlier as string,
         match?.resultFlier as string,
-        (match.opponent?.logo || ENV.LOGO_URL) as string,
-      ],
+        ...(match?.images as string[]),
+      ].filter(Boolean),
     },
   };
 }
