@@ -121,7 +121,7 @@ export default function ImageUploadComponent({
 
   return (
     <div className={cn(" relative", className)}>
-      {label && <Label className="text-sm font-medium text-Red mb-5 text-left">{label}</Label>}
+      {label && <Label className="text-sm font-medium mb-5 text-left">{label}</Label>}
 
       <input
         ref={inputRef}

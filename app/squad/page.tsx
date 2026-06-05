@@ -5,7 +5,7 @@ import { ResourceShare } from "@/components/SocialShare";
 import { getInitials } from "@/lib";
 import { ENV } from "@/lib/env";
 import { useGetSquadsQuery } from "@/services/squad.endpoints";
- 
+import SquadPlayer from "../admin/squad/SquadPlayer";
 
 export default function LatestMatchSquadPage() {
   const { data: squadsData, isLoading } = useGetSquadsQuery("");
@@ -16,7 +16,7 @@ export default function LatestMatchSquadPage() {
   return (
     <section id="squad" className="py-24 ">
       {/* <PageSEO page="squad"/> */}
-      <div >
+      <div>
         <div className="text-center mb-16">
           <span className="text-primary font-semibold tracking-wide uppercase text-sm">
             The Team
@@ -32,27 +32,7 @@ export default function LatestMatchSquadPage() {
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {squad?.players?.map((player, index) => (
-            <div
-              key={index}
-              className="group bg-card rounded-2xl overflow-hidden hover:transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl border border-border"
-            >
-              <div className="relative h-64 overflow-hidden bg-gray-100">
-                <img
-                  src={player.avatar}
-                  alt={player.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
-                />
-                <div className="absolute top-3 left-3 bg-primary uppercase font-bold w-10 h-10 rounded-full flex items-center justify-center shadow-md">
-                  {player?.number || getInitials(player?.position?.split(" "))}
-                </div>
-              </div>
-              <div className="p-4 text-center">
-                <h3 className="font-bold text-xl ">{player.name}</h3>
-                <p className="text-primary text-sm mb-1 font-semibold capitalize">
-                  {player.position}
-                </p>
-              </div>
-            </div>
+            <SquadPlayer player={player} key={index} />
           ))}
         </div>
         <ResourceShare

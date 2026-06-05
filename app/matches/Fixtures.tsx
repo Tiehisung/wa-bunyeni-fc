@@ -57,7 +57,7 @@ const FixturesSection = ({}: IProps) => {
         <SearchQueryUpdator query="fixture" options={filtersOptions} />
       </header>
 
-      <main className="grid md:grid-cols-2 gap-y-3.5 gap-x-5">
+      <main className="grid lg:grid-cols-2 xl:grid-cols-3 gap-5 mt-3">
         {fixtures?.data?.map((f, index) => (
           <MotionWrapper
             hoverEffect={false}

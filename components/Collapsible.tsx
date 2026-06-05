@@ -24,6 +24,7 @@ interface ICollapsible {
   size?: TButtonSize;
   isLoading?: boolean;
   defaultOpen?: boolean;
+  className?: string;
 }
 
 export function PrimaryCollapsible({
@@ -35,6 +36,7 @@ export function PrimaryCollapsible({
   size,
   isLoading,
   defaultOpen,
+  className='border',
 }: ICollapsible) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
@@ -50,7 +52,13 @@ export function PrimaryCollapsible({
   }, [defaultOpen]);
 
   return (
-    <div className="space-y-1 w-full ">
+    <div
+      className={cn(
+        "space-y-1 w-full rounded-lg ",
+        isOpen ? "bg-card border" : "",
+        className,
+      )}
+    >
       <Button
         type="button"
         onClick={() => {
@@ -59,9 +67,9 @@ export function PrimaryCollapsible({
           if (header.path) router.push(header.path);
         }}
         className={cn(
-          `w-full flex items-center justify-between p-3 pr-0 rounded-lg _transition ${
+          `w-full flex items-center justify-between p-3 pr-0 rounded-lg ${
             isActiveLink(header?.path || "") ? "text-primary" : ""
-          }  ${isOpen ? "rounded-b-none ring" : ""}`,
+          }  `,
           header?.className,
         )}
         {...header?.others}
@@ -115,7 +123,7 @@ export function PrimaryCollapsible({
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className=" space-y-1 border-l border-border/50 pl-4 pt-4 mb-3">
+            <div className=" space-y-1 border-border/50 mb-3">
               {isLoading ? <Loader /> : children}
             </div>
           </motion.div>

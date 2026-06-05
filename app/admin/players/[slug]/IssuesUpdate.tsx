@@ -69,13 +69,15 @@ export default function UpdatePlayerIssuesAndFitness({
 
   return (
     <div id="fitness-update" className="pt-6">
-      <header className="flex items-center justify-between gap-3">
-        <TITLE icon={<TbRibbonHealth size={36} />} text="ISSUES UPDATES" />
-
+      <PrimaryCollapsible
+        header={{ label: " Issues", icon: <TbRibbonHealth size={20} /> }}
+        size={"xl"}
+      >
         <DIALOG
           title="Add Issue"
           variant="outline"
           trigger={<icons.new size={32} />}
+          triggerStyles="mx-4"
         >
           <form
             onSubmit={handleSubmit}
@@ -108,11 +110,6 @@ export default function UpdatePlayerIssuesAndFitness({
             />
           </form>
         </DIALOG>
-      </header>
-
-      <br />
-
-      <PrimaryCollapsible header={{ label: "View Issues" }}>
         <PrimaryAccordion
           data={accordionData}
           className=" backdrop-blur-[1px] overflow-x-hidden mx-2"

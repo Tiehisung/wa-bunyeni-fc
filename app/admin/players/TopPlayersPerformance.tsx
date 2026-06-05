@@ -25,12 +25,14 @@ export default function TopPerformingPlayers() {
       header={{
         icon: <CgPerformance size={20} />,
         label: <div className="text-xl font-semibold">TOP PERFORMERS</div>,
-        className: "ring grow",
+        className: " grow",
       }}
+      className="border"
+      size={"xl"}
     >
-      <p className="_p">Leading scorers and playmakers</p>
+      <p className="_p px-4">Leading scorers and playmakers</p>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
         {/* Top Scorers */}
         <Card>
           <CardHeader>
