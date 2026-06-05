@@ -60,8 +60,9 @@ function buildCategoryQuery(category: string): { $expr?: any } | null {
   return {
     $expr: {
       $and: [
-        { $gte: [{ $year: "$dob" }, minBirthYear] },
-        { $lte: [{ $year: "$dob" }, maxBirthYear] },
+        // ✅ Convert string to date first, then extract year
+        { $gte: [{ $year: { $toDate: "$dob" } }, minBirthYear] },
+        { $lte: [{ $year: { $toDate: "$dob" } }, maxBirthYear] },
       ],
     },
   };
@@ -103,6 +104,7 @@ export async function GET(request: NextRequest) {
     }
 
     const cleaned = removeEmptyKeys(query);
+    console.log(cleaned, categoryQuery);
 
     const players = await PlayerModel.find(cleaned)
       .populate({
@@ -127,6 +129,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       {
         success: false,

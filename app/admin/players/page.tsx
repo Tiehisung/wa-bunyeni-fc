@@ -1,6 +1,6 @@
 "use client";
 
-import { IPlayer } from "@/types/player.interface";
+import { EPlayerAgeCategory, IPlayer } from "@/types/player.interface";
 import CaptaincyAdm from "./captaincy/Captaincy";
 import { PrimarySearch } from "@/components/Search";
 import { DisplayAdminPlayers } from "./DisplayPlayers";
@@ -15,6 +15,8 @@ import Link from "next/link";
 import { sParamsToObject } from "@/lib/searchParams";
 import { Button } from "@/components/buttons/Button";
 import { PrintPlayersBtn } from "./Export";
+import SELECT, { PrimarySelect } from "@/components/select/Select";
+import { enumToOptions } from "@/lib/select";
 
 export default function AdminPlayers() {
   const searchParams = useSearchParams();
@@ -56,8 +58,7 @@ export default function AdminPlayers() {
             Add Player
             <Plus />
           </Button>
-
-          <PrintPlayersBtn />
+          <PrintPlayersBtn players={players?.data as IPlayer[]} />
         </div>
 
         <div className="mt-4 mb-2 flex flex-wrap items-center justify-center gap-6">
@@ -67,6 +68,10 @@ export default function AdminPlayers() {
             type="search"
             name="search"
             searchKey="player_search"
+          />
+          <PrimarySelect
+            options={enumToOptions(EPlayerAgeCategory)}
+            paramKey="category"
           />
         </div>
       </header>
