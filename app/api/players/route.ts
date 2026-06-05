@@ -1,16 +1,15 @@
 import "@/models/file";
 import "@/models/galleries";
 // app/api/players/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/config/db.config';
+import { NextRequest, NextResponse } from "next/server";
+import connectDB from "@/config/db.config";
 
-import { auth } from '@/auth';
-import bcrypt from 'bcryptjs';
-import PlayerModel from '@/models/player';
-import UserModel from '@/models/user';
-import { formatDate, getAgeFromDOB } from '@/lib/timeAndDate';
-import { generatePlayerAbout } from '@/data/about';
-import { EPlayerAgeStatus, EPlayerStatus, } from '@/types/player.interface';
+import { auth } from "@/auth";
+import bcrypt from "bcryptjs";
+import PlayerModel from "@/models/player";
+import UserModel from "@/models/user";
+import { generatePlayerAbout } from "@/data/about";
+import { EPlayerAgeCategory, EPlayerStatus } from "@/types/player.interface";
 import { IPostPlayer } from "@/app/admin/players/new/NewSigningForms";
 import { getInitials, removeEmptyKeys } from "@/lib";
 import { EUserRole } from "@/types/user";
@@ -22,41 +21,65 @@ import { generatePlayerCode } from "./code";
 
 connectDB();
 
-// Helper function to generate player ID
-export const generatePlayerID = (
-  firstName: string,
-  lastName: string,
-  dob: string | Date,
-  format: 'ymd' | 'ydm' | 'dmy' | 'dym' | 'mdy' | 'myd' = 'dmy'
-) => {
-  const initials = getInitials([firstName, lastName], 2);
-  const date = formatDate(dob, 'dd/mm/yyyy');
-  const dmy = date.split('/').reverse();
-
-  const codes = {
-    dmy: dmy[2] + dmy[1] + dmy[0].substring(2),
-    dym: dmy[2] + dmy[0].substring(2) + dmy[1],
-    mdy: dmy[1] + dmy[2] + dmy[0].substring(2),
-    myd: dmy[1] + dmy[0].substring(2) + dmy[2],
-    ydm: dmy[0].substring(2) + dmy[2] + dmy[1],
-    ymd: dmy[0].substring(2) + dmy[1] + dmy[2],
-  };
-
-  return initials.toUpperCase() + codes[format];
+const CATEGORY_AGE_LIMITS: Record<
+  EPlayerAgeCategory,
+  { min: number; max: number }
+> = {
+  [EPlayerAgeCategory.U13]: { min: 10, max: 13 },
+  [EPlayerAgeCategory.U15]: { min: 13, max: 15 },
+  [EPlayerAgeCategory.U17]: { min: 15, max: 17 },
+  [EPlayerAgeCategory.U20]: { min: 17, max: 20 },
+  [EPlayerAgeCategory.SENIOR]: { min: 18, max: 99 },
 };
+
+function getAgeRangeForCategory(
+  category: EPlayerAgeCategory,
+): { $gte: number; $lte: number } | null {
+  const limits = CATEGORY_AGE_LIMITS[category];
+  if (!limits) return null;
+  return { $gte: limits.min, $lte: limits.max };
+}
+
+function buildCategoryQuery(category: string): { $expr?: any } | null {
+  if (!category) return null;
+
+  const validCategory = Object.values(EPlayerAgeCategory).find(
+    (c) => c === category,
+  );
+
+  if (!validCategory) return null;
+
+  const ageRange = getAgeRangeForCategory(validCategory);
+  if (!ageRange) return null;
+
+  // Calculate birthdate range based on age
+  const currentYear = new Date().getFullYear();
+  const maxBirthYear = currentYear - ageRange.$gte;
+  const minBirthYear = currentYear - ageRange.$lte;
+
+  return {
+    $expr: {
+      $and: [
+        { $gte: [{ $year: "$dob" }, minBirthYear] },
+        { $lte: [{ $year: "$dob" }, maxBirthYear] },
+      ],
+    },
+  };
+}
 
 // GET /api/players - List all players
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '30');
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "30");
     const skip = (page - 1) * limit;
 
-    const search = searchParams.get('player_search') || '';
-    const status = searchParams.get('status') || EPlayerStatus.CURRENT;
-
-    const regex = new RegExp(search, 'i');
+    const search = searchParams.get("player_search") || "";
+    const status = searchParams.get("status") || EPlayerStatus.CURRENT;
+    const category = searchParams.get("category") || ""; // New: u8, u10, u12, u13, u15, u17, u20, senior
+    const position = searchParams.get("position") || "";
+    const regex = new RegExp(search, "i");
 
     const query: any = {
       $or: [
@@ -70,18 +93,26 @@ export async function GET(request: NextRequest) {
       ],
       status,
     };
+    if (position) {
+      query.position = position;
+    }
+
+    const categoryQuery = buildCategoryQuery(category);
+    if (categoryQuery) {
+      Object.assign(query, categoryQuery);
+    }
 
     const cleaned = removeEmptyKeys(query);
 
     const players = await PlayerModel.find(cleaned)
       .populate({
-        path: 'galleries',
-        populate: { path: 'files' }
+        path: "galleries",
+        populate: { path: "files" },
       })
-      .populate('createdBy', 'name role')
+      .populate("createdBy", "name role")
       .skip(skip)
       .limit(limit)
-      .lean();
+      .lean({ virtuals: true });
 
     const total = await PlayerModel.countDocuments(cleaned);
 
@@ -96,11 +127,13 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    LoggerService.error('Failed to fetch players', error);
-    return NextResponse.json({
-      success: false,
-      message: getApiErrorMessage(error, 'Failed to fetch players'),
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: getApiErrorMessage(error, "Failed to fetch players"),
+      },
+      { status: 500 },
+    );
   }
 }
 
@@ -110,13 +143,15 @@ export async function POST(request: NextRequest) {
     const session = await auth();
 
     authorizeOrResponse(session?.user?.role, EUserRole.ADMIN);
- 
-    const pf = await request.json() as IPostPlayer;
+
+    const pf = (await request.json()) as IPostPlayer;
 
     // Ensure unique code
     let playerCode = await generatePlayerCode(pf.firstName, pf.lastName);
 
-    const existingPlayerByCode = await PlayerModel.findOne({ code: playerCode });
+    const existingPlayerByCode = await PlayerModel.findOne({
+      code: playerCode,
+    });
 
     if (existingPlayerByCode) {
       playerCode = getInitials([pf.firstName, pf.lastName], 2) + Date.now();
@@ -129,14 +164,17 @@ export async function POST(request: NextRequest) {
     const existingPlayerByEmail = await PlayerModel.findOne({ email });
 
     if (existingPlayerByEmail) {
-      return NextResponse.json({
-        message: `Duplicate email found - ${email}`,
-        success: false,
-      }, { status: 409 });
+      return NextResponse.json(
+        {
+          message: `Duplicate email found - ${email}`,
+          success: false,
+        },
+        { status: 409 },
+      );
     }
 
-    const ageStatus = getAgeFromDOB(pf.dob) < 10 ? EPlayerAgeStatus.JUVENILE : EPlayerAgeStatus.YOUTH;
-    const about = pf.about || generatePlayerAbout(pf.firstName, pf.lastName, pf.position);
+    const about =
+      pf.about || generatePlayerAbout(pf.firstName, pf.lastName, pf.position);
 
     const newPlayer = await PlayerModel.create({
       ...pf,
@@ -144,37 +182,42 @@ export async function POST(request: NextRequest) {
       code: playerCode,
       email,
       about,
-      ageStatus,
-      createdBy: session?.user 
+      createdBy: session?.user,
     });
 
     // Create User account for player
     const existingUser = await UserModel.findOne({ email: pf.email });
 
     if (!existingUser) {
-      const password = await bcrypt.hash('1234', 10);
+      const password = await bcrypt.hash("1234", 10);
 
       await UserModel.create({
         email,
         name: `${pf.lastName} ${pf.firstName}`,
         image: pf.avatar,
-        lastLoginAccount: 'credentials',
+        lastLoginAccount: "credentials",
         password,
         role: EUserRole.PLAYER,
-        about
+        about,
       });
     }
 
-    return NextResponse.json({
-      message: 'Player Added',
-      success: true,
-      data: newPlayer,
-    }, { status: 201 });
+    return NextResponse.json(
+      {
+        message: "Player Added",
+        success: true,
+        data: newPlayer,
+      },
+      { status: 201 },
+    );
   } catch (error) {
-    LoggerService.error('Failed to create player', error);
-    return NextResponse.json({
-      message: getApiErrorMessage(error),
-      success: false,
-    }, { status: 500 });
+    LoggerService.error("Failed to create player", error);
+    return NextResponse.json(
+      {
+        message: getApiErrorMessage(error),
+        success: false,
+      },
+      { status: 500 },
+    );
   }
 }

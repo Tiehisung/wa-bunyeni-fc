@@ -19,7 +19,7 @@ export function ShareButton({
   shareUrl,
   title,
   text,
-  shorten,
+  shorten,files
 }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
@@ -32,7 +32,12 @@ export function ShareButton({
           title,
           text: text || `${title} | ${ENV.APP_NAME}`,
           url: url,
-          files: [],
+          files: files ? await Promise.all(files.map(async (file) => {
+            const response = await fetch(file);
+            const blob = await response.blob();
+            const fileName = file.split("/").pop() || "file";
+            return new File([blob], fileName, { type: blob.type });
+          })) : undefined,
         });
       } catch (err) {
         console.log("Share cancelled");
