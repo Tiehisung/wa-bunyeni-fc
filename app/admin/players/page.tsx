@@ -58,7 +58,7 @@ export default function AdminPlayers() {
             Add Player
             <Plus />
           </Button>
-          <PrintPlayersBtn />
+          <PrintPlayersBtn players={players?.data as IPlayer[]} />
         </div>
 
         <div className="mt-4 mb-2 flex flex-wrap items-center justify-center gap-6">
