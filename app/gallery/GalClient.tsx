@@ -24,7 +24,7 @@ type Props = {
 export default function GalleryClient({ galleries, className = "" }: Props) {
   return (
     <div className={`p-3 ${className}`}>
-      <div className="flex items-center gap-2 justify-between my-6 _page">
+      <div className="flex items-center gap-2 justify-between mb-5">
         <PrimarySearch
           placeholder="Search Gallery"
           inputStyles="h-9"

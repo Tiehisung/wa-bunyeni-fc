@@ -8,7 +8,6 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import {
-  AVATAR,
   Avatar,
   AvatarFallback,
   AvatarImage,
@@ -36,6 +35,7 @@ import { Button } from "@/components/buttons/Button";
 import { useSParams } from "@/lib/searchParams";
 import SquadForm from "./SquadForm";
 import { useSession } from "next-auth/react";
+import SquadPlayer from "./SquadPlayer";
 
 interface SquadDisplayProps {
   match?: IMatch;
@@ -119,29 +119,9 @@ const SquadCard = ({ match }: SquadDisplayProps) => {
           <Users size={18} /> Players ({squad?.players?.length})
         </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {squad?.players?.map((player) => (
-            <div
-              key={player?._id}
-              className="flex items-center gap-3 bg-muted/30 overflow-hidden rounded-xl border border-border hover:shadow-md transition"
-            >
-              <AVATAR
-                src={player?.avatar as string}
-                alt={player?.name}
-                shape="square"
-                size="xl"
-              />
-              <div className="flex flex-col">
-                <span className="font-semibold text-sm uppercase">
-                  {player?.name}
-                </span>
-                <Badge variant="outline" className="text-xs mt-1 capitalize">
-                  {player?.position}
-                </Badge>
-
-                <span>{player?.number}</span>
-              </div>
-            </div>
+            <SquadPlayer player={player} className="h-52 w-full"/>
           ))}
         </div>
 

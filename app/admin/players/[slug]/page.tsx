@@ -157,8 +157,9 @@ export default function PlayerProfilePage() {
             header={{
               label: "Edit Player",
               icon: <icons.edit />,
-              className: "ring",
+              className: "",
             }}
+            size={"xl"}
           >
             <PlayerProfileForm player={player} />
           </PrimaryCollapsible>

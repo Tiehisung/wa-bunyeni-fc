@@ -24,14 +24,17 @@ export default function AdminDashboardPage() {
             header={{
               icon: <CgPerformance size={20} />,
               label: <div className="text-xl font-semibold">Key Metrics</div>,
-              className: "ring grow",
+              className: " grow",
             }}
+            size={"xl"}
             defaultOpen
+            className="border"
           >
-            <MetricsDashboard />
+            <div className="p-4">
+              <MetricsDashboard />
+            </div>
           </PrimaryCollapsible>
 
-   
           <TopPerformingPlayers />
         </div>
       </main>

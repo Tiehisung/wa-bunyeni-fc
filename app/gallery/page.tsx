@@ -37,13 +37,13 @@ const GalleryPage = () => {
 
   return (
     <div>
-      <IntroSection
-        image={featureImage as string}
+      {/* <IntroSection
+        // image={featureImage as string}
         title="Gallery"
         subtitle="Capture and relive your best moments"
         icon={<GrGallery />}
         className="rounded-b-2xl py-6"
-      />
+      /> */}
       <GalleryClient galleries={galleries} />
       <InfiniteLimitScroller pagination={galleries?.pagination} />
     </div>

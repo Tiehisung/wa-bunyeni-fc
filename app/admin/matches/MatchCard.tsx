@@ -17,9 +17,9 @@ import { ResizableContent } from "@/components/resizables/ResizableContent";
 import { MatchForm } from "./FixtureForm";
 import { StackModal } from "@/components/modals/StackModal";
 import Link from "next/link";
-import { CiCircleInfo, CiEdit } from "react-icons/ci";
+import { CiEdit } from "react-icons/ci";
 import { GiDarkSquad } from "react-icons/gi";
-import { MoreHorizontal } from "lucide-react";
+import { GlassmorphicGradient } from "@/components/Glasmorphic/Gradient";
 
 interface Props {
   match?: IMatch;
@@ -30,7 +30,7 @@ export function AdminMatchCard({ match }: Props) {
   const status = match?.status;
 
   return (
-    <div className="bg-card border p-4 space-y-2.5 max-w-[90vw]">
+    <GlassmorphicGradient className="bg-card border p-4 space-y-2.5 max-w-[90vw]">
       <header className="flex justify-between gap-5 text-muted-foreground text-sm font-light">
         <Badge
           variant={
@@ -132,6 +132,6 @@ export function AdminMatchCard({ match }: Props) {
          Details
         </Link>
       </ResizableContent>
-    </div>
+    </GlassmorphicGradient>
   );
 }

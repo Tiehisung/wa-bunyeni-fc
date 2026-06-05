@@ -228,10 +228,7 @@ export const printPlayersList = (
             <span class="meta-label">Active:</span>
             <span class="meta-value">${players?.filter((p) => p.status === EPlayerStatus.CURRENT).length || 0}</span>
           </div>
-          <div class="meta-item">
-            <span class="meta-label">On Loan:</span>
-            <span class="meta-value">${players?.filter((p) => p.status === EPlayerStatus.CURRENT).length || 0}</span>
-          </div>
+          
         </div>
 
         <table>

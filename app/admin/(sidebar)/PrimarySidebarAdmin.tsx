@@ -87,6 +87,7 @@ export function SidebarLink({
         className: "ring-border font-normal text-sm ",
       }}
       defaultOpen={item.defaultOpen}
+      className="border-0"
     >
       {item.children!.map((child, i) => (
         <SidebarLink key={i} item={child} depth={depth + 1} />

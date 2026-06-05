@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "30");
+    const limit = parseInt(searchParams.get("limit") || "100");
     const skip = (page - 1) * limit;
 
     const search = searchParams.get("player_search") || "";
