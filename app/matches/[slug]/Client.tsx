@@ -98,7 +98,7 @@ export default function MatchDetailsClient({ slug }: MatchDetailsClientProps) {
                 title={match?.title}
                 files={
                   [
-                    ...(match?.matchImages ?? []),
+                    ...(match?.images ?? []),
                     match?.fixtureFlier,
                     match?.resultFlier,
                     match?.opponent?.logo,
